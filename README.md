@@ -1,4 +1,8 @@
 hot-sastp
 =========
 
-Heuristic optimization lab exercises
+Heuristic optimization course lab exercises
+Updated version
+
+Some sentence! 
+
