@@ -12,3 +12,7 @@
 *.a
 
 .*.swp
+*.cpp~
+*.h~
+*.kdev4
+build
