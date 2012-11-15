@@ -1,0 +1,4 @@
+#!/bin/bash
+
+qstat -xml | /home1/share/qhost-replacement/qstat-rep $*
+

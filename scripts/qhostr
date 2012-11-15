@@ -1,0 +1,4 @@
+#!/bin/bash
+
+qhost -j -xml | /home1/share/qhost-replacement/qhost-rep $*
+
