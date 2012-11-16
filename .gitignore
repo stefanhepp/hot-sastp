@@ -13,6 +13,7 @@
 
 .*.swp
 *.cpp~
+*.txt~
 *.h~
 *.kdev4
 build
