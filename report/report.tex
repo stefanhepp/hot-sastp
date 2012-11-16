@@ -5,4 +5,35 @@
 
 \begin{document}
 
+- Calculations (let VSpots be the set of visited spots, MSi be the Method used at Spot Si)
+    - Total satisfaction = Sum( MSi.satisfaction , Si in VSpots ) - Sum( dist(Si,Sj) * alpha, (Si,Sj) in Edges(Tour)) 
+                         = Sum( MSi.satisfaction , Si in VSpots ) - TourLength * alpha
+    - Remaining Stamina (No rest) = Initial Stamina - Sum( MSi.stamina , Si in VSpots )
+    - Delta Stamina for (Si,Sj) = Si.rest * Habitus - MSj.stamina
+    - Total Resting Time = Sum( Si.rest, Si in VSpots ) = Remaining Stamina < 0 ? - Remaining Stamina / Habitus : 0
+    - Total Time = Sum( MSi.time + Si.rest , Si in VSpots ) + Sum( dist(Si,Sj) / speed, (Si,Sj) in Edges(Tour))
+                 = Sum( MSi.time , Si in VSpots ) + TourLength / speed + TotalRestTime
+
+- To assign the Total Resting Time to Si.rest, go through spots in tour order, if remaining stamina at spot < maxStamina, fill up stamina to maxStamina using
+remaining resting time, until Total Resting Time is used up.
+
+- Values to keep track of:
+    - Remaining Stamina (without rests)
+    - Total Satisfaction
+    - Total Time
+or:
+    - Tour Length
+    - Sum( Method.satisfaction )
+    - Sum( Method.stamina )
+    - Sum( Method.time )
+
+- Constraints
+    - MSj.stamina < maxStamina (Otherwise, there is never enough stamina to do the step)
+
+- We do not store the resting time per spots
+    - Sufficient to make sure that a single step does not consume more than max-stamina
+    - Does not matter where to add rests -> add rests in at spots where next step causes stamina to become negative
+    - Keep track of stamina without rests, calculate total time based on remining stamina
+
+
 \end{document}
