@@ -19,9 +19,9 @@ void SASTPSolution::addStop(int spot, int method, double restTime)
 	if(finished)throw logic_error("already finished");
 	if(restTime<0)throw logic_error("negative rest time");
 
-	const auto& s=prob.getSpots().at(spot);
-	const auto& m=s.getMethods().at(method);
-	const auto& lastSpot=tour.empty()?prob.getStartAsSpot():prob.getSpots().at(tour.back().spot);
+	const Spot&   s=prob.getSpot(spot);
+	const Method& m=s.getMethod(method);
+	const Spot    lastSpot=tour.empty()?prob.getStartAsSpot():prob.getSpot(tour.back().spot);
 
 	Stop stop(spot,method,restTime);
 
@@ -61,8 +61,8 @@ void SASTPSolution::finishTour()
 	//add return trip to time and satisfaction, if the tour actually leaves the starting location
 	if(tour.empty())return;
 
-	const auto& lastSpot=prob.getSpots().at(tour.back().spot);
-	const Spot finishSpot("Origin",prob.getStartX(),prob.getStartY());
+	const Spot& lastSpot=prob.getSpot(tour.back().spot);
+	const Spot  finishSpot("Origin",prob.getStartX(),prob.getStartY());
 
 	tourtime+=prob.getTravelTime(lastSpot,finishSpot);
 	satisfaction-=prob.getTravelSatisfactionCost(lastSpot,finishSpot);
@@ -94,7 +94,7 @@ bool SASTPSolution::isValid(bool verbose) const
 	for(const auto& stop:tour)
 	{
 		++i;
-		staminatrace-=prob.getSpots().at(stop.spot).getMethods().at(stop.method).getStamina();
+		staminatrace-=prob.getSpot(stop.spot).getMethod(stop.method).getStamina();
 		if(staminatrace<0)
 		{
 			if(verbose)cout << "Solution not valid because after stop "<<i<<" stamina is at "<<staminatrace<<"\n";

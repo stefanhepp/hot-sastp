@@ -62,9 +62,9 @@ SASTProblem::SASTProblem(const std::string& filename):
 				double x,y;
 				s>>id>>name>>x>>y;
 				assert(id == spots.size());
-				if(!spots.empty())assert(!spots.back().getMethods().empty());
-
-				spots.push_back(Spot(name,x,y));
+				if(!spots.empty()) assert(!spots.back()->getMethods().empty());
+				
+				spots.push_back(new Spot(name,x,y));
 			}
 			if(token=="method")
 			{
@@ -74,7 +74,7 @@ SASTProblem::SASTProblem(const std::string& filename):
 				s>>name>>satisfaction>>time>>stamina;
 				assert(!spots.empty());
 
-				spots.back().addMethod(Method(name,satisfaction,time,stamina));
+				spots.back()->addMethod(new Method(name,satisfaction,time,stamina));
 			}
 		}
 	}
@@ -105,18 +105,18 @@ void SASTProblem::store(const std::string& filename)
 	os << "numspot "<<spots.size()<<"\n";
 
 	int numMeth=0;
-	for(const auto& s:spots)numMeth+=s.getMethods().size();
+	for(const auto* s:spots)numMeth+=s->getMethods().size();
 
 	os << "nummeth "<<numMeth<<"\n";
 
 	for(int i=0;i<spots.size();++i)
 	{
-		const Spot& spot=spots.at(i);
+		const Spot& spot=*spots.at(i);
 		os << "spot "<<i<<" "<<spot.getName()<<" "<<spot.getX()<<" "<<spot.getY()<<"\n";
 
-		for(const auto& m:spot.getMethods())
+		for(const auto* m:spot.getMethods())
 		{
-			os << "method "<<m.getName()<<" "<<m.getSatisfaction()<<" "<<m.getTime()<<" "<<m.getStamina()<<"\n";
+			os << "method "<<m->getName()<<" "<<m->getSatisfaction()<<" "<<m->getTime()<<" "<<m->getStamina()<<"\n";
 		}
 	}
 }
@@ -146,7 +146,7 @@ int SASTProblem::getNumMeth()const
 {
 	int ret=0;
 
-	for(const auto& e:spots)ret+=e.getMethods().size();
+	for(const auto* e:spots)ret+=e->getMethods().size();
 
 	return ret;
 }

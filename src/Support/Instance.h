@@ -2,6 +2,7 @@
 #define INSTANCE_H
 
 #include "Framework/SASTProblem.h"
+#include "Framework/SASTPSolution.h"
 
 #include <vector>
 
@@ -12,6 +13,15 @@ struct TourNode {
     TourNode(unsigned spot, unsigned method) : spot(spot), method(method) {};
 };
 
+struct TourValue {
+    double tourTime;
+    double totalTime;
+    double satisfaction;
+    double stamina;
+    
+    TourValue(double tourTime, double totalTime, double satisfaction, double stamina) : 
+       tourTime(tourTime), totalTime(totalTime), satisfaction(satisfaction), stamina(stamina) {};
+};
 
 typedef std::vector<TourNode> TourList;
 
@@ -60,12 +70,11 @@ public:
     unsigned getSpotIndex(unsigned index) const { return tour[index].spot; };
     unsigned getMethodIndex(unsigned index) const { return tour[index].method; };
     
-    Spot   getSpot(const TourNode& node) { return problem.getSpots().at(node.spot); };
-    Method getMethod(const TourNode& node) { return problem.getSpots()[node.spot].getMethods()[node.method]; };    
-
-    Spot   getSpot(unsigned index) { return getSpot(getNode(index)); };
-    Method getMethod(unsigned index) { return getMethod(getNode(index)); };
+    const Spot&   getSpot(const TourNode& node) const { return problem.getSpot(node.spot); };
+    const Method& getMethod(const TourNode& node) const { return problem.getSpot(node.spot).getMethod(node.method); };    
     
+    const Spot&   getSpot(unsigned index) const { return getSpot(getNode(index)); };
+    const Method& getMethod(unsigned index) const { return getMethod(getNode(index)); };
     
     void clear(); 
     
@@ -85,9 +94,11 @@ public:
      */
     bool isValid() const;
 
-    // NOTE we could define functions to check if a move is valid. 
-    //      Maybe a better/easier way is to just do the move and call isValid, and if not undo the move.
-    //      We could therefore instead add some support to 'roll back' changes since a checkpoint efficiently.
+    TourValue getUpdateDeltaValues(unsigned index, const TourNode& node);
+    TourValue getInsertDeltaValues(unsigned index, const TourNode& node);
+    TourValue getDeleteDeltaValues(unsigned index);
+
+    SASTPSolution* createSolution() const;
     
 };
 

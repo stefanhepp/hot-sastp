@@ -31,13 +31,16 @@ class Spot
 {
 	std::string name;
 	double x,y;
-	std::vector<Method> methods;
+	std::vector<Method*> methods;
 
 public:
 	Spot(const std::string& name,double x,double y):name(name),x(x),y(y){}
 
-	void addMethod(const Method& m){methods.push_back(m);}
-	const std::vector<Method>& getMethods()const{return methods;}
+	void addMethod(Method* m){methods.push_back(m);}
+	const std::vector<Method*>& getMethods()const{return methods;}
+	
+	const Method& getMethod(unsigned index) const {return *methods[index];}
+	Method& getMethod(unsigned index) {return *methods[index];}
 
 	const std::string& getName()const{return name;}
 	double getX()const{return x;}
@@ -48,7 +51,7 @@ inline std::ostream& operator<<(std::ostream& os,const Spot& s)
 {
 	os << "Spot "<<s.getName()<<" offers "<<s.getMethods().size()<<" methods at location ("<<s.getX()<<","<<s.getY()<<"):\n";
 
-	for(const auto& m:s.getMethods())os << m<<"\n";
+	for(const auto* m:s.getMethods())os << *m<<"\n";
 
 	return os;
 }
@@ -74,7 +77,11 @@ public:
 	double getStartX()const{return startX;}
 	double getStartY()const{return startY;}
 
-	const std::vector<Spot>& getSpots()const{return spots;}
+	const std::vector<Spot*>& getSpots()const{return spots;}
+	
+	const Spot& getSpot(unsigned index) const {return *spots[index];}
+	Spot& getSpot(unsigned index) {return *spots[index];}
+	
 	Spot getStartAsSpot()const{return Spot("Origin",startX,startY);}
 
 	double getDistance(const Spot& a,const Spot& b)const;
@@ -95,7 +102,7 @@ private:
 
 	double startX,startY;
 
-	std::vector<Spot> spots;
+	std::vector<Spot*> spots;
 
 	SASTProblem():maxTime(0),initStamina(0),maxStamina(0),alpha(0),habitus(0),velocity(0),startX(0),startY(0){}
 
