@@ -42,6 +42,11 @@ struct TourValues {
     TourValues(double tourTime, double satisfaction, double stamina) : 
        tourTime(tourTime), satisfaction(satisfaction), stamina(stamina) {}
        
+    void addDeltaDistance(const SASTProblem& problem, double deltaDist) {
+	tourTime += deltaDist / problem.getVelocity();
+	satisfaction -= deltaDist * problem.getAlpha();
+    }
+       
     TourValues operator+(const TourValues& v) {
 	return TourValues(tourTime + v.tourTime, satisfaction + v.satisfaction, stamina + v.stamina);
     }

@@ -42,6 +42,23 @@ void Instance::deleteNode(unsigned int index)
 
 TourValues Instance::getInsertDeltaValues(unsigned int index, const TourNode& node)
 {
+    // insert node before 'index'
+    TourValues values;
+    
+    const Spot& prevSpot = getSpot(index - 1);
+    const Spot& nextSpot = getSpot(index);
+    const Spot& newSpot  = getSpot(node);
+
+    // Update tour time and satisfaction to include travel to new spot
+    double deltaDist = problem.getDistance(prevSpot, newSpot) + problem.getDistance(newSpot, nextSpot);
+    deltaDist -= problem.getDistance(prevSpot, nextSpot);
+    
+    values.addDeltaDistance(problem, deltaDist);
+    
+    // Add new method at new spot
+    values += newSpot.getMethod(node.method);
+    
+    return values;
 }
 
 TourValues Instance::getUpdateDeltaValues(unsigned int index, const TourNode& node)
@@ -64,8 +81,7 @@ TourValues Instance::getUpdateDeltaValues(unsigned int index, const TourNode& no
 	double deltaDist = problem.getDistance(prevSpot, newSpot) + problem.getDistance(newSpot, nextSpot);
 	deltaDist -= problem.getDistance(prevSpot, oldSpot) + problem.getDistance(oldSpot, nextSpot);
 	
-	values.tourTime += deltaDist / problem.getVelocity();
-	values.satisfaction -= deltaDist * problem.getAlpha();
+	values.addDeltaDistance(problem, deltaDist);
     }
     
     // remove the old method
@@ -78,7 +94,25 @@ TourValues Instance::getUpdateDeltaValues(unsigned int index, const TourNode& no
 
 TourValues Instance::getDeleteDeltaValues(unsigned int index)
 {
+    TourNode node = getNode(index);
 
+    // delete node at 'index'
+    TourValues values;
+    
+    const Spot& prevSpot = getSpot(index - 1);
+    const Spot& nextSpot = getSpot(index + 1);
+    const Spot& oldSpot  = getSpot(node);
+
+    // Update tour time and satisfaction to remove travel to new spot
+    double deltaDist = problem.getDistance(prevSpot,  nextSpot);
+    deltaDist -= problem.getDistance(prevSpot, oldSpot) + problem.getDistance(oldSpot, nextSpot);
+    
+    values.addDeltaDistance(problem, deltaDist);
+    
+    // Remove method of old spot
+    values -= oldSpot.getMethod(node.method);
+    
+    return values;
 }
 
 TourValues Instance::getStepValues(const TourNode& from, const TourNode& to)
