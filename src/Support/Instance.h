@@ -47,25 +47,25 @@ struct TourValues {
 	satisfaction -= deltaDist * problem.getAlpha();
     }
        
-    TourValues operator+(const TourValues& v) {
+    const TourValues operator+(const TourValues& v) {
 	return TourValues(tourTime + v.tourTime, satisfaction + v.satisfaction, stamina + v.stamina);
     }
     
-    TourValues& operator+=(const TourValues& v) {
+    const TourValues& operator+=(const TourValues& v) {
 	tourTime += v.tourTime; 
 	satisfaction += v.satisfaction;
 	stamina += v.stamina;
 	return *this;
     }
     
-    TourValues &operator+=(const Method& m) {
+    const TourValues &operator+=(const Method& m) {
 	tourTime += m.getTime();
 	satisfaction += m.getSatisfaction();
 	stamina += m.getStamina();
 	return *this;
     }
     
-    TourValues &operator-=(const Method& m) {
+    const TourValues &operator-=(const Method& m) {
 	tourTime -= m.getTime();
 	satisfaction -= m.getSatisfaction();
 	stamina -= m.getStamina();
