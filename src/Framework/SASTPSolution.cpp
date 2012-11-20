@@ -21,7 +21,7 @@ void SASTPSolution::addStop(int spot, int method, double restTime)
 
 	const Spot&   s=prob.getSpot(spot);
 	const Method& m=s.getMethod(method);
-	const Spot    lastSpot=tour.empty()?prob.getStartAsSpot():prob.getSpot(tour.back().spot);
+	const Spot&   lastSpot=tour.empty()?prob.getStartAsSpot():prob.getSpot(tour.back().spot);
 
 	Stop stop(spot,method,restTime);
 

@@ -10,7 +10,7 @@
 using namespace std;
 
 SASTProblem::SASTProblem(const std::string& filename):
-		maxTime(0),initStamina(0),maxStamina(0),alpha(0),habitus(0),velocity(0),startX(0),startY(0)
+		maxTime(0),initStamina(0),maxStamina(0),alpha(0),habitus(0),velocity(0),startX(0),startY(0),start("Origin",0,0)
 {
 	ifstream ifs(filename);
 
@@ -38,6 +38,8 @@ SASTProblem::SASTProblem(const std::string& filename):
 
 		ifs>>token>>startX>>startY;
 		assert(token=="start");
+		
+		start = Spot("Origin",startX, startY);
 
 		int num_spots=0, num_methods=0;
 

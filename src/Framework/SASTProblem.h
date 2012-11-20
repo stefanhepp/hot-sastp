@@ -82,7 +82,7 @@ public:
 	const Spot& getSpot(unsigned index) const {return *spots[index];}
 	Spot& getSpot(unsigned index) {return *spots[index];}
 	
-	Spot getStartAsSpot()const{return Spot("Origin",startX,startY);}
+	const Spot& getStartAsSpot() const {return start;}
 
 	double getDistance(const Spot& a,const Spot& b)const;
 
@@ -101,10 +101,11 @@ private:
 	double velocity;	//travel speed between spots
 
 	double startX,startY;
+	Spot   start;
 
 	std::vector<Spot*> spots;
 
-	SASTProblem():maxTime(0),initStamina(0),maxStamina(0),alpha(0),habitus(0),velocity(0),startX(0),startY(0){}
+	SASTProblem():maxTime(0),initStamina(0),maxStamina(0),alpha(0),habitus(0),velocity(0),startX(0),startY(0),start("Origin",0,0){}
 
 	friend class SASTProblemGenerator;
 };
