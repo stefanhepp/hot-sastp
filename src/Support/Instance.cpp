@@ -46,3 +46,4 @@ bool Instance::isValid() const
     return (getTotalTime() <= problem.getMaxTime());
 }
 
+
