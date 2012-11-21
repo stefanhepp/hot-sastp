@@ -19,11 +19,13 @@ double Instance::getTotalRequiredRestTime() const
     return remainingStamina < 0 ? -remainingStamina / problem.getHabitus() : 0.0; 
 }
 
-void Instance::insertNode(unsigned int index, const TourNode& node)
+unsigned Instance::insertNode(unsigned int index, const TourNode& node)
 {
     addTourValues( getInsertDeltaValues(index, node) );
     
     tour.insert( tour.begin() + index, node);
+    
+    return index;
 }
 
 void Instance::updateNode(unsigned int index, const TourNode& node)

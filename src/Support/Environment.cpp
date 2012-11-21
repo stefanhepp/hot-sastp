@@ -4,18 +4,7 @@
 
 using namespace std;
 
-Environment::Environment()
-: problem(0), solution(0)
-{
-}
-
-Environment::~Environment()
-{
-    if (problem) delete problem;
-    if (solution) delete solution;
-}
-
-void Environment::usage(char* programName)
+void Config::usage(char* programName)
 {
     cout << "Usage: " << programName << " [<options>] <input.prob> <output.sol>\n";
     cout << "\n";
@@ -25,7 +14,7 @@ void Environment::usage(char* programName)
     
 }
 
-int Environment::parseArguments(int argc, char* argv[])
+int Config::parseArguments(int argc, char* argv[])
 {
     if (argc < 3) {
 	usage(argv[0]);
@@ -63,3 +52,27 @@ int Environment::parseArguments(int argc, char* argv[])
 
 
 
+Environment::~Environment()
+{
+    deleteProblem();
+}
+
+void Environment::loadProblemFile ( const string& filename )
+{
+    deleteProblem();
+    
+    problem = new SASTProblem(filename);
+}
+
+void Environment::initSpotSearch ( unsigned int maxk )
+{
+    if (spotsearch) delete spotsearch;
+    
+    spotsearch = new SpotSearch(*problem);
+}
+
+void Environment::deleteProblem()
+{
+    if (problem) delete problem;
+    if (spotsearch) delete spotsearch;
+}

@@ -108,7 +108,9 @@ public:
      */
     double getTotalRequiredRestTime() const;
     
-    const TourList  getTour() const { return tour; };
+    const TourList  getTour() const { return tour; }
+    
+    bool empty() const { return tour.empty(); }
     
     TourNode getNode(int index) const { return (index == -1 || index == tour.size()) ? getHotelNode() : tour[index]; };
     
@@ -134,11 +136,25 @@ public:
     void updateNode(unsigned index, const TourNode& node);
     void updateNode(unsigned index, unsigned spot, unsigned method) { updateNode(index, TourNode(spot, method)); }
     
-    void insertNode(unsigned index, const TourNode& node);
-    void insertNode(unsigned index, unsigned spot, unsigned method) { insertNode(index, TourNode(spot, method)); }
+    /**
+     * @return the index of the new node in the tour.
+     */    
+    unsigned insertNode(unsigned index, const TourNode& node);
     
-    void addNode(const TourNode &node) { insertNode(tour.size(), node); }
-    void addNode(unsigned spot, unsigned method) { addNode(TourNode(spot, method)); }
+    /**
+     * @return the index of the new node in the tour.
+     */
+    unsigned insertNode(unsigned index, unsigned spot, unsigned method) { return insertNode(index, TourNode(spot, method)); }
+    
+    /**
+     * @return the index of the new node in the tour.
+     */
+    unsigned addNode(const TourNode &node) { return insertNode(tour.size(), node); }
+    
+    /**
+     * @return the index of the new node in the tour.
+     */
+    unsigned addNode(unsigned spot, unsigned method) { return addNode(TourNode(spot, method)); }
     
     void deleteNode(unsigned index);
     
