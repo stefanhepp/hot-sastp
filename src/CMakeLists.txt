@@ -10,5 +10,7 @@ add_subdirectory(Support)
 add_subdirectory(Solver)
 
 add_executable(sastpsolver sastpsolver.cpp)
+add_executable(sastpvis    sastpvis.cpp)
 
 target_link_libraries(sastpsolver Solver Support Framework)
+target_link_libraries(sastpvis Support Framework)

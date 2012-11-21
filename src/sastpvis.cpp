@@ -1,0 +1,32 @@
+
+#include "Framework/SASTProblem.h"
+#include "Framework/SASTPSolution.h"
+#include "Support/DotPrinter.h"
+
+#include <assert.h>
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+int main(int argc, char* argv[]) {
+
+    if (argc != 4) {
+	cout << "Usage: " << argv[0] << " <input.prob> <input.sol> <output.dot>" << endl;
+	exit(1);
+    }
+    
+    string inputproblem(argv[1]);
+    string inputsolution(argv[2]);
+    string outputfile(argv[3]);
+    
+    SASTProblem problem(inputproblem);
+    SASTPSolution solution(problem);
+    solution.load(inputsolution);
+    
+    DotPrinter printer(problem, solution);
+    
+    printer.writeDotFile(outputfile);
+    
+    return 0;
+}
