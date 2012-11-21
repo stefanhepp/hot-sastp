@@ -100,12 +100,15 @@ bool SASTPSolution::isValid(bool verbose) const
 			if(verbose)cout << "Solution not valid because after stop "<<i<<" stamina is at "<<staminatrace<<"\n";
 			result=false;
 		}
-		staminatrace+=prob.getHabitus()*stop.restingTime;
+		staminatrace = min(staminatrace + prob.getHabitus()*stop.restingTime, prob.getMaxStamina());
 	}
 
-	if(staminatrace!=stamina)throw logic_error("stamina inconsistent");
+	if(staminatrace!=stamina) {
+	    cerr << "Expected stamina: " << stamina << ", calculated stamina: " << staminatrace << "; inconsistent!" << endl;
+	    throw logic_error("stamina inconsistent");
+	}
 
-	if(result)cout << "Solution is valid\n";
+	if(result && verbose)cout << "Solution is valid\n";
 
 	return result;
 }

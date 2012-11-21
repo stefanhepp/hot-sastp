@@ -31,28 +31,28 @@ public:
      * @param spot the index of the spot, or -1 for the origin.
      * @return the index of the nearest spot.
      */
-    NearestSpot findNearestSpot(int spot);
+    NearestSpot findNearestSpot(const Instance& tour, int spot, bool skipUsed = true);
     
     /**
      * Find nearest spot to a tour.
      * @return a pair <tournode,nearest> where tournode is the index of the tour nodes to which the spot is nearest, and the
      *  index of the nearest spot.
      */
-    NearestSpot findNearestSpot(const Instance& tour);
+    NearestSpot findNearestSpot(const Instance& tour, bool skipUsed = true);
     
     /**
      * Find k nearest spots to a given spot.
      * @param spot the index of the spot, or -1 for the origin.
      * @return a vector containing the indices of the k nearest spots.
      */
-    NearestSpotList findNearestSpots(int spot, unsigned k);
+    NearestSpotList findNearestSpots(const Instance& tour, int spot, unsigned k, bool skipUsed = true);
     
     /**
      * Find k nearest spots to a tour.
      * @return a list of pairs <tournode,nearest> where tournode is the index of the tour nodes to which the spot is nearest, and the
      *  index of the nearest spot.
      */
-    NearestSpotList findNearestSpots(const Instance& tour, unsigned k);
+    NearestSpotList findNearestSpots(const Instance& tour, unsigned k, bool skipUsed = true);
     
 private:
     const SASTProblem& problem;

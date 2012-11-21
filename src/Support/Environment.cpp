@@ -10,6 +10,7 @@ Config::Config()
     _algorithm = GREEDY;
     _maxKNearestSpots = 5;
     _nodeInsertMode = NIM_SHORTEST_PATH;
+    _verbose = false;
 }
 
 

@@ -2,6 +2,10 @@
 
 #include "Support/SpotSearch.h"
 
+#include <iostream>
+
+using namespace std;
+
 Driver::~Driver()
 {
     if (solution) delete solution;
@@ -28,6 +32,20 @@ void Driver::solve()
     
     
     solution = greedy.getInstance().createSolution();
+}
+
+void Driver::checkSolution() {
+    if (!solution) {
+	cout << "No solution found!" << endl;
+	return;
+    }
+    
+    if (solution->isValid(env.getConfig().isVerbose())) {
+	cout << "Found a valid solution ";
+    } else {
+	cout << "Solution is not valid. Go back to debugging! ";
+    }
+    cout << "(time: " << solution->getTourTime() << ", satisfaction: " << solution->getSatisfaction() << ")" << endl;
 }
 
 void Driver::writeSolution()

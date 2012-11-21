@@ -41,6 +41,8 @@ public:
     std::string getInputFilename() const { return _inputFile;}
     std::string getOutputFilename() const {return _outputFile;}
 
+    bool isVerbose() const { return _verbose; }
+    
 private: 
     std::string _inputFile;
     std::string _outputFile;
@@ -49,6 +51,8 @@ private:
     NodeInsertMode _nodeInsertMode;
     
     unsigned _maxKNearestSpots;
+    
+    bool _verbose;
 };
 
 /**

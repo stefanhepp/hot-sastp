@@ -1,5 +1,7 @@
 #include "Instance.h"
 
+#include <iostream>
+
 Instance::Instance(const SASTProblem &problem)
 : problem(problem), tourTime(0.0), totalSatisfaction(0.0), 
   remainingStamina(problem.getInitStamina())
@@ -184,9 +186,12 @@ SASTPSolution* Instance::createSolution() const
 	
 	// fill up stamina up to max stamina if required
 	double maxRest = (problem.getMaxStamina() - currStamina) / problem.getHabitus();
+	
 	double rest = std::min(remainingRest, maxRest);
 	
 	remainingRest -= rest;
+	
+	currStamina += rest * problem.getHabitus();
 	
 	sol->addStop( node.spot, node.method, rest );
     }

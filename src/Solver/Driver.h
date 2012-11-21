@@ -13,12 +13,16 @@ public:
     
     const Environment& getEnvironment() const { return env; }
     
+    SASTPSolution& getSolution() { return *solution; }
+    
     /**
      * Prepare datastructures for the solvers (init data structures, ..)
      */
     void prepare();
     
     void solve();
+    
+    void checkSolution();
     
     void writeSolution();
     

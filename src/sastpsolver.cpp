@@ -25,9 +25,11 @@ int main(int argc, char* argv[]) {
     
     // run the solver(s)
     driver.solve();
-    
+
     // write solution to file
     driver.writeSolution();
+    
+    driver.checkSolution();
     
     return 0;
 }

@@ -131,7 +131,7 @@ unsigned int GreedyNearestNeighbor::insertSpot()
     int lastSpot = instance.empty() ? -1 : instance.getTour().back().spot;
 
     // find k nearest spots to last tour node
-    NearestSpotList nearest = spotsearch.findNearestSpots(lastSpot, maxk); 
+    NearestSpotList nearest = spotsearch.findNearestSpots(instance, lastSpot, maxk); 
     
     // find best spot and method, add it to the tour
     unsigned tmp;
