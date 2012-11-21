@@ -36,14 +36,79 @@ TourNode GreedyTour::selectBestTourNode ( NearestSpotList nearest, unsigned &ins
     
     for(const auto& ps : nearest) {
 	int tournode = ps.first;
-	unsigned spotid = ps.second;
+	unsigned spotId = ps.second;
 	
-	const Spot& nearestspot = problem.getSpot(spotid);
+	const Spot& spot = instance.getSpot(tournode);
+	const Spot& nearestspot = problem.getSpot(spotId);
+	double dist = problem.getDistance(spot, nearestspot);
 	
+	unsigned bestInsert;
+	double deltaTour;
 	
+	switch (insertMode) {
+	    case Config::NIM_ALWAYS_AFTER: {
+		// Insert after the node with the currently nearest spot
+		bestInsert = tournode + 1;
+		const Spot& prev = instance.getSpot(tournode - 1);
+		deltaTour = dist + problem.getDistance(nearestspot, prev) 
+		            - problem.getDistance(spot, prev);
+		break;
+	    }
+	    case Config::NIM_ALWAYS_BEFORE: {
+		// Insert before the node with the currenty nearest spot (except for the origin)
+		bestInsert = tournode == -1 ? 0 : tournode; 
+		const Spot& next = instance.getSpot(tournode + 1);
+		deltaTour = dist + problem.getDistance(nearestspot, next)
+		            - problem.getDistance(spot, next);
+		break;
+	    }
+	    case Config::NIM_SHORTEST_PATH: {
+		
+		// if we are at the origin, always insert after the node
+		if (tournode == -1) {
+		    bestInsert = tournode + 1;
+		    break;
+		}
+		
+		// Select to insert either before or after the node, depending on the distance differences
+		const Spot& prev = instance.getSpot(tournode - 1);
+		const Spot& next = instance.getSpot(tournode + 1);
+		
+		double deltaBefore = dist + problem.getDistance(nearestspot, prev) 
+		                     - problem.getDistance(spot, prev);
+		double deltaAfter  = dist + problem.getDistance(nearestspot, next)
+		                     - problem.getDistance(spot, next);
+		
+		bestInsert = deltaBefore < deltaAfter ? tournode : tournode + 1;
+		deltaTour = std::min(deltaBefore, deltaAfter);
+		break;
+	    }
+	}
+	
+	// check all methods of this spot
+	unsigned methodId = 0;
 	for (const auto& m : nearestspot.getMethods()) {
 	    
+	    float deltaSatisfaction = m->getSatisfaction() - deltaTour * problem.getAlpha();
+	    float deltaTime = m->getTime() + deltaTour / problem.getVelocity();
+	   
+	    // honor loss of time by reduced stamina, if remaining stamina gets below zero
+	    double newStamina = instance.getRemainingStamina() - m->getStamina();
+	    if (newStamina < 0.0) {
+		deltaTime += -newStamina * problem.getHabitus();
+	    }
 	    
+	    float ratio = deltaSatisfaction / deltaTime;
+	    
+	    if (ratio > bestRatio) {
+		// found a new best candidate
+		best.spot = spotId;
+		best.method = methodId;
+		bestRatio = ratio;
+		insertAt = bestInsert;
+	    }
+	    
+	    methodId++;
 	}
 	
     }
@@ -90,3 +155,4 @@ unsigned int GreedyInsertHeuristic::insertSpot()
         
     return instance.insertNode(insertAt, best);
 }
+

@@ -21,7 +21,7 @@ public:
     enum NodeInsertMode {
 	NIM_ALWAYS_BEFORE,
 	NIM_ALWAYS_AFTER,
-	NIM_SELECT_BEST
+	NIM_SHORTEST_PATH
     };
       
     /**

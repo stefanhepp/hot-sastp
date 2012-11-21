@@ -26,7 +26,7 @@ int Config::parseArguments(int argc, char* argv[])
     
     for (unsigned i = 1; i < argc-1 ; i++) 
     {
-      if(argv[i]== "-a")
+      if(string(argv[i])== "-a")
       {
 	switch(atoi(argv[i+1])){
 	  case GREEDY: 
