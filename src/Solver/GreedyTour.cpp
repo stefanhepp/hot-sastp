@@ -49,17 +49,17 @@ TourNode GreedyTour::selectBestTourNode ( NearestSpotList nearest, unsigned &ins
 	    case Config::NIM_ALWAYS_AFTER: {
 		// Insert after the node with the currently nearest spot
 		bestInsert = tournode + 1;
-		const Spot& prev = instance.getSpot(tournode - 1);
-		deltaTour = dist + problem.getDistance(nearestspot, prev) 
-		            - problem.getDistance(spot, prev);
+		const Spot& next = instance.getSpot(tournode + 1);
+		deltaTour = dist + problem.getDistance(nearestspot, next)
+		            - problem.getDistance(spot, next);
 		break;
 	    }
 	    case Config::NIM_ALWAYS_BEFORE: {
 		// Insert before the node with the currenty nearest spot (except for the origin)
 		bestInsert = tournode == -1 ? 0 : tournode; 
-		const Spot& next = instance.getSpot(tournode + 1);
-		deltaTour = dist + problem.getDistance(nearestspot, next)
-		            - problem.getDistance(spot, next);
+		const Spot& prev = instance.getSpot(tournode == -1 ? 0 : tournode - 1);
+		deltaTour = dist + problem.getDistance(nearestspot, prev) 
+		            - problem.getDistance(spot, prev);
 		break;
 	    }
 	    case Config::NIM_SHORTEST_PATH: {
@@ -67,6 +67,9 @@ TourNode GreedyTour::selectBestTourNode ( NearestSpotList nearest, unsigned &ins
 		// if we are at the origin, always insert after the node
 		if (tournode == -1) {
 		    bestInsert = tournode + 1;
+		    const Spot& next = instance.getSpot(tournode + 1);
+		    deltaTour = dist + problem.getDistance(nearestspot, next)
+				- problem.getDistance(spot, next);
 		    break;
 		}
 		

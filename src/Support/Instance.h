@@ -85,6 +85,8 @@ class Instance
     
     TourList tour;
     
+    std::vector<bool> usedSpots;
+    
 public:
     Instance(const SASTProblem& problem);
     
@@ -124,22 +126,21 @@ public:
     unsigned getSpotIndex(unsigned index) const { return tour[index].spot; };
     unsigned getMethodIndex(unsigned index) const { return tour[index].method; };
     
-    const Spot&   getSpot(const TourNode& node) const 
-                  { return (node.spot == -1 || node.spot == tour.size()) ? problem.getStartAsSpot() : problem.getSpot(node.spot); }
-    const Method& getMethod(const TourNode& node) const { return problem.getSpot(node.spot).getMethod(node.method); }    
+    const Spot&   getSpot(TourNode node) const;
+    const Method& getMethod(TourNode node) const { return problem.getSpot(node.spot).getMethod(node.method); }
     
     const Spot&   getSpot(int index) const { return getSpot(getNode(index)); }
     const Method& getMethod(int index) const { return getMethod(getNode(index)); }
     
     void clear(); 
     
-    void updateNode(unsigned index, const TourNode& node);
+    void updateNode(unsigned index, TourNode node);
     void updateNode(unsigned index, unsigned spot, unsigned method) { updateNode(index, TourNode(spot, method)); }
     
     /**
      * @return the index of the new node in the tour.
      */    
-    unsigned insertNode(unsigned index, const TourNode& node);
+    unsigned insertNode(unsigned index, TourNode node);
     
     /**
      * @return the index of the new node in the tour.
@@ -149,7 +150,7 @@ public:
     /**
      * @return the index of the new node in the tour.
      */
-    unsigned addNode(const TourNode &node) { return insertNode(tour.size(), node); }
+    unsigned addNode(TourNode node) { return insertNode(tour.size(), node); }
     
     /**
      * @return the index of the new node in the tour.
@@ -158,13 +159,16 @@ public:
     
     void deleteNode(unsigned index);
     
+    bool containsSpot(unsigned spotId) const;
+    bool containsSpot(TourNode node) const { return containsSpot(node.spot); }
+    
     /**
      * Check if the current instance satisfies all constraints
      */
     bool isValid() const;
 
-    TourValues getUpdateDeltaValues(unsigned index, const TourNode& node);
-    TourValues getInsertDeltaValues(unsigned index, const TourNode& node);
+    TourValues getUpdateDeltaValues(unsigned index, TourNode node);
+    TourValues getInsertDeltaValues(unsigned index, TourNode node);
     TourValues getDeleteDeltaValues(unsigned index);
 
     /**

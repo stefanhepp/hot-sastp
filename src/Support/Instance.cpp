@@ -4,7 +4,14 @@ Instance::Instance(const SASTProblem &problem)
 : problem(problem), tourTime(0.0), totalSatisfaction(0.0), 
   remainingStamina(problem.getInitStamina())
 {
+    usedSpots.resize(problem.getSpots().size(), false);
 }
+
+const Spot& Instance::getSpot ( TourNode node ) const 
+{
+    return (node.spot == -1 || node.spot == problem.getSpots().size()) ? problem.getStartAsSpot() : problem.getSpot(node.spot); 
+}
+
 
 void Instance::clear()
 {
@@ -12,6 +19,8 @@ void Instance::clear()
     totalSatisfaction = 0.0;
     tourTime = 0.0;
     remainingStamina = problem.getInitStamina();
+    usedSpots.clear();
+    usedSpots.resize(problem.getSpots().size(), false);
 }
 
 double Instance::getTotalRequiredRestTime() const 
@@ -19,30 +28,44 @@ double Instance::getTotalRequiredRestTime() const
     return remainingStamina < 0 ? -remainingStamina / problem.getHabitus() : 0.0; 
 }
 
-unsigned Instance::insertNode(unsigned int index, const TourNode& node)
+unsigned Instance::insertNode(unsigned int index, TourNode node)
 {
     addTourValues( getInsertDeltaValues(index, node) );
     
     tour.insert( tour.begin() + index, node);
     
+    usedSpots[node.spot] = true;
+    
     return index;
 }
 
-void Instance::updateNode(unsigned int index, const TourNode& node)
+void Instance::updateNode(unsigned int index, TourNode node)
 {
     addTourValues( getUpdateDeltaValues(index, node) );
     
+    usedSpots[ tour[index].spot ] = false;
+    
     tour[index] = node;
+    
+    usedSpots[node.spot] = true;
 }
 
 void Instance::deleteNode(unsigned int index)
 {
     addTourValues( getDeleteDeltaValues(index) );
     
+    usedSpots[ tour[index].spot ] = false;
+    
     tour.erase(tour.begin() + index);
 }
 
-TourValues Instance::getInsertDeltaValues(unsigned int index, const TourNode& node)
+bool Instance::containsSpot ( unsigned int spotId ) const 
+{
+    return usedSpots[spotId];
+}
+
+
+TourValues Instance::getInsertDeltaValues(unsigned int index, TourNode node)
 {
     // insert node before 'index'
     TourValues values;
@@ -63,7 +86,7 @@ TourValues Instance::getInsertDeltaValues(unsigned int index, const TourNode& no
     return values;
 }
 
-TourValues Instance::getUpdateDeltaValues(unsigned int index, const TourNode& node)
+TourValues Instance::getUpdateDeltaValues(unsigned int index, TourNode node)
 {
     TourNode oldNode = getNode(index);
     
