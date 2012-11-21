@@ -8,7 +8,7 @@
 class Config
 {
 public:
-    Config() {}
+    Config();
 
     void usage(char* programName);
     

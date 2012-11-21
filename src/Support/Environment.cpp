@@ -4,6 +4,15 @@
 
 using namespace std;
 
+Config::Config()
+{
+    // Set some default values
+    _algorithm = GREEDY;
+    _maxKNearestSpots = 5;
+    _nodeInsertMode = NIM_SHORTEST_PATH;
+}
+
+
 void Config::usage(char* programName)
 {
     cout << "Usage: " << programName << " [<options>] <input.prob> <output.sol>\n";
@@ -14,40 +23,40 @@ void Config::usage(char* programName)
     
 }
 
-int Config::parseArguments(int argc, char* argv[])
+int Config::parseArguments ( int argc, char* argv[] )
 {
-    if (argc < 3) {
-	usage(argv[0]);
-	exit(1);
+    if ( argc < 3 ) {
+        usage ( argv[0] );
+        exit ( 1 );
+    }
+
+    _inputFile = string ( argv[argc-2] );
+    _outputFile = string ( argv[argc-1] );
+
+    for ( unsigned i = 1; i < argc-2 ; i++ ) {
+        if ( string ( argv[i] ) == "-a" ) {
+            switch ( atoi ( argv[i+1] ) ) {
+            case GREEDY:
+                _algorithm = GREEDY;
+                break;
+            case NEIGHBOUR1:
+                _algorithm = NEIGHBOUR1;
+                break;
+            case NEIGHBOUR2:
+                _algorithm = NEIGHBOUR2;
+                break;
+            default:
+                cout<<"The algorithm value is not a supported one"<<endl;
+                exit ( 2 );
+            }
+	    i++;
+        } else {
+            cout<< "Option not supported yet"<<endl;
+            exit ( 3 );
+        }
     }
     
-    _inputFile = string(argv[argc-1]);
-    _outputFile = string(argv[argc]);
-    
-    for (unsigned i = 1; i < argc-1 ; i++) 
-    {
-      if(string(argv[i])== "-a")
-      {
-	switch(atoi(argv[i+1])){
-	  case GREEDY: 
-	     _algorithm = GREEDY;
-	     break;
-	  case NEIGHBOUR1: 
-	    _algorithm = NEIGHBOUR1;
-	    break;
-	  case NEIGHBOUR2: 
-	    _algorithm = NEIGHBOUR2;
-	    break;
-	  default: 
-	    cout<<"The algorithm value is not a supported one"<<endl;
-	    return 1;
-	}
-	}else{ 
-	  cout<< "Option not supported yet"<<endl;
-	  return 1; 
-	}
-      }
-    return 0;
+    return argc;
 }
 
 
