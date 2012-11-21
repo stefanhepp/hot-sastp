@@ -96,14 +96,19 @@ TourNode GreedyTour::selectBestTourNode ( NearestSpotList nearest, unsigned &ins
 	    float deltaTime = m->getTime() + deltaTour / problem.getVelocity();
 	   
 	    // honor loss of time by reduced stamina, if remaining stamina gets below zero
-	    double newStamina = instance.getRemainingStamina() - m->getStamina();
+	    double newStamina = instance.getRemainingStamina() > 0.0 ? 
+	                               std::min(instance.getRemainingStamina() - m->getStamina(), 0.0) : 
+	                               -m->getStamina();
 	    if (newStamina < 0.0) {
 		deltaTime += -newStamina * problem.getHabitus();
 	    }
 	    
 	    float ratio = deltaSatisfaction / deltaTime;
 	    
-	    if (ratio > bestRatio) {
+	    // check if we have a new best value, but check for time constraints ..
+	    if (instance.getTotalTime() + deltaTime <= problem.getMaxTime() && 
+		ratio > bestRatio) 
+	    {
 		// found a new best candidate
 		best.spot = spotId;
 		best.method = methodId;
@@ -116,6 +121,12 @@ TourNode GreedyTour::selectBestTourNode ( NearestSpotList nearest, unsigned &ins
 	
     }
     
+    // Too bad, we did not find a node that still fits, just return the first nearest one..
+    if (best.spot == -1) {
+	insertAt = nearest.front().first + 1;
+	best.spot = nearest.front().second;
+	best.method = 0;
+    }
     
     return best;
 }
