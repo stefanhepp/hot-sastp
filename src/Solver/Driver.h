@@ -1,13 +1,15 @@
 #ifndef DRIVER_H
 #define DRIVER_H
 
+#include "Framework/SASTPSolution.h"
 #include "Support/Environment.h"
 #include "Solver/GreedyTour.h"
 
 class Driver
 {
 public:
-    Driver(Environment& env) : env(env) {}
+    Driver(Environment& env) : env(env), solution(0) {}
+    ~Driver();
     
     const Environment& getEnvironment() const { return env; }
     
@@ -22,6 +24,8 @@ public:
     
 private:
     Environment& env;
+    
+    SASTPSolution *solution;
     
 };
 
