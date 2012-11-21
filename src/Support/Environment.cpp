@@ -18,7 +18,7 @@ int Config::parseArguments(int argc, char* argv[])
 {
     if (argc < 3) {
 	usage(argv[0]);
-	return 1;
+	exit(1);
     }
     
     _inputFile = string(argv[argc-1]);
