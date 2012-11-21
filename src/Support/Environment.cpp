@@ -78,6 +78,8 @@ void Environment::initSpotSearch ( unsigned int maxk )
     if (spotsearch) delete spotsearch;
     
     spotsearch = new SpotSearch(*problem);
+    
+    spotsearch->initialize(maxk);
 }
 
 void Environment::deleteProblem()
