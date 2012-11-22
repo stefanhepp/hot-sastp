@@ -27,16 +27,34 @@ void DotPrinter::writeDotFile ( const std::string& filename ) {
     // write out origin spot
     output << "digraph Tour { \n";
     output << " compound = true; \n " << "rankstep = 1.25; \n";
-    output << " node[shape = plaintext , fontsize =\"8\"];\n";
+    output << " node[shape = box, fontsize =\"8\"];\n";
+    output << problem.getStartAsSpot().getName() << " [style = filled , color =\" .7 .3 1.0 \"];\n";
     output << " edge[arrowsize = 1, color = black];"; 
-    output << problem.getStartAsSpot().getName()<<";\n";
     
     // write out all spots
    
     for (const Spot* spot : problem.getSpots()) {
 	output<<spot->getName() <<";\n";
     }
+    unsigned i=2;
+    output << " { rank = same ; "; 
+    for (const Spot* spot : problem.getSpots()){
+      if (i == 1 )
+      {
+	  output<< " { rank = same; ";
+      } 
+      if ( i == 5)
+      {
+	output << " };\n";
+	i=0;
+      }
+      
+      output << "\"" <<spot->getName()<<"\" ;";
+      i++;
+            
+    }
     
+   
    output << problem.getStartAsSpot().getName()<< " -> ";
     // write out tour as edges connecting spots
     
@@ -50,4 +68,19 @@ void DotPrinter::writeDotFile ( const std::string& filename ) {
     // write out connection from last spot to origin
     output << "}\n";
     std::cout<<"Done printing"<<std::endl;
+}
+
+void DotPrinter::writeTikzFile(const std::string& filename)
+{
+    std::ofstream out(filename);
+    if(!out)throw std::logic_error("no output stream to "+filename);
+    
+    out << " \\begin{tikzpicture}\n";
+    out << "[scale=.5 , auto=left, every node/.style={circle,fill=blue!20}]\n";
+    for (Spot* spot:problem.getSpots()){
+      out <<"\\node  ("<< spot->getName()<<") at ("<< spot->getX()<<","<<spot->getY()<<") {}; \n";
+    }
+    
+    out << " \\end{tikzpicture}\n";
+    
 }
