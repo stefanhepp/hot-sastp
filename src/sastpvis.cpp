@@ -26,8 +26,8 @@ int main(int argc, char* argv[]) {
     
     DotPrinter printer(problem, solution);
     
-    printer.writeTikzFile(outputfile);
-   // printer.writeDotFile(outputfile);
+    //printer.writeTikzFile(outputfile);
+    printer.writeDotFile(outputfile);
     
     return 0;
 }

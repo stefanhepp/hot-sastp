@@ -36,24 +36,27 @@ void DotPrinter::writeDotFile ( const std::string& filename ) {
     for (const Spot* spot : problem.getSpots()) {
 	output<<spot->getName() <<";\n";
     }
-    unsigned i=2;
-    output << " { rank = same ; "; 
+
+    //try to do some layering of the nodes. Let's assume we want on each layer 5 nodes
+    int i = 1;
     for (const Spot* spot : problem.getSpots()){
-      if (i == 1 )
-      {
-	  output<< " { rank = same; ";
-      } 
-      if ( i == 5)
-      {
-	output << " };\n";
-	i=0;
+     if ( i == 1 ) 
+     { 
+       output << "{rank=same; "<<spot->getName()<<";";
       }
-      
-      output << "\"" <<spot->getName()<<"\" ;";
-      i++;
-            
+    else{
+      output << spot->getName()<<";";
+      }
+    i++;
+    if ( i == 5 ) 
+      {
+      output<< "};\n";
+      i=1;
+      }
     }
     
+    if ( i != 5) 
+      output << "};\n";
    
    output << problem.getStartAsSpot().getName()<< " -> ";
     // write out tour as edges connecting spots
