@@ -7,9 +7,10 @@ using namespace std;
 Config::Config()
 {
     // Set some default values
-    _algorithm = GREEDY;
+    _algorithm = AT_GREEDY;
     _maxKNearestSpots = 5;
     _nodeInsertMode = NIM_SHORTEST_PATH;
+    _stepFunction = SF_BEST;
     _verbose = false;
     _writeDot = false;
 }
@@ -38,14 +39,14 @@ int Config::parseArguments ( int argc, char* argv[] )
     for ( unsigned i = 1; i < argc-2 ; i++ ) {
         if ( string ( argv[i] ) == "-a" ) {
             switch ( atoi ( argv[i+1] ) ) {
-            case GREEDY:
-                _algorithm = GREEDY;
+            case AT_GREEDY:
+                _algorithm = AT_GREEDY;
                 break;
-            case NEIGHBOUR1:
-                _algorithm = NEIGHBOUR1;
+            case AT_LOCALSEARCH:
+                _algorithm = AT_LOCALSEARCH;
                 break;
-            case NEIGHBOUR2:
-                _algorithm = NEIGHBOUR2;
+            case AT_VND:
+                _algorithm = AT_VND;
                 break;
             default:
                 cout<<"The algorithm value is not a supported one"<<endl;

@@ -13,9 +13,11 @@ public:
     void usage(char* programName);
     
     enum AlgorithmTag{
-	GREEDY = 0,
-	NEIGHBOUR1 = 1,
-	NEIGHBOUR2 = 2
+	AT_GREEDY = 0,
+	AT_LOCALSEARCH = 1,
+	AT_VND = 2,
+	AT_GRASP = 3,
+	AT_GVNS = 4
     };
     
     enum NodeInsertMode {
@@ -24,6 +26,12 @@ public:
 	NIM_SHORTEST_PATH
     };
       
+    enum StepFunction {
+	SF_RANDOM,
+	SF_NEXT,
+	SF_BEST
+    };
+    
     /**
      * @return the index of the first unhandled argument.
      */
@@ -32,6 +40,8 @@ public:
     AlgorithmTag getAlgorithm() const {return _algorithm;}
   
     NodeInsertMode getNodeInsertMode() const { return _nodeInsertMode; }
+  
+    StepFunction getStepFunction() const { return _stepFunction; }
   
     /**
      * @return the maximum number of nearest spots that should be searched for.
@@ -51,6 +61,7 @@ private:
     
     AlgorithmTag _algorithm;       
     NodeInsertMode _nodeInsertMode;
+    StepFunction _stepFunction;
     
     unsigned _maxKNearestSpots;
     
