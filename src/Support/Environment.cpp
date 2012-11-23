@@ -11,6 +11,7 @@ Config::Config()
     _maxKNearestSpots = 5;
     _nodeInsertMode = NIM_SHORTEST_PATH;
     _verbose = false;
+    _writeDot = false;
 }
 
 
@@ -20,7 +21,7 @@ void Config::usage(char* programName)
     cout << "\n";
     cout << "Options can be:\n";
     cout << "-a integer ( algorithm, takes the following values: 0 - GREEDY 1-NEIGHBOUR1 2-NEIGHBOUR2"<<endl;
-    cout << "more to be added here" <<endl;
+    cout << "-p           write out .dot file" << endl;
     
 }
 
@@ -51,6 +52,8 @@ int Config::parseArguments ( int argc, char* argv[] )
                 exit ( 2 );
             }
 	    i++;
+	} else if (string(argv[i]) == "-p" ) {
+	    _writeDot = true;
         } else {
             cout<< "Option not supported yet"<<endl;
             exit ( 3 );

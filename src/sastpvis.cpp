@@ -27,7 +27,9 @@ int main(int argc, char* argv[]) {
     DotPrinter printer(problem, solution);
     
     //printer.writeTikzFile(outputfile);
-    printer.writeDotFile(outputfile);
+    printer.writeDotFile(outputfile, problem.getSpots().size() > 20);
+    
+    cout << "Done printing" << endl;
     
     return 0;
 }

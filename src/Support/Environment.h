@@ -43,6 +43,8 @@ public:
 
     bool isVerbose() const { return _verbose; }
     
+    bool doWriteDotFile() const { return _writeDot; }
+    
 private: 
     std::string _inputFile;
     std::string _outputFile;
@@ -53,6 +55,7 @@ private:
     unsigned _maxKNearestSpots;
     
     bool _verbose;
+    bool _writeDot;
 };
 
 /**

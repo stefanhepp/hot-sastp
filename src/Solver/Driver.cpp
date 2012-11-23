@@ -1,6 +1,7 @@
 #include "Driver.h"
 
 #include "Support/SpotSearch.h"
+#include "Support/DotPrinter.h"
 
 #include <iostream>
 
@@ -50,6 +51,22 @@ void Driver::checkSolution() {
 
 void Driver::writeSolution()
 {
-    solution->store(env.getConfig().getOutputFilename());
+    string solFilename = env.getConfig().getOutputFilename();
+    
+    solution->store(solFilename);
+    
+    if (env.getConfig().doWriteDotFile()) {
+	string dotFilename = solFilename;
+	
+	if (dotFilename.substr(dotFilename.length()-4) == ".sol") {
+	    dotFilename = dotFilename.substr(0, dotFilename.length()-4);
+	}
+	dotFilename = dotFilename + ".dot";
+	
+	cout << "Exporting tour to " << dotFilename << endl;
+	
+	DotPrinter printer(env.getProblem(), *solution);
+	printer.writeDotFile(dotFilename, env.getProblem().getSpots().size() > 10);
+    }
 }
 

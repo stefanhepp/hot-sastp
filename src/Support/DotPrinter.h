@@ -11,7 +11,7 @@ class DotPrinter {
 public:
     DotPrinter(const SASTProblem& problem, const SASTPSolution& solution) : problem(problem), solution(solution) {}
     
-    void writeDotFile(const std::string& filename);
+    void writeDotFile(const std::string& filename, bool dense);
     void writeTikzFile(const std::string& filename);
 private:
     const SASTProblem& problem;
