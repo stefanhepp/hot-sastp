@@ -4,20 +4,8 @@
 #include <fstream>
 #include <stdexcept>
 
-/**
- * This is still just some monkey work. It just prints out a .dot file with a directed graph, 
- * in which all spots are printed, and then the connections between nodes which are included 
- * in the graph are done. 
- * 
- * There is a nice way around it, by using boost::graphviz library. I think I will have a look 
- * at that library and try it out so that we do not have to print out the .dot file. 
- * 
- * One change that I will have to do is "layering" the nodes. At the moment the tour looks ugly
- * a very deep graph and that's it! 
- * 
- * One ideea would be to have on each layer a fixed number of nodes (let's say 5) and arrange them
- * so that we get a nicer graph. 
- * 
+/*
+ * command line to generate the actual graph : neato -Tpng -o outputFile.png input.dot 
  */
 void DotPrinter::writeDotFile ( const std::string& filename ) {
     
