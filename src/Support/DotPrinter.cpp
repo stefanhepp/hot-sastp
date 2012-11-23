@@ -27,37 +27,16 @@ void DotPrinter::writeDotFile ( const std::string& filename ) {
     // write out origin spot
     output << "digraph Tour { \n";
     output << " compound = true; \n " << "rankstep = 1.25; \n";
-    output << " node[shape = box, fontsize =\"8\"];\n";
-    output << problem.getStartAsSpot().getName() << " [style = filled , color =\" .7 .3 1.0 \"];\n";
+    output << " node[shape = point, fontsize =\"1\"];\n";
+    output << problem.getStartAsSpot().getName() << " [ pos= \""<<problem.getStartAsSpot().getX()<<","<<problem.getStartAsSpot().getY()<<"\",style = filled , color =\" .7 .3 1.0 \"];\n";
     output << " edge[arrowsize = 1, color = black];"; 
     
     // write out all spots
    
     for (const Spot* spot : problem.getSpots()) {
-	output<<spot->getName() <<";\n";
+	output<<spot->getName() <<"[pos =\""<<spot->getX()<<","<<spot->getY() <<"!\"];\n";
     }
 
-    //try to do some layering of the nodes. Let's assume we want on each layer 5 nodes
-    int i = 1;
-    for (const Spot* spot : problem.getSpots()){
-     if ( i == 1 ) 
-     { 
-       output << "{rank=same; "<<spot->getName()<<";";
-      }
-    else{
-      output << spot->getName()<<";";
-      }
-    i++;
-    if ( i == 5 ) 
-      {
-      output<< "};\n";
-      i=1;
-      }
-    }
-    
-    if ( i != 5) 
-      output << "};\n";
-   
    output << problem.getStartAsSpot().getName()<< " -> ";
     // write out tour as edges connecting spots
     
