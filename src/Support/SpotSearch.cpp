@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <vector>
 #include <algorithm>
+#include <set>
 
 SpotSearch::SpotSearch(const SASTProblem& problem)
 : problem(problem)
@@ -72,6 +73,8 @@ void SpotSearch::addNearestSpots(const Spot& spot, unsigned int maxk)
 	    
 	    dist.insert(distIt, d);
 	    nearest->insert(nearest->begin() + (distIt - dist.begin()), index);
+
+	    maxDist = dist.back();
 	}
 	
 	index++;
@@ -195,7 +198,54 @@ NearestSpotList SpotSearch::findNearestSpots(const Instance& tour, unsigned int 
 	    dist.insert(distIt, spotDist);
 	    nearest.insert(nearest.begin() + (distIt - dist.begin()), std::make_pair(tourIndex, spotIndex));
 	    
-	    maxDist = spotDist;
+	    maxDist = dist.back();
+	}
+	
+	tourIndex++;
+    }
+    
+    return nearest;
+}
+
+NearestNodesList SpotSearch::findNearestTourNodes(const Instance& tour, unsigned int k)
+{
+    NearestNodesList nearest;
+    nearest.reserve(k);
+    
+    std::vector<double> dist;
+    dist.reserve(k);
+    
+    double maxDist = 0.0;
+    
+    int tourIndex = 0;
+    for (const auto& node : tour.getTour()) {
+	std::vector<unsigned>* spots = nearestSpots[node.spot+1];
+	
+	for (unsigned spotIndex : *spots) {
+	    // To avoid adding duplicate entries, only add pairs where first.spot < second.spot.
+	    if (node.spot > spotIndex) continue;
+	    
+	    // skip all spots that are not on the tour
+	    if (!tour.containsSpot(spotIndex)) continue;
+	    
+	    double spotDist = problem.getDistance(problem.getSpot(node.spot), problem.getSpot(spotIndex));
+	    
+	    if (dist.size() >= k && spotDist >= maxDist) break;
+	    
+	    // We need to get the index of the node in the tour for the nearest spot
+	    unsigned nearestnode = tour.getNodeIndex(spotIndex);
+	    
+	    if (dist.size() >= k) {
+		nearest.pop_back();
+		dist.pop_back();
+	    }
+
+    	    auto distIt = std::upper_bound(dist.begin(), dist.end(), spotDist);
+	    
+	    dist.insert(distIt, spotDist);
+	    nearest.insert(nearest.begin() + (distIt - dist.begin()), std::make_pair(tourIndex, nearestnode));
+	    
+	    maxDist = dist.back();	    
 	}
 	
 	tourIndex++;

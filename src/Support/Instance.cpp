@@ -30,6 +30,19 @@ double Instance::getTotalRequiredRestTime() const
     return remainingStamina < 0 ? -remainingStamina / problem.getHabitus() : 0.0; 
 }
 
+unsigned int Instance::getNodeIndex(unsigned int spot) const
+{
+    unsigned index = 0;
+   
+    for (const auto& node : tour) {
+	if (node.spot == spot) return index;
+	index++;
+    }
+    
+    // not found
+    return -1;
+}
+
 unsigned Instance::insertNode(unsigned int index, TourNode node)
 {
     addTourValues( getInsertDeltaValues(index, node) );

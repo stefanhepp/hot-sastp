@@ -126,6 +126,11 @@ public:
     unsigned getSpotIndex(unsigned index) const { return tour[index].spot; };
     unsigned getMethodIndex(unsigned index) const { return tour[index].method; };
     
+    /**
+     * Get the index of the node in this tour refering to spot.
+     */
+    unsigned getNodeIndex(unsigned spot) const;
+    
     const Spot&   getSpot(TourNode node) const;
     const Method& getMethod(TourNode node) const { return problem.getSpot(node.spot).getMethod(node.method); }
     

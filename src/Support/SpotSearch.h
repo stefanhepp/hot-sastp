@@ -13,6 +13,11 @@
 typedef std::pair<int,unsigned>    NearestSpot;
 typedef std::vector< NearestSpot > NearestSpotList;
 
+/**
+ * Pair of nodes that are near to each other.
+ */
+typedef std::pair<unsigned,unsigned> NearestNodes;
+typedef std::vector< NearestNodes > NearestNodesList;
 
 class SpotSearch
 {
@@ -53,6 +58,11 @@ public:
      *  index of the nearest spot.
      */
     NearestSpotList findNearestSpots(const Instance& tour, unsigned k, bool skipUsed = true);
+    
+    /**
+     * Find k nearest non-adjacent tour nodes.
+     */
+    NearestNodesList findNearestTourNodes(const Instance& tour, unsigned k);
     
 private:
     const SASTProblem& problem;
