@@ -1,26 +1,27 @@
-#ifndef LOCALSEARCH_H
-#define LOCALSEARCH_H
+#ifndef GRASP_H
+#define GRASP_H
 
-#include "Framework/SASTProblem.h"
 #include "Support/Environment.h"
 #include "Support/Instance.h"
 #include "Solver/AbstractSearch.h"
 #include "Solver/Neighborhood.h"
 
-class LocalSearch : public AbstractSearch
+class Grasp : public AbstractSearch
 {
     Instance instance;
-    Neighborhood& neighborhood;
+    Instance initInstance;
+
+    AbstractSearch& localSearch;
     
 public:
-    LocalSearch(Environment& env, Neighborhood& nb, const Instance& init);
+    Grasp(Environment& env, AbstractSearch& localSearch, const Instance& init);
 
     virtual Instance& getInstance() { return instance; };
-
+    
     virtual void reset(const Instance& init);
     
     virtual void run();
-    
+
 };
 
-#endif // LOCALSEARCH_H
+#endif // GRASP_H

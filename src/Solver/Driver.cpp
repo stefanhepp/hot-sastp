@@ -2,6 +2,9 @@
 
 #include "Support/SpotSearch.h"
 #include "Support/DotPrinter.h"
+#include "Solver/GreedyTour.h"
+#include "Solver/LocalSearch.h"
+#include "Solver/Neighborhood.h"
 
 #include <iostream>
 
@@ -30,7 +33,10 @@ void Driver::solve()
     
     // TODO use config to run requested heuristic improvement on initial solution, if enabled
     
-    
+    // Neighborhood *nb = new ...;
+    // LocalSearch local(env, *nb, greedy.getInstance());
+    // local.run();
+    // solution = local.getInstance().createSolution();
     
     solution = greedy.getInstance().createSolution();
 }
