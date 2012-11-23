@@ -6,14 +6,17 @@
 
 #include <assert.h>
 
+#include <iostream>
+using namespace std;
 int main(int argc, char* argv[]) {
     
     Config config;
     
     int nextArg = config.parseArguments(argc, argv);
+    
     // For now, config should handle all arguments
     assert(nextArg == argc);
-    
+   
     Environment env(config);
     Driver driver(env);
     

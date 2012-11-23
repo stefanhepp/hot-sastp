@@ -10,7 +10,7 @@ class Config
 public:
     Config();
 
-    void usage(char* programName);
+    void printHelp();
     
     enum AlgorithmTag{
 	AT_GREEDY = 0,
@@ -21,22 +21,21 @@ public:
     };
     
     enum NodeInsertMode {
-	NIM_ALWAYS_BEFORE,
-	NIM_ALWAYS_AFTER,
-	NIM_SHORTEST_PATH
+	NIM_ALWAYS_BEFORE = 0,
+	NIM_ALWAYS_AFTER = 1,
+	NIM_SHORTEST_PATH = 2 
     };
       
     enum StepFunction {
-	SF_RANDOM,
-	SF_NEXT,
-	SF_BEST
+	SF_RANDOM = 0,
+	SF_NEXT = 1,
+	SF_BEST = 2
     };
     
     /**
      * @return the index of the first unhandled argument.
      */
     int parseArguments(int argc, char* argv[]);
-    
     AlgorithmTag getAlgorithm() const {return _algorithm;}
   
     NodeInsertMode getNodeInsertMode() const { return _nodeInsertMode; }
