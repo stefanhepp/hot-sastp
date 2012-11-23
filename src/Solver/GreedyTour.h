@@ -6,6 +6,7 @@
 #include "Support/Instance.h"
 #include "Support/Environment.h"
 #include "Support/SpotSearch.h"
+#include "Support/ProblemHelper.h"
 
 /**
  * Create an (initial) solution using a greedy algorithm based on inserting favorable 
@@ -25,6 +26,7 @@ protected:
     
     const SASTProblem& problem;
     SpotSearch& spotsearch;
+    ProblemHelper helper;
     
     // Maximum number of nearest nodes to search for best neighbor
     unsigned maxk; 

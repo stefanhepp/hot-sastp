@@ -5,7 +5,8 @@
 #include "Support/SpotSearch.h"
 
 GreedyTour::GreedyTour(Environment& env)
-: instance(env.getProblem()), problem(env.getProblem()), spotsearch(env.getSpotSearch())
+: instance(env.getProblem()), problem(env.getProblem()), spotsearch(env.getSpotSearch()),
+  helper(env.getProblem(), env.getSpotSearch())
 {
     maxk = env.getConfig().getMaxKNearestSpots(); 
 }
@@ -32,7 +33,7 @@ TourNode GreedyTour::selectBestTourNode ( NearestSpotList nearest, unsigned &ins
 {
     TourNode best(-1, 0);
     // start off with something really bad so that we are sure to select the first node
-    float bestRatio = -1.0f;
+    double bestRatio = -1.0f;
     
     for(const auto& ps : nearest) {
 	int tournode = ps.first;
@@ -40,70 +41,16 @@ TourNode GreedyTour::selectBestTourNode ( NearestSpotList nearest, unsigned &ins
 	
 	const Spot& spot = instance.getSpot(tournode);
 	const Spot& nearestspot = problem.getSpot(spotId);
-	double dist = problem.getDistance(spot, nearestspot);
 	
 	unsigned bestInsert;
-	double deltaTour;
-	
-	switch (insertMode) {
-	    case Config::NIM_ALWAYS_AFTER: {
-		// Insert after the node with the currently nearest spot
-		bestInsert = tournode + 1;
-		const Spot& next = instance.getSpot(tournode + 1);
-		deltaTour = dist + problem.getDistance(nearestspot, next)
-		            - problem.getDistance(spot, next);
-		break;
-	    }
-	    case Config::NIM_ALWAYS_BEFORE: {
-		// Insert before the node with the currenty nearest spot (except for the origin)
-		bestInsert = tournode == -1 ? 0 : tournode; 
-		const Spot& prev = instance.getSpot(tournode == -1 ? 0 : tournode - 1);
-		deltaTour = dist + problem.getDistance(nearestspot, prev) 
-		            - problem.getDistance(spot, prev);
-		break;
-	    }
-	    case Config::NIM_SHORTEST_PATH: {
+	double deltaTour = helper.getInsertDeltaTourLength(instance, tournode, nearestspot, insertMode, bestInsert);
 		
-		// if we are at the origin, always insert after the node
-		if (tournode == -1) {
-		    bestInsert = tournode + 1;
-		    const Spot& next = instance.getSpot(tournode + 1);
-		    deltaTour = dist + problem.getDistance(nearestspot, next)
-				- problem.getDistance(spot, next);
-		    break;
-		}
-		
-		// Select to insert either before or after the node, depending on the distance differences
-		const Spot& prev = instance.getSpot(tournode - 1);
-		const Spot& next = instance.getSpot(tournode + 1);
-		
-		double deltaBefore = dist + problem.getDistance(nearestspot, prev) 
-		                     - problem.getDistance(spot, prev);
-		double deltaAfter  = dist + problem.getDistance(nearestspot, next)
-		                     - problem.getDistance(spot, next);
-		
-		bestInsert = deltaBefore < deltaAfter ? tournode : tournode + 1;
-		deltaTour = std::min(deltaBefore, deltaAfter);
-		break;
-	    }
-	}
-	
 	// check all methods of this spot
 	unsigned methodId = 0;
 	for (const auto& m : nearestspot.getMethods()) {
 	    
-	    float deltaSatisfaction = m->getSatisfaction() - deltaTour * problem.getAlpha();
-	    float deltaTime = m->getTime() + deltaTour / problem.getVelocity();
-	   
-	    // honor loss of time by reduced stamina, if remaining stamina gets below zero
-	    double newStamina = instance.getRemainingStamina() > 0.0 ? 
-	                               std::min(instance.getRemainingStamina() - m->getStamina(), 0.0) : 
-	                               -m->getStamina();
-	    if (newStamina < 0.0) {
-		deltaTime += -newStamina * problem.getHabitus();
-	    }
-	    
-	    float ratio = deltaSatisfaction / deltaTime;
+	    double deltaTime;
+	    double ratio = helper.calcInsertSatisfactionTimeRatio(instance.getRemainingStamina(), *m, deltaTour, deltaTime);
 	    
 	    // check if we have a new best value, but check for time constraints ..
 	    if (instance.getTotalTime() + deltaTime <= problem.getMaxTime() && 
