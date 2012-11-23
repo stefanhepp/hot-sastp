@@ -8,7 +8,7 @@
 class AbstractSearch
 {
 public:
-    AbstractSearch(Environment& env);
+    AbstractSearch(Environment& env, int stepsToStop);
 
     virtual Instance& getInstance() =0;
     
@@ -17,11 +17,13 @@ public:
     virtual void run() =0;
     
 protected:
+    int _noImprovement;
+    int _maxSteps;
     SASTProblem& problem;
     
     Config::StepFunction stepFunction;
-
-    bool shouldStop();
+    void start() { _noImprovement =0; }
+    bool shouldStop(double improvement);
     
 };
 
