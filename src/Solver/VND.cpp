@@ -5,13 +5,13 @@
 #include "Solver/AbstractSearch.h"
 #include "Solver/Neighborhood.h"
 
+#include <iostream>
 #include <vector>
 
 using namespace std;
 
 VND::VND(Environment& env, const Instance& init)
-// TODO get number of steps without improveent from config
-: AbstractSearch(env, 10), instance(init)
+: AbstractSearch(env, 1), instance(init)
 {
 }
 
@@ -22,6 +22,27 @@ void VND::reset(const Instance& init)
 
 void VND::run()
 {
+    double deltaSatisfaction;
+    unsigned i = 0;
+    
+    if (stepFunction == Config::SF_RANDOM) {
+	cout << "Cannot use RANDOM step function for VND, using NEXT instead!" << endl;
+	stepFunction = Config::SF_NEXT;
+    }
+    
+    start();
+    
+    do {
+	
+	// Choose best or next x' in N(x), apply if f(x') <= f(x)
+	
+	if ( neighborhoods[i]->performStep(instance, stepFunction, false) ) {
+	    i = 1;
+	} else {
+	    i++;
+	}   
+	
+    } while (i < neighborhoods.size());
     
 }
 

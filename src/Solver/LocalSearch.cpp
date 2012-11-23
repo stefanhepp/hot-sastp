@@ -19,8 +19,8 @@ void LocalSearch::reset(const Instance& init)
 
 void LocalSearch::run()
 {
-  double deltaSatisfaction;
-  start();
+    double deltaSatisfaction;
+    start();
     do {
 	
 	// Choose an x' in N(x), apply if f(x') <= f(x)
@@ -35,5 +35,5 @@ void LocalSearch::run()
 	
 	deltaSatisfaction += instance.getTotalSatisfaction();
 		
-    }while(!shouldStop(deltaSatisfaction));
+    } while (!shouldStop(deltaSatisfaction));
 }
