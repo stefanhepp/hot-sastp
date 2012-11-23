@@ -13,12 +13,13 @@ public:
     void printHelp();
     
     enum AlgorithmTag{
-	AT_GREEDY = 0,
-	AT_LOCALSEARCH = 1,
-	AT_VND = 2,
-	AT_GRASP_LS = 3,
-        AT_GRASP_VND = 4,
-	AT_GVNS = 5
+	AT_GREEDY_NN = 0,
+        AT_GREEDY_IN = 1,
+	AT_LOCALSEARCH = 2,
+	AT_VND = 3,
+	AT_GRASP_LS = 4,
+        AT_GRASP_VND = 5,
+	AT_GVNS = 6
     };
     
     enum NodeInsertMode {

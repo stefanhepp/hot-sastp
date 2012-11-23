@@ -12,7 +12,7 @@ using namespace std;
 Config::Config()
 {
     // Set some default values
-    _algorithm = AT_GREEDY;
+    _algorithm = AT_GREEDY_IN;
     _maxKNearestSpots = 5;
     _nodeInsertMode = NIM_SHORTEST_PATH;
     _stepFunction = SF_BEST;
@@ -137,8 +137,11 @@ int Config::parseArguments (int argc, char* argv[])
                         case AT_GRASP_VND:
                             _algorithm = AT_GRASP_VND;
                             break;
-                        case AT_GREEDY:
-                            _algorithm = AT_GREEDY;
+                        case AT_GREEDY_NN:
+                            _algorithm = AT_GREEDY_NN;
+                            break;
+                       case AT_GREEDY_IN:
+                            _algorithm = AT_GREEDY_IN;
                             break;
                         case AT_GVNS:
                             _algorithm = AT_GVNS;

@@ -1,14 +1,5 @@
 #include "Driver.h"
 
-#include "Support/SpotSearch.h"
-#include "Support/DotPrinter.h"
-#include "Solver/GreedyTour.h"
-#include "Solver/LocalSearch.h"
-#include "Solver/Neighborhood.h"
-#include "Solver/VND.h"
-#include "Solver/GVNS.h"
-#include "Solver/AbstractSearch.h"
-#include "Solver/Grasp.h"
 
 #include <iostream>
 
@@ -27,29 +18,54 @@ void Driver::prepare()
     
 }
 
+GreedyTour* Driver::getGreedyTour(Environment& env){
+    GreedyTour* gt;
+    if(env.getConfig().getAlgorithm() == Config::AT_GREEDY_IN)
+    {
+        gt = new GreedyInsertHeuristic(env);
+        return gt;
+        
+    }
+    else
+    { 
+        gt = new GreedyNearestNeighbor(env);
+        return gt;
+    }
+}
+
+LocalSearch* Driver::getLocalSearch(Environment& env, GreedyTour& gt){
+   
+    Neighborhood* nb = new OneOPT(env.getProblem());
+    
+    LocalSearch* ls;
+    ls = new LocalSearch(env, *nb, gt.getInstance());
+    return ls;
+}
+
 void Driver::solve()
 {
   switch(env.getConfig().getAlgorithm()){
-    case Config::AT_GREEDY: {
+    case Config::AT_GREEDY_IN:
+    case Config::AT_GREEDY_NN:
+    {
 	// TODO use env.getConfig() to instanciate appropriate greedy solver
-	GreedyInsertHeuristic greedy(env);
+	GreedyTour* greedy = getGreedyTour(env);
+	greedy->run();
 	
-	greedy.run();
-	
-	solution = greedy.getInstance().createSolution();
+	solution = greedy->getInstance().createSolution();
 	break;
     }
 
     case Config::AT_LOCALSEARCH: {
         // TODO use env.getConfig() to instanciate appropriate greedy solver
-        GreedyInsertHeuristic greedy(env);
+        GreedyTour* greedy = getGreedyTour(env);
         
-        greedy.run();
+        greedy->run();
         
         // TODO use config to select neighborhood
         Neighborhood* nb = new OneOPT(env.getProblem());
         
-        LocalSearch local(env, *nb, greedy.getInstance());
+        LocalSearch local(env, *nb, greedy->getInstance());
         
         solution = local.getInstance().createSolution();
         break;
@@ -57,11 +73,11 @@ void Driver::solve()
     
     case Config::AT_VND: {
         // TODO use env.getConfig() to instanciate appropriate greedy solver
-        GreedyInsertHeuristic greedy(env);
+        GreedyTour* greedy = getGreedyTour(env);
         
-        greedy.run();
+        greedy->run();
         
-        VND vnd(env, greedy.getInstance());
+        VND vnd(env, greedy->getInstance());
         Neighborhood* one = new OneOPT(env.getProblem());
         vnd.addNeighborhood(*one);
         Neighborhood* two = new TwoOPT(env.getProblem());
@@ -73,12 +89,12 @@ void Driver::solve()
         
     case Config::AT_GRASP_LS: {
         // TODO use env.getConfig() to instanciate appropriate greedy solver
-        GreedyInsertHeuristic greedy(env);
+        GreedyTour* greedy= getGreedyTour(env);
         
-        greedy.run();
+        greedy->run();
         
         Neighborhood* nb = new OneOPT(env.getProblem());
-        AbstractSearch* search = new LocalSearch(env, *nb, greedy.getInstance());
+        AbstractSearch* search = new LocalSearch(env, *nb, greedy->getInstance());
                 
         Grasp grasp(env, *search, search->getInstance());
 
@@ -88,13 +104,13 @@ void Driver::solve()
    
     case Config::AT_GRASP_VND: {
         // TODO use env.getConfig() to instanciate appropriate greedy solver
-        GreedyInsertHeuristic greedy(env);
+        GreedyTour* greedy = getGreedyTour(env);
         
-        greedy.run();
+        greedy->run();
         
         Neighborhood* nb = new OneOPT(env.getProblem());
         
-        AbstractSearch* search = new VND(env, greedy.getInstance());
+        AbstractSearch* search = new VND(env, greedy->getInstance());
         
         Grasp grasp(env, *search, search->getInstance());
 
@@ -103,12 +119,12 @@ void Driver::solve()
     }
     case Config::AT_GVNS: {
         // TODO use env.getConfig() to instanciate appropriate greedy solver
-        GreedyInsertHeuristic greedy(env);
+        GreedyTour* greedy= getGreedyTour(env);
         
-        greedy.run();
+        greedy->run();
         
         
-        solution = greedy.getInstance().createSolution();
+        solution = greedy->getInstance().createSolution();
         break;
     }
   }

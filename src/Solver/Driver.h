@@ -4,6 +4,16 @@
 #include "Framework/SASTPSolution.h"
 #include "Support/Environment.h"
 
+#include "Support/SpotSearch.h"
+#include "Support/DotPrinter.h"
+#include "Solver/GreedyTour.h"
+#include "Solver/LocalSearch.h"
+#include "Solver/Neighborhood.h"
+#include "Solver/VND.h"
+#include "Solver/GVNS.h"
+#include "Solver/AbstractSearch.h"
+#include "Solver/Grasp.h"
+
 class Driver
 {
 public:
@@ -25,6 +35,9 @@ public:
     
     void writeSolution();
     
+protected:
+   GreedyTour* getGreedyTour(Environment& env);
+   LocalSearch* getLocalSearch(Environment& env, GreedyTour& gt);
 private:
     Environment& env;
     
