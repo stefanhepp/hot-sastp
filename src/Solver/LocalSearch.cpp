@@ -18,7 +18,9 @@ void LocalSearch::reset(const Instance& init)
 
 void LocalSearch::run()
 {
-    while (!shouldStop()) {
+  double deltaSatisfaction;
+  start();
+    do {
 	
 	// Choose an x' in N(x), apply if f(x') <= f(x)
 	
@@ -26,13 +28,11 @@ void LocalSearch::run()
 	//       let the neighborhood handle the update. The neighborhood 
 	//       may evaluate the choosen step before modifying the instance.
 	
-	double deltaSatisfaction = -instance.getTotalSatisfaction();
+	deltaSatisfaction = -instance.getTotalSatisfaction();
 	
 	bool applied = neighborhood.performStep(instance, stepFunction, false);
 	
 	deltaSatisfaction += instance.getTotalSatisfaction();
-	
-	// TODO evaluate step, based on deltaSatisfaction, applied, runtime, .. , update stopping criteria
-	
-    }
+		
+    }while(!shouldStop(deltaSatisfaction));
 }
