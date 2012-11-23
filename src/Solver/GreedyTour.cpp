@@ -39,7 +39,6 @@ TourNode GreedyTour::selectBestTourNode ( NearestSpotList nearest, unsigned &ins
 	int tournode = ps.first;
 	unsigned spotId = ps.second;
 	
-	const Spot& spot = instance.getSpot(tournode);
 	const Spot& nearestspot = problem.getSpot(spotId);
 	
 	unsigned bestInsert;
