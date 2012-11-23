@@ -7,7 +7,8 @@
 
 
 Grasp::Grasp(Environment& env, AbstractSearch& localSearch, const Instance& init)
-: AbstractSearch(env), localSearch(localSearch), instance(env.getProblem()), initInstance(init)
+  // TODO get number of steps without change from configuration
+: AbstractSearch(env, 10), localSearch(localSearch), instance(env.getProblem()), initInstance(init)
 {
 }
 
@@ -19,19 +20,28 @@ void Grasp::reset(const Instance& init)
 
 void Grasp::run()
 {
-    while (!shouldStop()) {
+    start();
+    
+    double deltaSatisfaction = 0.0;
+    
+    do {
 	
 	// Perform randomized greedy heuristic 
 	// TODO implement 
 	Instance randomized = initInstance;
 	
+	
+	
+	
 	// Perform local search on result
 	localSearch.reset( randomized );
 	localSearch.run();
 	
-	if (localSearch.getInstance().getTotalSatisfaction() <= instance.getTotalSatisfaction()) {
+	deltaSatisfaction = localSearch.getInstance().getTotalSatisfaction() - instance.getTotalSatisfaction();
+	if (deltaSatisfaction >= 0.0) {
 	    instance = localSearch.getInstance();
 	}
-    }
+	
+    } while (!shouldStop(deltaSatisfaction));
 }
 

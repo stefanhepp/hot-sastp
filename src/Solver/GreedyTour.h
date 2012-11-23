@@ -7,24 +7,26 @@
 #include "Support/Environment.h"
 #include "Support/SpotSearch.h"
 #include "Support/ProblemHelper.h"
+#include "Solver/AbstractSearch.h"
 
 /**
  * Create an (initial) solution using a greedy algorithm based on inserting favorable 
  * nodes into an existing tour.
  */
-class GreedyTour {
+class GreedyTour : public AbstractSearch {
 public:
     GreedyTour(Environment& env);
     
-    Instance& getInstance() { return instance; };
+    virtual Instance& getInstance() { return instance; };
     
-    void run();
+    virtual void reset(const Instance& init);
+    
+    virtual void run();
     
 protected:
 
     Instance instance;
     
-    const SASTProblem& problem;
     SpotSearch& spotsearch;
     ProblemHelper helper;
     

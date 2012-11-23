@@ -26,22 +26,22 @@ void Driver::prepare()
 void Driver::solve()
 {
   switch(env.getConfig().getAlgorithm()){
-    case Config::AT_GREEDY:
-    // TODO use env.getConfig() to instanciate appropriate greedy solver
-    GreedyInsertHeuristic greedy(env);
-       
-    greedy.run();
-    
-    // TODO use config to run requested heuristic improvement on initial solution, if enabled
-    
-    // Neighborhood *nb = new ...;
-    // LocalSearch local(env, *nb, greedy.getInstance());
-    // local.run();
-    // solution = local.getInstance().createSolution();
-    
-    solution = greedy.getInstance().createSolution();
-    break;
-    
+    case Config::AT_GREEDY: {
+	// TODO use env.getConfig() to instanciate appropriate greedy solver
+	GreedyInsertHeuristic greedy(env);
+	
+	greedy.run();
+	
+	// TODO use config to run requested heuristic improvement on initial solution, if enabled
+	
+	// Neighborhood *nb = new ...;
+	// LocalSearch local(env, *nb, greedy.getInstance());
+	// local.run();
+	// solution = local.getInstance().createSolution();
+	
+	solution = greedy.getInstance().createSolution();
+	break;
+    }
     case Config::AT_GRASP:
     case Config::AT_GVNS:
     case Config::AT_LOCALSEARCH:

@@ -108,7 +108,8 @@ int Config::parseArguments (int argc, char* argv[])
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
     option::Stats stats (usage, argc, argv);
-    option::Option options[stats.options_max], buffer[stats.buffer_max];
+    option::Option *options = new option::Option[stats.options_max];
+    option::Option *buffer = new option::Option[stats.buffer_max];
 
     option::Parser parse (usage, argc, argv, options, buffer);
 
@@ -220,6 +221,9 @@ int Config::parseArguments (int argc, char* argv[])
     _inputFile = string (parse.nonOption (0));
     _outputFile = string (parse.nonOption (1));
 
+    delete[] options;
+    delete[] buffer;
+    
     //the +1 is needed because the first step is to skip the program name - first line of this function
     return argc + 1;
 }

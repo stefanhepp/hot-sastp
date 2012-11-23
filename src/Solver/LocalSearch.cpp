@@ -7,7 +7,8 @@
 
 
 LocalSearch::LocalSearch(Environment& env, Neighborhood& nb, const Instance& init)
-: AbstractSearch(env), neighborhood(nb), instance(init)
+  // TODO get number of steps without change from config
+: AbstractSearch(env, 10), neighborhood(nb), instance(init)
 {
 }
 

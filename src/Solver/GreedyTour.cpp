@@ -5,10 +5,15 @@
 #include "Support/SpotSearch.h"
 
 GreedyTour::GreedyTour(Environment& env)
-: instance(env.getProblem()), problem(env.getProblem()), spotsearch(env.getSpotSearch()),
+: AbstractSearch(env, 1), instance(env.getProblem()), spotsearch(env.getSpotSearch()),
   helper(env.getProblem(), env.getSpotSearch())
 {
     maxk = env.getConfig().getMaxKNearestSpots(); 
+}
+
+void GreedyTour::reset(const Instance& init)
+{
+    instance = init;
 }
 
 void GreedyTour::run()
