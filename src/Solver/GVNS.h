@@ -1,26 +1,25 @@
-#ifndef LOCALSEARCH_H
-#define LOCALSEARCH_H
+#ifndef GVNS_H
+#define GVNS_H
 
-#include "Framework/SASTProblem.h"
 #include "Support/Environment.h"
 #include "Support/Instance.h"
 #include "Solver/AbstractSearch.h"
 #include "Solver/Neighborhood.h"
 
-class LocalSearch : public AbstractSearch
+#include <vector>
+
+class GVNS : public AbstractSearch
 {
     Instance instance;
-    Neighborhood& neighborhood;
     
 public:
-    LocalSearch(Environment& env, Neighborhood& nb, const Instance& init);
-
+    GVNS(Environment& env, const Instance& init);
+    
     virtual Instance& getInstance() { return instance; };
-
+    
     virtual void reset(const Instance& init);
     
     virtual void run();
-    
 };
 
-#endif // LOCALSEARCH_H
+#endif // GVNS_H

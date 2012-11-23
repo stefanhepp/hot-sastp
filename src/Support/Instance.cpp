@@ -1,5 +1,6 @@
 #include "Instance.h"
 
+#include <assert.h>
 #include <iostream>
 
 Instance::Instance(const SASTProblem &problem)
@@ -7,6 +8,28 @@ Instance::Instance(const SASTProblem &problem)
   remainingStamina(problem.getInitStamina())
 {
     usedSpots.resize(problem.getSpots().size(), false);
+}
+
+Instance::Instance(const Instance& instance)
+: problem(instance.getProblem()), tourTime(instance.getTourTime()),
+  totalSatisfaction(instance.getTotalSatisfaction()),
+  remainingStamina(instance.getRemainingStamina()),
+  tour(instance.tour), usedSpots(instance.usedSpots)
+{
+}
+
+Instance& Instance::operator=(const Instance& instance)
+{
+    if (this == &instance) return *this;
+    
+    assert(&problem == &instance.getProblem());
+    
+    tourTime = instance.getTourTime();
+    totalSatisfaction = instance.getTotalSatisfaction();
+    remainingStamina = instance.getRemainingStamina();
+    tour = instance.tour;
+    usedSpots = instance.usedSpots;  
+    return *this;
 }
 
 const Spot& Instance::getSpot ( TourNode node ) const 

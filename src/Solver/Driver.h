@@ -3,7 +3,6 @@
 
 #include "Framework/SASTPSolution.h"
 #include "Support/Environment.h"
-#include "Solver/GreedyTour.h"
 
 class Driver
 {
