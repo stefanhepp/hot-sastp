@@ -131,8 +131,11 @@ int Config::parseArguments (int argc, char* argv[])
 
                 if (opt.arg)
                     switch (atoi (opt.arg)) {
-                        case AlgorithmTag::AT_GRASP:
-                            _algorithm = AT_GRASP;
+                        case AlgorithmTag::AT_GRASP_LS:
+                            _algorithm = AT_GRASP_LS;
+                            break;
+                        case AT_GRASP_VND:
+                            _algorithm = AT_GRASP_VND;
                             break;
                         case AT_GREEDY:
                             _algorithm = AT_GREEDY;

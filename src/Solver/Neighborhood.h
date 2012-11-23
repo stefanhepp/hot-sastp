@@ -31,4 +31,22 @@ protected:
     
 };
 
+class OneOPT: public Neighborhood
+{
+public :
+    OneOPT (SASTProblem& problem):Neighborhood(problem){};
+    //TODO implement the perform
+    virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);    
+protected:
+};
+
+
+class TwoOPT: public Neighborhood
+{
+public :
+    TwoOPT (SASTProblem& problem):Neighborhood(problem){};
+    virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);    
+protected:
+};
+
 #endif // NEIGHBORHOOD_H

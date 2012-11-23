@@ -5,6 +5,10 @@
 #include "Solver/GreedyTour.h"
 #include "Solver/LocalSearch.h"
 #include "Solver/Neighborhood.h"
+#include "Solver/VND.h"
+#include "Solver/GVNS.h"
+#include "Solver/AbstractSearch.h"
+#include "Solver/Grasp.h"
 
 #include <iostream>
 
@@ -32,23 +36,81 @@ void Driver::solve()
 	
 	greedy.run();
 	
-	// TODO use config to run requested heuristic improvement on initial solution, if enabled
-	
-	// Neighborhood *nb = new ...;
-	// LocalSearch local(env, *nb, greedy.getInstance());
-	// local.run();
-	// solution = local.getInstance().createSolution();
-	
 	solution = greedy.getInstance().createSolution();
 	break;
     }
-    case Config::AT_GRASP:
-    case Config::AT_GVNS:
-    case Config::AT_LOCALSEARCH:
-    case Config::AT_VND:
-      break;
-    default:
-      break;
+
+    case Config::AT_LOCALSEARCH: {
+        // TODO use env.getConfig() to instanciate appropriate greedy solver
+        GreedyInsertHeuristic greedy(env);
+        
+        greedy.run();
+        
+        // TODO use config to select neighborhood
+        Neighborhood* nb = new OneOPT(env.getProblem());
+        
+        LocalSearch local(env, *nb, greedy.getInstance());
+        
+        solution = local.getInstance().createSolution();
+        break;
+    }
+    
+    case Config::AT_VND: {
+        // TODO use env.getConfig() to instanciate appropriate greedy solver
+        GreedyInsertHeuristic greedy(env);
+        
+        greedy.run();
+        
+        VND vnd(env, greedy.getInstance());
+        Neighborhood* one = new OneOPT(env.getProblem());
+        vnd.addNeighborhood(*one);
+        Neighborhood* two = new TwoOPT(env.getProblem());
+        vnd.addNeighborhood(*two);
+        
+        solution = vnd.getInstance().createSolution();
+        break;
+    }
+        
+    case Config::AT_GRASP_LS: {
+        // TODO use env.getConfig() to instanciate appropriate greedy solver
+        GreedyInsertHeuristic greedy(env);
+        
+        greedy.run();
+        
+        Neighborhood* nb = new OneOPT(env.getProblem());
+        AbstractSearch* search = new LocalSearch(env, *nb, greedy.getInstance());
+                
+        Grasp grasp(env, *search, search->getInstance());
+
+        solution = grasp.getInstance().createSolution();
+        break;
+    }
+   
+    case Config::AT_GRASP_VND: {
+        // TODO use env.getConfig() to instanciate appropriate greedy solver
+        GreedyInsertHeuristic greedy(env);
+        
+        greedy.run();
+        
+        Neighborhood* nb = new OneOPT(env.getProblem());
+        
+        AbstractSearch* search = new VND(env, greedy.getInstance());
+        
+        Grasp grasp(env, *search, search->getInstance());
+
+        solution = grasp.getInstance().createSolution();
+        break;
+    }
+    case Config::AT_GVNS: {
+        // TODO use env.getConfig() to instanciate appropriate greedy solver
+        GreedyInsertHeuristic greedy(env);
+        
+        greedy.run();
+        
+        
+        solution = greedy.getInstance().createSolution();
+        break;
+    }
   }
 }
 

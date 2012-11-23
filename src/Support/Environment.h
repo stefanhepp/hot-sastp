@@ -16,8 +16,9 @@ public:
 	AT_GREEDY = 0,
 	AT_LOCALSEARCH = 1,
 	AT_VND = 2,
-	AT_GRASP = 3,
-	AT_GVNS = 4
+	AT_GRASP_LS = 3,
+        AT_GRASP_VND = 4,
+	AT_GVNS = 5
     };
     
     enum NodeInsertMode {
