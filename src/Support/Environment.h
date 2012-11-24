@@ -48,6 +48,7 @@ public:
      * @return the maximum number of nearest spots that should be searched for.
      */
     unsigned getMaxKNearestSpots() const { return _maxKNearestSpots; }
+    unsigned getMaxStepsNoChange() const { return _maxStepsWithNoChange; }
   
     std::string getInputFilename() const { return _inputFile;}
     std::string getOutputFilename() const {return _outputFile;}
@@ -65,6 +66,7 @@ private:
     StepFunction _stepFunction;
     
     unsigned _maxKNearestSpots;
+    unsigned _maxStepsWithNoChange;
     
     bool _verbose;
     bool _writeDot;

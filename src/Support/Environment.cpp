@@ -18,6 +18,7 @@ Config::Config()
     _stepFunction = SF_BEST;
     _verbose = false;
     _writeDot = false;
+    _maxStepsWithNoChange = 10u;
 }
 
 
@@ -60,7 +61,7 @@ struct Arg: public option::Arg {
     }
 };
 
-enum optionIndex {UNKNOWN, HELP, ALGORITHM, KNEAREST, VERBOSE, DOT, INSERTMODE, STEP};
+enum optionIndex {UNKNOWN, HELP, ALGORITHM, KNEAREST, VERBOSE, DOT, INSERTMODE, STEP, MAXSTEPS};
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -86,6 +87,9 @@ const option::Descriptor usage[] = {
     {
         STEP, 0, "s", "step", Arg::Numeric, "  -s <arg>, \t--step=<arg> \tStep function to be used. Values:\n"
         "\tSF_RANDOM = 0,\n\tSF_NEXT = 1,\n \tSF_BEST = 2."
+    },
+    {
+	MAXSTEPS, 0, "m", "maxSteps", Arg::Numeric, " -m <arg>, \t--maxSteps=<arg> \tMaximal number of steps with no improvement.\n"
     },
     {
         UNKNOWN, 0, "", "", Arg::None,
@@ -212,6 +216,10 @@ int Config::parseArguments (int argc, char* argv[])
                         exit (2);
                 }
                 break;
+	    case MAXSTEPS:
+		assert(opt.arg);
+		_maxStepsWithNoChange = (unsigned)atoi(opt.arg);
+		break;
             case UNKNOWN:
                 // not possible because Arg::Unknown returns ARG_ILLEGAL
                 // which aborts the parse with an error

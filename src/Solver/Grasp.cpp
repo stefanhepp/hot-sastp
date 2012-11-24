@@ -7,8 +7,7 @@
 
 
 Grasp::Grasp(Environment& env, AbstractSearch& localSearch, const Instance& init)
-  // TODO get number of steps without change from configuration
-: AbstractSearch(env, 10), localSearch(localSearch), instance(env.getProblem()), initInstance(init)
+: AbstractSearch(env, env.getConfig().getMaxStepsNoChange()), localSearch(localSearch), instance(env.getProblem()), initInstance(init)
 {
 }
 

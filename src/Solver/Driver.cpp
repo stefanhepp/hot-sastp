@@ -48,7 +48,6 @@ void Driver::solve()
     case Config::AT_GREEDY_IN:
     case Config::AT_GREEDY_NN:
     {
-	// TODO use env.getConfig() to instanciate appropriate greedy solver
 	GreedyTour* greedy = getGreedyTour(env);
 	greedy->run();
 	
@@ -57,7 +56,6 @@ void Driver::solve()
     }
 
     case Config::AT_LOCALSEARCH: {
-        // TODO use env.getConfig() to instanciate appropriate greedy solver
         GreedyTour* greedy = getGreedyTour(env);
         
         greedy->run();
@@ -72,7 +70,6 @@ void Driver::solve()
     }
     
     case Config::AT_VND: {
-        // TODO use env.getConfig() to instanciate appropriate greedy solver
         GreedyTour* greedy = getGreedyTour(env);
         
         greedy->run();
@@ -88,7 +85,6 @@ void Driver::solve()
     }
         
     case Config::AT_GRASP_LS: {
-        // TODO use env.getConfig() to instanciate appropriate greedy solver
         GreedyTour* greedy= getGreedyTour(env);
         
         greedy->run();
@@ -103,7 +99,6 @@ void Driver::solve()
     }
    
     case Config::AT_GRASP_VND: {
-        // TODO use env.getConfig() to instanciate appropriate greedy solver
         GreedyTour* greedy = getGreedyTour(env);
         
         greedy->run();
@@ -118,7 +113,6 @@ void Driver::solve()
         break;
     }
     case Config::AT_GVNS: {
-        // TODO use env.getConfig() to instanciate appropriate greedy solver
         GreedyTour* greedy= getGreedyTour(env);
         
         greedy->run();
