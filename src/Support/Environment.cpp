@@ -69,9 +69,9 @@ const option::Descriptor usage[] = {
     },
     { HELP, 0, "h", "help", Arg::None, "  \t--help  \tPrint usage and exit." },
     {
-        ALGORITHM , 0, "a", "algorithm", Arg::Numeric, "  -a <arg>, \t--argument=<arg>"
-        "  \tTakes an integer argument.\n \tOptions:\n \tAT_GREEDY = 0 ,\n \tAT_LOCALSEARCH = 1"
-        ",\n \tAT_VND = 2, \n \tAT_GRASP = 3, \n \tAT_GVNS = 4. \n"
+        ALGORITHM , 0, "a", "algorithm", Arg::Numeric, "  -a <arg>, \t--algorithm=<arg>"
+        "  \tTakes an integer argument.\n \tOptions:\n \tAT_GREEDY_IN = 0 ,\n \tAT_GREEDY_NN =1 ,\n \tAT_LOCALSEARCH = 2"
+        ",\n \tAT_VND = 3, \n \tAT_GRASP = 4, \n \tAT_GVNS = 5. \n"
     },
     {
         KNEAREST, 0, "k", "knear", Arg::Numeric, "  -k <arg>, \t--knear=<arg> \tMust have as an"
@@ -94,8 +94,15 @@ const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "", Arg::None,
         "\nExamples:\n"
-        "\n Default values for the options are: \n"
-        "\n Will be added soon! \n"
+        "Default values for the options are: \n"
+	" algorithm : AT_GREEDY_IN; \n"
+	" maxKNearestSpots : 5;\n"
+	" nodeInsertMode : NIM_SHORTEST_PATH;\n"
+	" stepFunction : SF_BEST; \n"
+	" verbose : false; \n"
+	" writeDot : false; \n"
+	" maxStepsWithNoChange : 10; \n"
+        "\nExample configurations be added soon! \n"
     },
     { 0, 0, 0, 0, 0, 0 }
 };

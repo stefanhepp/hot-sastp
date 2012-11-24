@@ -34,6 +34,11 @@ public:
 	SF_BEST = 2
     };
     
+    enum StopCriterionTag{
+	SC_DEFAULT = 0,
+	SC_OTHER = 1
+    };
+    
     /**
      * @return the index of the first unhandled argument.
      */

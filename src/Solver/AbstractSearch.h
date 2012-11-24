@@ -24,7 +24,6 @@ protected:
     Config::StepFunction stepFunction;
     void start() { _noImprovement =0; }
     bool shouldStop(double improvement);
-    
 };
 
 #endif // ABSTRACTSEARCH_H
