@@ -93,7 +93,8 @@ void Driver::solve()
         AbstractSearch* search = new LocalSearch(env, *nb, greedy->getInstance());
                 
         Grasp grasp(env, *search, search->getInstance());
-
+        grasp.run();
+        
         solution = grasp.getInstance().createSolution();
         break;
     }
