@@ -68,6 +68,8 @@ public:
     
     bool doWriteDotFile() const { return _writeDot; }
     
+    bool doUseShortOutput() const { return _shortOutput; }
+    
 private: 
     std::string _inputFile;
     std::string _outputFile;
@@ -81,6 +83,7 @@ private:
     
     bool _verbose;
     bool _writeDot;
+    bool _shortOutput;
 };
 
 /**

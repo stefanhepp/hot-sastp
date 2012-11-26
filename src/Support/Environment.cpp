@@ -19,6 +19,7 @@ Config::Config()
     _verbose = false;
     _writeDot = false;
     _maxStepsWithNoChange = 10u;
+    _shortOutput = false;
 }
 
 
@@ -61,7 +62,7 @@ struct Arg: public option::Arg {
     }
 };
 
-enum optionIndex {UNKNOWN, HELP, ALGORITHM, KNEAREST, VERBOSE, DOT, INSERTMODE, STEP, MAXSTEPS};
+enum optionIndex {UNKNOWN, HELP, ALGORITHM, KNEAREST, VERBOSE, DOT, SHORT_OUTPUT, INSERTMODE, STEP, MAXSTEPS};
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -77,8 +78,9 @@ const option::Descriptor usage[] = {
         KNEAREST, 0, "k", "knear", Arg::Numeric, "  -k <arg>, \t--knear=<arg> \tMust have as an"
         " argument a number -maximal KNearest Spots."
     },
-    { DOT, 0, "d", "dot", Arg::None, "  -d, \t--dot \tDoes not require anything as an argument. " },
-    { VERBOSE, 0, "v", "verbose", Arg::None, "  -v, \t--verbose \t Requires no arguments."},
+    { DOT, 0, "d", "dot", Arg::None, "  -d, \t--dot \tGenerate dot file from solution. " },
+    { VERBOSE, 0, "v", "verbose", Arg::None, "  -v, \t--verbose \tBe verbosive."},
+    { SHORT_OUTPUT, 0, "s", "short", Arg::None, "  -v, \t--short \tPrint result as short CSV output." },
     {
         INSERTMODE, 0, "i", "inMode", Arg::Numeric, "  -i <arg>, \t--inMode=<arg> \tNode insertion"
         "mode can take the following options:\n "
@@ -125,7 +127,7 @@ int Config::parseArguments (int argc, char* argv[])
     option::Parser parse (usage, argc, argv, options, buffer);
 
     if (parse.error())
-        return 1;
+        exit (1);
 
     if (options[HELP] || argc == 0) {
         printHelp();
@@ -151,7 +153,7 @@ int Config::parseArguments (int argc, char* argv[])
                         case AT_GREEDY_NN:
                             _algorithm = AT_GREEDY_NN;
                             break;
-                       case AT_GREEDY_IN:
+                        case AT_GREEDY_IN:
                             _algorithm = AT_GREEDY_IN;
                             break;
                         case AT_GVNS:
@@ -176,6 +178,10 @@ int Config::parseArguments (int argc, char* argv[])
                 assert (!opt.arg);
                 _writeDot = true;
                 break;
+	    case SHORT_OUTPUT:
+		assert( !opt.arg);
+		_shortOutput = true;
+		break;
             case KNEAREST:
                 assert (atoi (opt.arg));
                 _maxKNearestSpots = atoi (opt.arg);
