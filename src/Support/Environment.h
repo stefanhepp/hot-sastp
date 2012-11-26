@@ -67,7 +67,9 @@ public:
     
     bool doWriteDotFile() const { return _writeDot; }
     
-    bool doUseShortOutput() const { return _shortOutput; }
+    bool doPrintCSVOutput() const { return _printCSVOutput; }
+    
+    bool doPrintAllSteps() const { return _printAllSteps; }
     
 private: 
     std::string _inputFile;
@@ -82,7 +84,8 @@ private:
     
     bool _verbose;
     bool _writeDot;
-    bool _shortOutput;
+    bool _printCSVOutput;
+    bool _printAllSteps;
 };
 
 /**
@@ -112,6 +115,10 @@ public:
     
     const SpotSearch& getSpotSearch() const { return *spotsearch; }
     SpotSearch& getSpotSearch() { return *spotsearch; }
+    
+    void startTimer();
+    
+    void getCurrentTime();
     
     void loadProblemFile(const std::string& filename);
     

@@ -19,7 +19,8 @@ Config::Config()
     _verbose = false;
     _writeDot = false;
     _maxStepsWithNoChange = 10u;
-    _shortOutput = false;
+    _printAllSteps = false;
+    _printCSVOutput = false;
 }
 
 
@@ -62,7 +63,7 @@ struct Arg: public option::Arg {
     }
 };
 
-enum optionIndex {UNKNOWN, HELP, ALGORITHM, KNEAREST, VERBOSE, DOT, SHORT_OUTPUT, INSERTMODE, STEP, MAXSTEPS};
+enum optionIndex {UNKNOWN, HELP, ALGORITHM, KNEAREST, VERBOSE, DOT, PRINT_CSV, PRINT_ALL_STEPS, INSERTMODE, STEP, MAXSTEPS};
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -80,7 +81,8 @@ const option::Descriptor usage[] = {
     },
     { DOT, 0, "d", "dot", Arg::None, "  -d, \t--dot \tGenerate dot file from solution. " },
     { VERBOSE, 0, "v", "verbose", Arg::None, "  -v, \t--verbose \tBe verbosive."},
-    { SHORT_OUTPUT, 0, "s", "short", Arg::None, "  -v, \t--short \tPrint result as short CSV output." },
+    { PRINT_CSV, 0, "c", "csv", Arg::None, "  -c, \t--csv \tPrint result as CSV output." },
+    { PRINT_ALL_STEPS, 0, "s", "allsteps", Arg::None, "  -s, \t--allsteps \tPrint result of all intermediate steps." },
     {
         INSERTMODE, 0, "i", "inMode", Arg::Numeric, "  -i <arg>, \t--inMode=<arg> \tNode insertion"
         "mode can take the following options:\n "
@@ -178,9 +180,13 @@ int Config::parseArguments (int argc, char* argv[])
                 assert (!opt.arg);
                 _writeDot = true;
                 break;
-	    case SHORT_OUTPUT:
+	    case PRINT_CSV:
 		assert( !opt.arg);
-		_shortOutput = true;
+		_printCSVOutput = true;
+		break;
+	    case PRINT_ALL_STEPS:
+		assert( !opt.arg);
+		_printAllSteps = true;
 		break;
             case KNEAREST:
                 assert (atoi (opt.arg));
