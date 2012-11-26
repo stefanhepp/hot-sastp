@@ -29,10 +29,10 @@ void SpotSearch::initialize(unsigned int maxk)
     
     unsigned listSize = problem.getSpots().size();
     
-    addNearestSpots(problem.getStartAsSpot(), listSize);
+    addNearestSpots(problem.getStartAsSpot(), listSize-1);
     
     for (const auto* spot : problem.getSpots()) {
-	addNearestSpots(*spot, listSize);
+	addNearestSpots(*spot, listSize-1);
     }
 }
 
@@ -49,7 +49,10 @@ void SpotSearch::addNearestSpots(const Spot& spot, unsigned int maxk)
     
     unsigned index = 0;
     for (const auto* s : problem.getSpots()) {
-	if (index == spotIndex) continue;
+	if (index == spotIndex) {
+	    index++;
+	    continue;
+	}
 	
 	double d = problem.getDistance(spot, *s);
 	
