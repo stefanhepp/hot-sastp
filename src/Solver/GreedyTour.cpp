@@ -125,8 +125,12 @@ GreedyRandomHeuristic::GreedyRandomHeuristic (Environment& env) : GreedyTour (en
 }
 
 NearestSpotList getRestrictedCandidates(NearestSpotList candidates){
+
     // Anything to do here?
+    //yes we have to select all the spots where cost(spot) < cost_min + alpha*(cost_max -cost_min )
+    //where alpha is in [0..1].
     return candidates;
+
 }
 
 TourNode GreedyTour::selectRandomTourNode (NearestSpotList nearest, unsigned int& insertAt, Config::NodeInsertMode insertMode)
@@ -163,7 +167,7 @@ unsigned int GreedyRandomHeuristic::insertSpot()
     
     //find the k nearest spots to the tour
     //in our GRASP settings this is the candidates list 
-    NearestSpotList candidateList = spotsearch.findNearestSpots(instance, maxk);
+    NearestSpotList candidateList = spotsearch.findNearestSpots(instance, lastSpot, maxk);
     //compute the restricted candidates list 
     NearestSpotList restrictedCandidates = getRestrictedCandidates(candidateList);
     
@@ -171,5 +175,5 @@ unsigned int GreedyRandomHeuristic::insertSpot()
     
     unsigned insertAt;
     TourNode random = selectRandomTourNode(restrictedCandidates, insertAt);
-    return instance.insertNode(insertAt, random);
+    return instance.addNode(random);
 }
