@@ -90,10 +90,8 @@ GreedyNearestNeighbor::GreedyNearestNeighbor ( Environment& env ) : GreedyTour (
 
 unsigned int GreedyNearestNeighbor::insertSpot()
 {
-    int lastSpot = instance.empty() ? -1 : instance.getTour().back().spot;
-
     // find k nearest spots to last tour node
-    NearestSpotList nearest = spotsearch.findNearestSpots(instance, lastSpot, maxk); 
+    NearestSpotList nearest = spotsearch.findNearestSpots(instance, instance.getTourLength() - 1, maxk); 
     
     // find best spot and method, add it to the tour
     unsigned tmp;
@@ -127,7 +125,8 @@ GreedyRandomHeuristic::GreedyRandomHeuristic (Environment& env) : GreedyTour (en
 }
 
 NearestSpotList getRestrictedCandidates(NearestSpotList candidates){
-    
+    // Anything to do here?
+    return candidates;
 }
 
 TourNode GreedyTour::selectRandomTourNode (NearestSpotList nearest, unsigned int& insertAt, Config::NodeInsertMode insertMode)
@@ -149,11 +148,10 @@ TourNode GreedyTour::selectRandomTourNode (NearestSpotList nearest, unsigned int
     unsigned methodId = 0; 
     unsigned randomMethod = rand() % randomSpot.getMethods().size();
     
-    unsigned bestInset; 
-    double deltaTour = helper.getInsertDeltaTourLength(instance, tourNode, randomSpot, insertMode, bestInset);
+    double deltaTour = helper.getInsertDeltaTourLength(instance, tourNode, randomSpot, insertMode, insertAt);
     _random.spot = spotId;
     _random.method = methodId;
-    insertAt = bestInset;
+    
     //return that node 
     return _random;
 }

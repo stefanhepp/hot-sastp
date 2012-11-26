@@ -94,7 +94,7 @@ public:
     
     Instance& operator=(const Instance& instance);
     
-    const SASTProblem& getProblem() const { return problem; };
+    const SASTProblem& getProblem() const { return problem; }
     
     /**
      * Get the time required for the tour excluding resting times.
@@ -106,7 +106,7 @@ public:
     /**
      * Get the total tour time, including any resting times for filling up stamina.
      */
-    double getTotalTime() const { return tourTime + getTotalRequiredRestTime(); };
+    double getTotalTime() const { return tourTime + getTotalRequiredRestTime(); }
     
     /**
      * This gets the total rest time based only on the amount of remaining stamina.
@@ -118,7 +118,7 @@ public:
     
     bool empty() const { return tour.empty(); }
     
-    TourNode getNode(int index) const { return (index == -1 || index == tour.size()) ? getHotelNode() : tour[index]; };
+    TourNode getNode(int index) const { return (index == -1 || index == tour.size()) ? getHotelNode() : tour.at(index); }
     
     TourNode getHotelNode() const { return TourNode(-1, 0); }
 	
@@ -127,8 +127,8 @@ public:
      */
     size_t getTourLength() const { return tour.size(); };
     
-    unsigned getSpotIndex(unsigned index) const { return tour[index].spot; };
-    unsigned getMethodIndex(unsigned index) const { return tour[index].method; };
+    unsigned getSpotIndex(unsigned index) const { return index == -1 ? -1 : tour.at(index).spot; }
+    unsigned getMethodIndex(unsigned index) const { return index == -1 ? 0 : tour.at(index).method; }
     
     /**
      * Get the index of the node in this tour refering to spot.
