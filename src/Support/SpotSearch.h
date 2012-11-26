@@ -33,10 +33,10 @@ public:
     
     /**
      * Find nearest spot to a given spot.
-     * @param spot the index of the spot, or -1 for the origin.
+     * @param tournode the index of the spot in the tour, or -1 for the origin.
      * @return the index of the nearest spot.
      */
-    NearestSpot findNearestSpot(const Instance& tour, int spot, bool skipUsed = true);
+    NearestSpot findNearestSpot(const Instance& tour, int tournode, bool skipUsed = true);
     
     /**
      * Find nearest spot to a tour.
@@ -47,10 +47,10 @@ public:
     
     /**
      * Find k nearest spots to a given spot.
-     * @param spot the index of the spot, or -1 for the origin.
+     * @param tournode the index of the spot in the tour, or -1 for the origin.
      * @return a vector containing the indices of the k nearest spots.
      */
-    NearestSpotList findNearestSpots(const Instance& tour, int spot, unsigned k, bool skipUsed = true);
+    NearestSpotList findNearestSpots(const Instance& tour, int tournode, unsigned k, bool skipUsed = true);
     
     /**
      * Find k nearest spots to a tour.

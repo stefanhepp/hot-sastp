@@ -84,18 +84,20 @@ void SpotSearch::addNearestSpots(const Spot& spot, unsigned int maxk)
 }
 
 
-NearestSpot SpotSearch::findNearestSpot(const Instance& instance, int spot, bool skipUsed)
+NearestSpot SpotSearch::findNearestSpot(const Instance& instance, int tournode, bool skipUsed)
 {
+    unsigned spot = instance.getSpotIndex(tournode);
+    
     std::vector<unsigned>* nearest = nearestSpots[spot+1];
     
     for (unsigned nearestspot : *nearest) {
 	if (skipUsed && instance.containsSpot(nearestspot)) continue;
 	
-	return std::make_pair(spot,nearestspot);
+	return std::make_pair(tournode,nearestspot);
     }
     // Should never be reached
     assert(false && "Trying to find nearest spot, but all spots are used");
-    return std::make_pair(spot,-1);
+    return std::make_pair(tournode,-1);
 }
 
 NearestSpot SpotSearch::findNearestSpot(const Instance& tour, bool skipUsed)
@@ -125,8 +127,10 @@ NearestSpot SpotSearch::findNearestSpot(const Instance& tour, bool skipUsed)
 }
 
 
-NearestSpotList SpotSearch::findNearestSpots(const Instance& tour, int spot, unsigned int k, bool skipUsed)
+NearestSpotList SpotSearch::findNearestSpots(const Instance& tour, int tournode, unsigned int k, bool skipUsed)
 {
+    unsigned spot = tour.getSpotIndex(tournode);
+    
     std::vector<unsigned>* nearest = nearestSpots[spot+1];
 
     // return a vector containing the first k entries
@@ -139,14 +143,14 @@ NearestSpotList SpotSearch::findNearestSpots(const Instance& tour, int spot, uns
 	for (unsigned nearestspot : *nearest) {
 	    if (tour.containsSpot(nearestspot)) continue;
 	    
-	    pairs.push_back( std::make_pair(spot, nearestspot) );
+	    pairs.push_back( std::make_pair(tournode, nearestspot) );
 	    
 	    if (pairs.size() >= k) break;
 	}
     } else {
 	pairs.resize(k);
 	std::transform(nearest->begin(), nearest->begin() + k, pairs.begin(), 
-			[spot](unsigned ns){ return std::make_pair(spot, ns); } );
+			[tournode](unsigned ns){ return std::make_pair(tournode, ns); } );
     }
     
     return pairs;
