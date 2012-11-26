@@ -34,9 +34,15 @@ public:
 	SF_BEST = 2
     };
     
+
     enum StopCriterionTag{
 	SC_DEFAULT = 0,
 	SC_OTHER = 1
+    };
+    
+    enum NeighborhoodTag{
+      NT_ONE_OPT = 0,
+      NT_TWO_OPT = 1
     };
     
     /**

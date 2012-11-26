@@ -121,3 +121,57 @@ unsigned int GreedyInsertHeuristic::insertSpot()
     return instance.insertNode(insertAt, best);
 }
 
+GreedyRandomHeuristic::GreedyRandomHeuristic (Environment& env) : GreedyTour (env)
+{
+
+}
+
+NearestSpotList getRestrictedCandidates(NearestSpotList candidates){
+    
+}
+
+TourNode GreedyTour::selectRandomTourNode (NearestSpotList nearest, unsigned int& insertAt, Config::NodeInsertMode insertMode)
+{
+    TourNode _random(-1,0);
+    
+    //pick a random valid index 
+    unsigned int maxIndexNode = nearest.size();
+    unsigned int randomChoice = rand() % maxIndexNode;
+    
+    //get the node in the RCL with that index
+    unsigned tourNode = nearest[randomChoice].first;
+    unsigned spotId = nearest[randomChoice].second;
+    
+    //get the spot from the problem
+    const Spot& randomSpot = problem.getSpot(spotId);
+    
+    //pick randomly a valid method for that spot 
+    unsigned methodId = 0; 
+    unsigned randomMethod = rand() % randomSpot.getMethods().size();
+    
+    unsigned bestInset; 
+    double deltaTour = helper.getInsertDeltaTourLength(instance, tourNode, randomSpot, insertMode, bestInset);
+    _random.spot = spotId;
+    _random.method = methodId;
+    insertAt = bestInset;
+    //return that node 
+    return _random;
+}
+
+
+unsigned int GreedyRandomHeuristic::insertSpot()
+{
+    int lastSpot = instance.empty() ? -1 : instance.getTour().back().spot;
+    
+    //find the k nearest spots to the tour
+    //in our GRASP settings this is the candidates list 
+    NearestSpotList candidateList = spotsearch.findNearestSpots(instance, maxk);
+    //compute the restricted candidates list 
+    NearestSpotList restrictedCandidates = getRestrictedCandidates(candidateList);
+    
+    //pick a randomly from the restrictedCandidates one spot, 
+    
+    unsigned insertAt;
+    TourNode random = selectRandomTourNode(restrictedCandidates, insertAt);
+    return instance.insertNode(insertAt, random);
+}

@@ -40,7 +40,7 @@ protected:
     virtual unsigned insertSpot()=0;
   
     TourNode selectBestTourNode(NearestSpotList nearest, unsigned& insertAt, Config::NodeInsertMode insertMode = Config::NIM_ALWAYS_AFTER);
-
+    TourNode selectRandomTourNode(NearestSpotList nearest, unsigned& insertAt, Config::NodeInsertMode insertMode = Config::NIM_ALWAYS_AFTER);
 };
 
 
@@ -51,7 +51,7 @@ public:
     GreedyNearestNeighbor ( Environment& env );
     
 protected:
-    
+    NearestSpotList getRestrictedCandidates(NearestSpotList candidates);
     virtual unsigned insertSpot();
 };
 
@@ -70,6 +70,14 @@ protected:
     virtual unsigned insertSpot();
 };
 
-
+class GreedyRandomHeuristic : public GreedyTour{
+public:
+    
+    GreedyRandomHeuristic (Environment& env);
+    
+protected:
+    
+    virtual unsigned insertSpot();
+};  
 
 #endif
