@@ -163,11 +163,11 @@ TourNode GreedyTour::selectRandomTourNode (NearestSpotList nearest, unsigned int
 
 unsigned int GreedyRandomHeuristic::insertSpot()
 {
-    int lastSpot = instance.empty() ? -1 : instance.getTour().back().spot;
+    int lastNode = instance.getTourLength() - 1;
     
     //find the k nearest spots to the tour
     //in our GRASP settings this is the candidates list 
-    NearestSpotList candidateList = spotsearch.findNearestSpots(instance, lastSpot, maxk);
+    NearestSpotList candidateList = spotsearch.findNearestSpots(instance, lastNode, maxk);
     //compute the restricted candidates list 
     NearestSpotList restrictedCandidates = getRestrictedCandidates(candidateList);
     

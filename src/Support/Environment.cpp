@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <sys/time.h>
 #include <assert.h>
 #include "optionparser.h"
 
@@ -263,10 +264,45 @@ int Config::parseArguments (int argc, char* argv[])
 
 
 
+Environment::Environment(Config& config)
+ : config(config), problem(0), spotsearch(0) 
+{
+    string basename = config.getOutputFilename();
+    auto p = basename.find_last_of('/');
+    if (p != string::npos) {
+	
+    }
+}
 
 Environment::~Environment()
 {
     deleteProblem();
+}
+
+void Environment::startTimer()
+{
+    gettimeofday(&startTime, NULL);
+}
+
+float Environment::getCurrentTime()
+{
+    timeval currTime;
+    gettimeofday(&currTime, NULL);
+    
+    float currSecs = (currTime.tv_sec - startTime.tv_sec) + float(currTime.tv_usec - startTime.tv_usec)/1000000.0;
+    
+    return currSecs;
+}
+
+void Environment::printStepResult(const Instance& instance)
+{
+    if (!config.doPrintAllSteps()) return;
+    
+}
+
+void Environment::printFinalResult(const Instance& instance)
+{
+
 }
 
 void Environment::loadProblemFile (const string& filename)

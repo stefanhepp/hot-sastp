@@ -4,6 +4,9 @@
 #include "Framework/SASTProblem.h"
 #include "Framework/SASTPSolution.h"
 #include "Support/SpotSearch.h"
+#include "Support/Instance.h"
+
+#include <sys/time.h>
 
 class Config
 {
@@ -103,8 +106,12 @@ class Environment
     SASTProblem *problem;
     SpotSearch  *spotsearch;
     
+    timeval startTime;
+    
+    std::string problemName;
+    
 public:
-    Environment(Config& config) : config(config), problem(0), spotsearch(0) {}
+    Environment(Config& config);
     ~Environment();
     
     const Config& getConfig() const { return config; }
@@ -118,7 +125,14 @@ public:
     
     void startTimer();
     
-    void getCurrentTime();
+    /**
+     * @return the current run time in seconds
+     */
+    float getCurrentTime();
+    
+    void printStepResult(const Instance& instance);
+    
+    void printFinalResult(const Instance& instance);
     
     void loadProblemFile(const std::string& filename);
     
