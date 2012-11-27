@@ -5,6 +5,8 @@
 #include "Solver/Driver.h"
 
 #include <assert.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include <iostream>
 using namespace std;
@@ -17,6 +19,7 @@ int main(int argc, char* argv[]) {
     // For now, config should handle all arguments
     assert(nextArg == argc);
    
+    srand(time(NULL));
     Environment env(config);
     Driver driver(env);
     

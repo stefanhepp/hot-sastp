@@ -29,17 +29,20 @@ void Grasp::run()
 	// Perform randomized greedy heuristic
         randGreedy->run();
         Instance randomized = randGreedy->getInstance();
+        
 	// TODO implement 
 		
 	// Perform local search on result
 	localSearch.reset( randomized );
 	localSearch.run();
-	
+	randomized.clear();
+        randGreedy->reset(randomized);
+        
 	deltaSatisfaction = localSearch.getInstance().getTotalSatisfaction() - instance.getTotalSatisfaction();
 	if (deltaSatisfaction >= 0.0) {
 	    instance = localSearch.getInstance();
 	}
 	
-    } while (!shouldStop(deltaSatisfaction));
+   } while (!shouldStop(deltaSatisfaction));
 }
 

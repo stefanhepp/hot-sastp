@@ -1,5 +1,7 @@
 #include "GreedyTour.h"
 
+#include <stdlib.h>
+
 #include "Framework/SASTProblem.h"
 #include "Support/Instance.h"
 #include "Support/SpotSearch.h"
@@ -124,11 +126,20 @@ GreedyRandomHeuristic::GreedyRandomHeuristic (Environment& env) : GreedyTour (en
 
 }
 
-NearestSpotList getRestrictedCandidates(NearestSpotList candidates){
+NearestSpotList GreedyRandomHeuristic::getRestrictedCandidates (NearestSpotList candidates)
+{
 
     // Anything to do here?
     //yes we have to select all the spots where cost(spot) < cost_min + alpha*(cost_max -cost_min )
     //where alpha is in [0..1].
+    double min_cost, max_cost;
+    for( const auto& c : candidates){
+        int tournode = c.first;
+        unsigned spotId = c.second;
+        //find min and max cost 
+        Spot& spot = problem.getSpot(spotId);
+    }
+    
     return candidates;
 
 }
@@ -148,15 +159,13 @@ TourNode GreedyTour::selectRandomTourNode (NearestSpotList nearest, unsigned int
     //get the spot from the problem
     const Spot& randomSpot = problem.getSpot(spotId);
     
-    //pick randomly a valid method for that spot 
-    unsigned methodId = 0; 
+    //pick randomly a valid method for that spot  
     unsigned randomMethod = rand() % randomSpot.getMethods().size();
     
     double deltaTour = helper.getInsertDeltaTourLength(instance, tourNode, randomSpot, insertMode, insertAt);
     _random.spot = spotId;
-    _random.method = methodId;
-    
-    //return that node 
+    _random.method = randomMethod;
+ 
     return _random;
 }
 
@@ -177,3 +186,9 @@ unsigned int GreedyRandomHeuristic::insertSpot()
     TourNode random = selectRandomTourNode(restrictedCandidates, insertAt);
     return instance.addNode(random);
 }
+
+void GreedyRandomHeuristic::reset (const Instance& inst)
+{
+    GreedyTour::reset(inst);
+}
+

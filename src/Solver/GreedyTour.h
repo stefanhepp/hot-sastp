@@ -51,7 +51,7 @@ public:
     GreedyNearestNeighbor ( Environment& env );
     
 protected:
-    NearestSpotList getRestrictedCandidates(NearestSpotList candidates);
+    
     virtual unsigned insertSpot();
 };
 
@@ -74,9 +74,10 @@ class GreedyRandomHeuristic : public GreedyTour{
 public:
     
     GreedyRandomHeuristic (Environment& env);
+    virtual void reset(const Instance& inst);
     
 protected:
-    
+    NearestSpotList getRestrictedCandidates(NearestSpotList candidates);
     virtual unsigned insertSpot();
 };  
 
