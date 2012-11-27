@@ -156,8 +156,9 @@ void SASTPSolution::store(const std::string& filename)const
 	}
 }
 
-void SASTPSolution::print(std::ostream& os)const
+void SASTPSolution::print(std::ostream& os, bool pretty)const
 {
+    if (pretty) {
 	os << "Solution has "<<tour.size()<<" stops, taking "<<tourtime<<" time and achieving "<<satisfaction<<" satisfaction, with "<<stamina<<" stamina remaining\n";
 	os << "Stops:\n";
 
@@ -165,4 +166,13 @@ void SASTPSolution::print(std::ostream& os)const
 	{
 		os << "Spot "<<s.spot<<" with method "<<s.method<<" and then resting "<<s.restingTime<<"\n";
 	}
+    } else {
+    	os<<"#Solution to SASTP\n";
+	os<<"#Spot Method Resting Time\n";
+
+	for(const auto& stop:tour)
+	{
+		os<<stop.spot<<" "<<stop.method<<" "<<stop.restingTime<<"\n";
+	}
+    }
 }

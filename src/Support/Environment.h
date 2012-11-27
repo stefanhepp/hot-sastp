@@ -74,6 +74,13 @@ public:
     
     bool doPrintAllSteps() const { return _printAllSteps; }
     
+    bool doPrintSolution() const { return _printSolution; }
+    
+    /**
+     * @return maximum allowed runtime in seconds
+     */
+    unsigned getMaxRuntime() const { return _maxRuntime; }
+    
 private: 
     std::string _inputFile;
     std::string _outputFile;
@@ -85,8 +92,11 @@ private:
     unsigned _maxKNearestSpots;
     unsigned _maxStepsWithNoChange;
     
+    unsigned _maxRuntime;
+    
     bool _verbose;
     bool _writeDot;
+    bool _printSolution;
     bool _printCSVOutput;
     bool _printAllSteps;
 };
@@ -110,6 +120,8 @@ class Environment
     
     std::string problemName;
     
+    bool printSteps;
+    
 public:
     Environment(Config& config);
     ~Environment();
@@ -132,7 +144,9 @@ public:
     
     void printStepResult(const Instance& instance);
     
-    void printFinalResult(const Instance& instance);
+    void printSolution(const SASTPSolution& solution);
+    
+    void setPrintSteps(bool enable) { printSteps = enable; }
     
     void loadProblemFile(const std::string& filename);
     

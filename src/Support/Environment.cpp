@@ -22,6 +22,9 @@ Config::Config()
     _maxStepsWithNoChange = 10u;
     _printAllSteps = false;
     _printCSVOutput = false;
+    _printSolution = false;
+    
+    _maxRuntime = 1800;
 }
 
 
@@ -64,7 +67,7 @@ struct Arg: public option::Arg {
     }
 };
 
-enum optionIndex {UNKNOWN, HELP, ALGORITHM, KNEAREST, VERBOSE, DOT, PRINT_CSV, PRINT_ALL_STEPS, INSERTMODE, STEP, MAXSTEPS};
+enum optionIndex {UNKNOWN, HELP, ALGORITHM, KNEAREST, VERBOSE, DOT, PRINT_CSV, PRINT_ALL_STEPS, TIMEOUT, INSERTMODE, STEP, MAXSTEPS};
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -96,6 +99,7 @@ const option::Descriptor usage[] = {
     {
 	MAXSTEPS, 0, "m", "maxSteps", Arg::Numeric, " -m <arg>, \t--maxSteps=<arg> \tMaximal number of steps with no improvement.\n"
     },
+    { TIMEOUT, 0, "t", "timeout", Arg::Numeric, "  -t <secs>, \t--timeout=<secs> \tTimeout for search in seconds.\n" },
     {
         UNKNOWN, 0, "", "", Arg::None,
         "\nExamples:\n"
@@ -240,6 +244,10 @@ int Config::parseArguments (int argc, char* argv[])
 		assert(opt.arg);
 		_maxStepsWithNoChange = (unsigned)atoi(opt.arg);
 		break;
+	    case TIMEOUT:
+		assert(opt.arg);
+		_maxRuntime = (unsigned)atoi(opt.arg);
+		break;
             case UNKNOWN:
                 // not possible because Arg::Unknown returns ARG_ILLEGAL
                 // which aborts the parse with an error
@@ -247,13 +255,17 @@ int Config::parseArguments (int argc, char* argv[])
         }
     }
 
-    if (parse.nonOptionsCount() != 2) {
+    if (parse.nonOptionsCount() < 1 || parse.nonOptionsCount() > 2) {
         printHelp();
         exit (1);
     }
-
+    
     _inputFile = string (parse.nonOption (0));
-    _outputFile = string (parse.nonOption (1));
+    if (parse.nonOptionsCount() > 1) {
+	_outputFile = string (parse.nonOption (1));
+    } else {
+	_printSolution = true;
+    }
 
     delete[] options;
     delete[] buffer;
@@ -265,12 +277,16 @@ int Config::parseArguments (int argc, char* argv[])
 
 
 Environment::Environment(Config& config)
- : config(config), problem(0), spotsearch(0) 
+ : config(config), problem(0), spotsearch(0), printSteps(false)
 {
-    string basename = config.getOutputFilename();
-    auto p = basename.find_last_of('/');
+    problemName = config.getInputFilename();
+    size_t p = problemName.find_last_of('/');
     if (p != string::npos) {
-	
+	problemName = problemName.substr(p + 1);
+    }
+    p = problemName.find('.');
+    if (p != string::npos) {
+	problemName = problemName.substr(0, p);
     }
 }
 
@@ -296,13 +312,29 @@ float Environment::getCurrentTime()
 
 void Environment::printStepResult(const Instance& instance)
 {
-    if (!config.doPrintAllSteps()) return;
+    if (!config.doPrintAllSteps() || !printSteps) return;
+    
+    if (config.doPrintCSVOutput()) {
+	cout << problemName << "," << instance.getTotalSatisfaction() << "," << getCurrentTime() << endl;
+    } else {
+	cout << "Finished step (time: " << instance.getTotalTime() << 
+	                        ", satisfaction: " << instance.getTotalSatisfaction() << 
+	                        ", stamina: " << instance.getRemainingStamina() << 
+	                        ", runtime: " << getCurrentTime() << ")" << endl;
+    }
     
 }
 
-void Environment::printFinalResult(const Instance& instance)
+void Environment::printSolution(const SASTPSolution& solution)
 {
-
+    if (config.doPrintCSVOutput()) {
+	cout << problemName << "," << solution.getSatisfaction() << "," << getCurrentTime() << endl;
+    } else {
+	cout << "Found solution to " << problemName << " (time: " << solution.getTourTime() << 
+	                                                  ", satisfaction: " << solution.getSatisfaction() << 
+	                                                  ", stamina: " << solution.getStamina() << 
+	                                                  ", runtime: " << getCurrentTime() << ")" << endl;
+    }
 }
 
 void Environment::loadProblemFile (const string& filename)

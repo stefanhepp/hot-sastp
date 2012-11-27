@@ -1,7 +1,7 @@
 #include "AbstractSearch.h"
 
 AbstractSearch::AbstractSearch(Environment& env, int stepsToStop)
-: problem(env.getProblem()), _maxSteps(stepsToStop)
+: env(env), problem(env.getProblem()), _maxSteps(stepsToStop)
 {
     stepFunction = env.getConfig().getStepFunction();
 }
@@ -14,6 +14,9 @@ bool AbstractSearch::shouldStop(double improvement)
       _noImprovement++;
     if(_maxSteps == _noImprovement)
       return true;
+    
+    if (env.getCurrentTime() > env.getConfig().getMaxRuntime()) return true;
+    
     return false;
 }
 

@@ -19,6 +19,8 @@ public:
 protected:
     int _noImprovement;
     int _maxSteps;
+    
+    Environment& env;
     SASTProblem& problem;
     
     Config::StepFunction stepFunction;

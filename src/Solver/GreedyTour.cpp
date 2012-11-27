@@ -32,6 +32,8 @@ void GreedyTour::run()
 	    instance.deleteNode(newSpot);
 	    break;
 	}
+	
+	env.printStepResult(instance);
     }
     
 }

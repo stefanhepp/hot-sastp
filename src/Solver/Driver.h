@@ -37,7 +37,8 @@ public:
     
 protected:
    GreedyTour* getGreedyTour(Environment& env);
-   LocalSearch* getLocalSearch(Environment& env, GreedyTour& gt);
+   LocalSearch* getLocalSearch(Environment& env, const Instance& init);
+   VND* getVND(Environment& env, const Instance& init);
 private:
     Environment& env;
     

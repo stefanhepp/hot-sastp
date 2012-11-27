@@ -22,6 +22,8 @@ void LocalSearch::run()
     start();
     do {
 	
+	env.printStepResult(instance);
+	
 	// Choose an x' in N(x), apply if f(x') <= f(x)
 	
 	// Note: in order not to copy the whole instance in every step, we 
@@ -33,6 +35,6 @@ void LocalSearch::run()
 	bool applied = neighborhood.performStep(instance, stepFunction, false);
 	
 	deltaSatisfaction += instance.getTotalSatisfaction();
-		
+	
     } while (!shouldStop(deltaSatisfaction));
 }

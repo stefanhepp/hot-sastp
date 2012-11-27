@@ -33,22 +33,44 @@ GreedyTour* Driver::getGreedyTour(Environment& env){
     }
 }
 
-LocalSearch* Driver::getLocalSearch(Environment& env, GreedyTour& gt){
-   
+LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init) 
+{
+    // TODO make the neighborhood for local search configurable
+    
     Neighborhood* nb = new OneOPT(env.getProblem());
     
     LocalSearch* ls;
-    ls = new LocalSearch(env, *nb, gt.getInstance());
+    ls = new LocalSearch(env, *nb, init);
+    
     return ls;
 }
 
+VND* Driver::getVND(Environment& env, const Instance& init)
+{
+    VND* vnd = new VND(env, init);
+    
+    Neighborhood* one = new OneOPT(env.getProblem());
+    vnd->addNeighborhood(*one);
+    
+    Neighborhood* two = new TwoOPT(env.getProblem());
+    vnd->addNeighborhood(*two);
+
+    return vnd;
+}
+
+
 void Driver::solve()
 {
+  env.startTimer();
+  env.setPrintSteps(false);
+    
   switch(env.getConfig().getAlgorithm()){
     case Config::AT_GREEDY_IN:
     case Config::AT_GREEDY_NN:
     {
 	GreedyTour* greedy = getGreedyTour(env);
+	
+	env.setPrintSteps(true);
 	greedy->run();
 	
 	solution = greedy->getInstance().createSolution();
@@ -60,12 +82,12 @@ void Driver::solve()
         
         greedy->run();
         
-        // TODO use config to select neighborhood
-        Neighborhood* nb = new OneOPT(env.getProblem());
+        LocalSearch* local = getLocalSearch(env, greedy->getInstance());
         
-        LocalSearch local(env, *nb, greedy->getInstance());
-        
-        solution = local.getInstance().createSolution();
+	env.setPrintSteps(true);
+	local->run();
+	
+        solution = local->getInstance().createSolution();
         break;
     }
     
@@ -74,25 +96,24 @@ void Driver::solve()
         
         greedy->run();
         
-        VND vnd(env, greedy->getInstance());
-        Neighborhood* one = new OneOPT(env.getProblem());
-        vnd.addNeighborhood(*one);
-        Neighborhood* two = new TwoOPT(env.getProblem());
-        vnd.addNeighborhood(*two);
-        
-        solution = vnd.getInstance().createSolution();
+	VND* vnd = getVND(env, greedy->getInstance());
+	
+	env.setPrintSteps(true);
+	vnd->run();
+	
+        solution = vnd->getInstance().createSolution();
         break;
     }
         
     case Config::AT_GRASP_LS: {
-        GreedyTour* greedy= getGreedyTour(env);
-        
-        greedy->run();
-        
-        Neighborhood* nb = new OneOPT(env.getProblem());
-        AbstractSearch* search = new LocalSearch(env, *nb, greedy->getInstance());
-                
-        Grasp grasp(env, *search, search->getInstance());
+	
+	Instance empty(env.getProblem());
+	
+	LocalSearch *ls = getLocalSearch(env, empty);
+	
+        Grasp grasp(env, *ls, empty);
+	
+	env.setPrintSteps(true);
         grasp.run();
         
         solution = grasp.getInstance().createSolution();
@@ -100,16 +121,16 @@ void Driver::solve()
     }
    
     case Config::AT_GRASP_VND: {
-        GreedyTour* greedy = getGreedyTour(env);
         
-        greedy->run();
-        
-        Neighborhood* nb = new OneOPT(env.getProblem());
-        
-        AbstractSearch* search = new VND(env, greedy->getInstance());
-        
-        Grasp grasp(env, *search, search->getInstance());
+	Instance empty(env.getProblem());
+	
+	VND* vnd = getVND(env, empty);
+	
+        Grasp grasp(env, *vnd, empty);
 
+	env.setPrintSteps(true);
+	grasp.run();
+	
         solution = grasp.getInstance().createSolution();
         break;
     }
@@ -118,10 +139,16 @@ void Driver::solve()
         
         greedy->run();
         
+	
+	env.setPrintSteps(true);
         
         solution = greedy->getInstance().createSolution();
         break;
     }
+  }  
+  
+  if (solution) {
+      env.printSolution(*solution);
   }
 }
 
@@ -131,32 +158,37 @@ void Driver::checkSolution() {
 	return;
     }
     
-    if (solution->isValid(env.getConfig().isVerbose())) {
-	cout << "Found a valid solution ";
-    } else {
-	cout << "Solution is not valid. Go back to debugging! ";
+    if (!solution->isValid(env.getConfig().isVerbose())) {
+	cout << "Solution is not valid. Go back to debugging!" << endl;
     }
-    cout << "(time: " << solution->getTourTime() << ", satisfaction: " << solution->getSatisfaction() << ")" << endl;
 }
 
 void Driver::writeSolution()
 {
+    if (env.getConfig().doPrintSolution()) {
+	solution->print(cout, false);
+    }
+    
     string solFilename = env.getConfig().getOutputFilename();
-    
-    solution->store(solFilename);
-    
-    if (env.getConfig().doWriteDotFile()) {
-	string dotFilename = solFilename;
+    if (!solFilename.empty()) {
 	
-	if (dotFilename.substr(dotFilename.length()-4) == ".sol") {
-	    dotFilename = dotFilename.substr(0, dotFilename.length()-4);
+	solution->store(solFilename);
+	
+	if (env.getConfig().doWriteDotFile()) {
+	    string dotFilename = solFilename;
+	    
+	    if (dotFilename.substr(dotFilename.length()-4) == ".sol") {
+		dotFilename = dotFilename.substr(0, dotFilename.length()-4);
+	    }
+	    dotFilename = dotFilename + ".dot";
+	
+	    if (!env.getConfig().doPrintCSVOutput()) {
+		cout << "Exporting tour to " << dotFilename << endl;
+	    }
+	    
+	    DotPrinter printer(env.getProblem(), *solution);
+	    printer.writeDotFile(dotFilename, env.getProblem().getSpots().size() > 10);
 	}
-	dotFilename = dotFilename + ".dot";
-	
-	cout << "Exporting tour to " << dotFilename << endl;
-	
-	DotPrinter printer(env.getProblem(), *solution);
-	printer.writeDotFile(dotFilename, env.getProblem().getSpots().size() > 10);
     }
 }
 
