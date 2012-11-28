@@ -24,7 +24,7 @@ Config::Config()
     _printAllSteps = false;
     _printCSVOutput = false;
     _printSolution = false;
-    
+    _alphaRCL = 1;
     _maxRuntime = 1800;
 }
 
@@ -68,7 +68,7 @@ struct Arg: public option::Arg {
     }
 };
 
-enum optionIndex {UNKNOWN, HELP, ALGORITHM, KNEAREST, VERBOSE, DOT, PRINT_CSV, PRINT_ALL_STEPS, TIMEOUT, INSERTMODE, STEP, MAXSTEPS};
+enum optionIndex {UNKNOWN, HELP, ALGORITHM, KNEAREST, VERBOSE, DOT, PRINT_CSV, PRINT_ALL_STEPS, TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA};
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -101,6 +101,7 @@ const option::Descriptor usage[] = {
 	MAXSTEPS, 0, "m", "maxSteps", Arg::Numeric, " -m <arg>, \t--maxSteps=<arg> \tMaximal number of steps with no improvement.\n"
     },
     { TIMEOUT, 0, "t", "timeout", Arg::Numeric, "  -t <secs>, \t--timeout=<secs> \tTimeout for search in seconds.\n" },
+    { ALPHA , 0, "", "alpha", Arg::NonEmpty, " , \t--alpha=<arg> \t Alpaha for the construction of Restricted Candidates List. values in [0..1]\n"},
     {
         UNKNOWN, 0, "", "", Arg::None,
         "\nExamples:\n"
@@ -249,6 +250,11 @@ int Config::parseArguments (int argc, char* argv[])
 		assert(opt.arg);
 		_maxRuntime = (unsigned)atoi(opt.arg);
 		break;
+            case ALPHA: 
+                assert(opt.arg);
+                _alphaRCL = atof(opt.arg);
+                assert(_alphaRCL >= 0 && _alphaRCL <= 1 );
+                break;
             case UNKNOWN:
                 // not possible because Arg::Unknown returns ARG_ILLEGAL
                 // which aborts the parse with an error

@@ -201,7 +201,7 @@ GreedyTour::SpotMethodList GreedyTour::getRestrictedCandidates (NearestSpotList 
         
         double deltaTime;
         double ratio = GreedyTour::helper.calcInsertSatisfactionTimeRatio(instance.getRemainingStamina(), m, deltaTour, deltaTime);
-        double st = minRatio + 0.5 * (maxRatio-minRatio);
+        double st = minRatio + env.getConfig().getAlpha() * (maxRatio-minRatio);
         if( ratio <= st)
             CleanRCL.push_back(sm);
               

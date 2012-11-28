@@ -80,6 +80,7 @@ public:
      * @return maximum allowed runtime in seconds
      */
     unsigned getMaxRuntime() const { return _maxRuntime; }
+    double getAlpha() const {return _alphaRCL; }
     
 private: 
     std::string _inputFile;
@@ -93,6 +94,7 @@ private:
     unsigned _maxStepsWithNoChange;
     
     unsigned _maxRuntime;
+    double _alphaRCL;
     
     bool _verbose;
     bool _writeDot;
