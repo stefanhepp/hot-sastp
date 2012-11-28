@@ -23,8 +23,7 @@ void GreedyTour::run()
 {
     size_t numSpots = getInstance().getProblem().getSpots().size();
     
-    while (instance.getTourLength() < numSpots) {
-	
+    while (instance.getTourLength() < numSpots ) {
 	// add a new spot into the tour
 	unsigned newSpot = insertSpot();
 	
@@ -144,6 +143,7 @@ GreedyTour::SpotMethodList GreedyTour::getRestrictedCandidates (NearestSpotList 
     //where alpha is in [0..1].
     double min_cost, max_cost;
    
+    //compute the minimal and the maximal cost 
     for( const auto& c : candidates){
         SpotMethod sm; 
        
@@ -165,15 +165,10 @@ GreedyTour::SpotMethodList GreedyTour::getRestrictedCandidates (NearestSpotList 
             double deltaTime;
             double ratio = helper.calcInsertSatisfactionTimeRatio(instance.getRemainingStamina(), *m, deltaTour, deltaTime);
             
-            // check if we have a new best value, but check for time constraints ..
-            if (instance.getTotalTime() + deltaTime <= problem.getMaxTime() && 
-                ratio > maxRatio) 
-            {
-                // found a new best candidate
-                maxRatio = ratio;
-            } else 
-                if( ratio < minRatio) 
-                    minRatio = ratio;
+            // check if we have a new best value, don't check for time constraints ..
+            maxRatio = std::max(ratio, maxRatio);
+            minRatio = std::min(ratio, minRatio);
+            
             sm.second = methodId;
             methodId++;
             
@@ -182,34 +177,33 @@ GreedyTour::SpotMethodList GreedyTour::getRestrictedCandidates (NearestSpotList 
         
     }
     
-    
-   int eraseMe = 0;
+   double st = minRatio + env.getConfig().getAlpha() * (maxRatio-minRatio);
+   
    SpotMethodList CleanRCL;
-   CleanRCL.reserve(RCL.size()/2);
+   CleanRCL.reserve(RCL.size());
    
-   
-    for ( const auto& ite : RCL){
+   //create a new list with elements which obey the restricted list constraints
+   for ( const auto& ite : RCL){
         Spot& spot = problem.getSpot(ite.first);
         Method m = spot.getMethod(ite.second);
         
         SpotMethod sm ;
         sm.first = ite.first;
-        sm.second = sm.second;
+        sm.second = ite.second;
         
         unsigned bestInsert;
         double deltaTour = GreedyTour::helper.getInsertDeltaTourLength(instance, candidates[0].first, spot, env.getConfig().getNodeInsertMode(), bestInsert);
         
         double deltaTime;
         double ratio = GreedyTour::helper.calcInsertSatisfactionTimeRatio(instance.getRemainingStamina(), m, deltaTour, deltaTime);
-        double st = minRatio + env.getConfig().getAlpha() * (maxRatio-minRatio);
+        
         if( ratio <= st)
             CleanRCL.push_back(sm);
-              
-        eraseMe++;
+
     } 
     
-    
-    return RCL;
+    //return the new list 
+    return CleanRCL;
 
 }
 
@@ -245,17 +239,12 @@ TourNode GreedyTour::selectRandomTourNode(SpotMethodList restricted)
     
     unsigned maxIndexNode = restricted.size();
     unsigned randomChoice;
-    if (maxIndexNode != 0 ){
+    if (maxIndexNode != 0 ) {
         randomChoice = rand() % maxIndexNode;
-    
-    
-    _random.method = restricted[randomChoice].second;
-    _random.spot = restricted[randomChoice].first;
-    
-    return _random;}
-    else {
-        return _random;
+        _random.method = restricted[randomChoice].second;
+        _random.spot = restricted[randomChoice].first;
     }
+    return _random;
 }
 
 unsigned int GreedyRandomHeuristic::insertSpot()
@@ -271,6 +260,7 @@ unsigned int GreedyRandomHeuristic::insertSpot()
     //pick a randomly from the restrictedCandidates one spot, 
     
     TourNode random = selectRandomTourNode(restrictedCandidates);
+    
     return instance.addNode(random);
 }
 

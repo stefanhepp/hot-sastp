@@ -39,7 +39,12 @@ protected:
      */
     virtual unsigned insertSpot()=0;
     
+    /**
+     * First is the index of the spot 
+     * Second is the index of the method
+     */
     typedef std::pair<unsigned , unsigned>SpotMethod;
+    /** Vector of Spot-Method pairs*/
     typedef std::vector<SpotMethod>SpotMethodList;
     
     
