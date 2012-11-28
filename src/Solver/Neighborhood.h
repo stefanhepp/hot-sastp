@@ -32,6 +32,13 @@ protected:
     
 };
 
+/**
+ * Exchange one spot with an unused spot and pick a proper method.
+ * - SF_RANDOM: pick a random spot and a random method of that spot
+ * - SF_NEXT: pick the first node in the tour with lowest satisfaction/time ratio, find nearest spot 
+ *   that gives some improvement on exchange
+ * - SF_BEST: search all combinations of nodes in the tour and unused nodes to find best spot to replace
+ */
 class OneOPT: public Neighborhood
 {
 public :
@@ -42,7 +49,12 @@ public :
 protected:
 };
 
-
+/**
+ * Exchange two edges in the tour.
+ * - SF_RANDOM: pick two random edges to exchange
+ * - SF_NEXT: TODO
+ * - SF_BEST: search all pairs of edges in the tour for possible improvements
+ */
 class TwoOPT: public Neighborhood
 {
 public :
