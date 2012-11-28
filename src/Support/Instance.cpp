@@ -207,6 +207,29 @@ bool Instance::isValid() const
     return (getTotalTime() <= problem.getMaxTime());
 }
 
+bool Instance::isValid(TourValues delta) const
+{
+    double time = tourTime + delta.tourTime;
+    double stamina = remainingStamina - delta.stamina;
+    if (stamina < 0) {
+	time += -stamina / problem.getHabitus();
+    }
+    
+    return time < problem.getMaxTime();
+}
+
+double Instance::getSatisfactionPerTotalTimeRatio(TourValues delta)
+{
+    double time = tourTime + delta.tourTime;
+    double stamina = remainingStamina - delta.stamina;
+    if (stamina < 0) {
+	time += -stamina / problem.getHabitus();
+    }
+    
+    double ratio = delta.satisfaction / time;
+    return ratio;
+}
+
 SASTPSolution* Instance::createSolution() const
 {
     SASTPSolution* sol = new SASTPSolution(problem);
