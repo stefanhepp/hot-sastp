@@ -17,7 +17,7 @@ Config::Config()
     _algorithm = AT_GREEDY_NN;
     _maxKNearestSpots = 5;
     _nodeInsertMode = NIM_SHORTEST_PATH;
-    _stepFunction = SF_BEST;
+    _stepFunction = SF_RANDOM;
     _verbose = false;
     _writeDot = false;
     _maxStepsWithNoChange = 10u;
