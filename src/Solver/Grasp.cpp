@@ -25,23 +25,25 @@ void Grasp::run()
     double deltaSatisfaction = 0.0;
     
     do {
+
+	// Do not print steps of used searches
+	bool printSteps = env.setPrintSteps(false);
 	
 	// Perform randomized greedy heuristic
+        randGreedy->reset(env.getEmptyInstance());
         randGreedy->run();
-        Instance randomized = randGreedy->getInstance();
         
-	// TODO implement 
-		
 	// Perform local search on result
-	localSearch.reset( randomized );
+	localSearch.reset( randGreedy->getInstance() );
 	localSearch.run();
-	randomized.clear();
-        randGreedy->reset(randomized);
-        
+	
 	deltaSatisfaction = localSearch.getInstance().getTotalSatisfaction() - instance.getTotalSatisfaction();
 	if (deltaSatisfaction >= 0.0) {
 	    instance = localSearch.getInstance();
 	}
+	
+	env.setPrintSteps(printSteps);
+	env.printStepResult(instance);
 	
    } while (!shouldStop(deltaSatisfaction));
 }

@@ -6,6 +6,7 @@
 
 #include <sys/time.h>
 #include <assert.h>
+#include <unistd.h>
 #include "optionparser.h"
 
 using namespace std;
@@ -303,11 +304,19 @@ void Environment::startTimer()
 float Environment::getCurrentTime()
 {
     timeval currTime;
+    
     gettimeofday(&currTime, NULL);
     
     float currSecs = (currTime.tv_sec - startTime.tv_sec) + float(currTime.tv_usec - startTime.tv_usec)/1000000.0;
     
     return currSecs;
+}
+
+bool Environment::setPrintSteps(bool enable)
+{
+    bool tmp = printSteps;
+    printSteps = enable;
+    return tmp;
 }
 
 void Environment::printStepResult(const Instance& instance)

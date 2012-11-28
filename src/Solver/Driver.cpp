@@ -107,11 +107,9 @@ void Driver::solve()
         
     case Config::AT_GRASP_LS: {
 	
-	Instance empty(env.getProblem());
+	LocalSearch *ls = getLocalSearch(env, env.getEmptyInstance());
 	
-	LocalSearch *ls = getLocalSearch(env, empty);
-	
-        Grasp grasp(env, *ls, empty);
+        Grasp grasp(env, *ls, env.getEmptyInstance());
 	
 	env.setPrintSteps(true);
         grasp.run();
@@ -122,11 +120,9 @@ void Driver::solve()
    
     case Config::AT_GRASP_VND: {
         
-	Instance empty(env.getProblem());
+	VND* vnd = getVND(env, env.getEmptyInstance());
 	
-	VND* vnd = getVND(env, empty);
-	
-        Grasp grasp(env, *vnd, empty);
+        Grasp grasp(env, *vnd, env.getEmptyInstance());
 
 	env.setPrintSteps(true);
 	grasp.run();

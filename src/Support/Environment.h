@@ -135,6 +135,8 @@ public:
     const SpotSearch& getSpotSearch() const { return *spotsearch; }
     SpotSearch& getSpotSearch() { return *spotsearch; }
     
+    Instance getEmptyInstance() const { Instance empty(*problem); return empty; }
+    
     void startTimer();
     
     /**
@@ -146,7 +148,7 @@ public:
     
     void printSolution(const SASTPSolution& solution);
     
-    void setPrintSteps(bool enable) { printSteps = enable; }
+    bool setPrintSteps(bool enable);
     
     void loadProblemFile(const std::string& filename);
     
