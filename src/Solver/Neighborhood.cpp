@@ -120,5 +120,17 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 
 bool TwoOPT::performStep (Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
 {
-
+    if (stepFunction == Config::SF_RANDOM) {
+	
+	
+	
+    } else if (stepFunction == Config::SF_NEXT) {
+	
+	
+	
+    } else {
+	
+	
+	
+    }
 }

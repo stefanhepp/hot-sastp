@@ -284,7 +284,7 @@ int Config::parseArguments (int argc, char* argv[])
 
 
 Environment::Environment(Config& config)
- : config(config), problem(0), spotsearch(0), printSteps(false)
+ : config(config), problem(0), spotsearch(0), empty(0), printSteps(false)
 {
     problemName = config.getInputFilename();
     size_t p = problemName.find_last_of('/');
@@ -357,6 +357,7 @@ void Environment::loadProblemFile (const string& filename)
     deleteProblem();
 
     problem = new SASTProblem (filename);
+    empty = new Instance(*problem);
 }
 
 void Environment::initSpotSearch (unsigned int maxk)
@@ -370,6 +371,7 @@ void Environment::initSpotSearch (unsigned int maxk)
 
 void Environment::deleteProblem()
 {
+    if (empty) delete empty;
     if (problem) delete problem;
     if (spotsearch) delete spotsearch;
 }

@@ -52,26 +52,38 @@ struct TourValues {
 	return TourValues(tourTime + v.tourTime, satisfaction + v.satisfaction, stamina + v.stamina);
     }
     
-    const TourValues& operator+=(const TourValues& v) {
+    const TourValues operator-(const TourValues& v) {
+	return TourValues(tourTime - v.tourTime, satisfaction - v.satisfaction, stamina - v.stamina);
+    }
+    
+    TourValues& operator+=(const TourValues& v) {
 	tourTime += v.tourTime; 
 	satisfaction += v.satisfaction;
 	stamina += v.stamina;
 	return *this;
     }
     
-    const TourValues &operator+=(const Method& m) {
+    TourValues& operator-=(const TourValues& v) {
+	tourTime -= v.tourTime; 
+	satisfaction -= v.satisfaction;
+	stamina -= v.stamina;
+	return *this;
+    }
+    
+    TourValues &operator+=(const Method& m) {
 	tourTime += m.getTime();
 	satisfaction += m.getSatisfaction();
 	stamina += m.getStamina();
 	return *this;
     }
-    
-    const TourValues &operator-=(const Method& m) {
+        
+    TourValues &operator-=(const Method& m) {
 	tourTime -= m.getTime();
 	satisfaction -= m.getSatisfaction();
 	stamina -= m.getStamina();
 	return *this;
     }
+    
 };
 
 typedef std::vector<TourNode> TourList;
@@ -176,7 +188,7 @@ public:
     /**
      * @return a set of currently unused spot indices.
      */
-    const std::set<unsigned> getUnusedSpotIDs() const { return unusedSpotIDs; }
+    std::set<unsigned> getUnusedSpotIDs() const;
     
     /**
      * Check if the current instance satisfies all constraints

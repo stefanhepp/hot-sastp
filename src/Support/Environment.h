@@ -117,6 +117,7 @@ class Environment
     
     SASTProblem *problem;
     SpotSearch  *spotsearch;
+    Instance    *empty;
     
     timeval startTime;
     
@@ -137,7 +138,7 @@ public:
     const SpotSearch& getSpotSearch() const { return *spotsearch; }
     SpotSearch& getSpotSearch() { return *spotsearch; }
     
-    Instance getEmptyInstance() const { Instance empty(*problem); return empty; }
+    const Instance& getEmptyInstance() const { return *empty; }
     
     void startTimer();
     

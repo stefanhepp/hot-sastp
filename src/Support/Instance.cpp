@@ -2,6 +2,10 @@
 
 #include <assert.h>
 #include <iostream>
+#include <set>
+
+using namespace std;
+
 
 Instance::Instance(const SASTProblem &problem)
 : problem(problem), tourTime(0.0), totalSatisfaction(0.0), 
@@ -199,6 +203,13 @@ TourValues Instance::getStepValues(const TourNode& from, const TourNode& to)
     }
     
     return values;
+}
+
+set<unsigned> Instance::getUnusedSpotIDs() const
+{
+    set<unsigned> unused;
+    
+    return unused;
 }
 
 bool Instance::isValid() const
