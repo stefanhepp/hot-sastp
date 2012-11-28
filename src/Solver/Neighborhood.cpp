@@ -174,15 +174,84 @@ bool TwoOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 {
     if (stepFunction == Config::SF_RANDOM) {
 	
+	int firstEdge = rand() % (instance.getTourLength() - 1);
+	int secondEdge = rand() % (instance.getTourLength() - firstEdge) + firstEdge + 1;
+	
 	
 	
     } else if (stepFunction == Config::SF_NEXT) {
 	
+	int tourLength = instance.getTourLength();
+	int maxDist = (tourLength - 1) / 2;
 	
+	// iterate first over the first edge, then the *distance* between the edges
+	for (int distance = 2; distance < maxDist; distance++) {
+	    
+	    for (int firstEdge = 0; firstEdge < tourLength; firstEdge++) {
+		int secondEdge = firstEdge + distance;
+		
+		
+		
+		
+		double deltaSatisfaction;
+		if (isValidEdgeExchange(instance, firstEdge, secondEdge, deltaSatisfaction)) {
+		    
+		    if (alwaysApply || deltaSatisfaction >= 0) {
+			
+			performEdgeExchange(instance, firstEdge, secondEdge);
+
+			return true;
+		    }
+		}
+		
+	    }
+	    
+	}
 	
     } else {
+	int tourLength = instance.getTourLength();
 	
+	int bestFirst = 0;
+	int bestSecond = 0;
+	double bestSatisfaction;
 	
+	for (int firstEdge = 0; firstEdge < tourLength - 1; firstEdge++) {
+	    for (int secondEdge = firstEdge + 2; secondEdge < tourLength + 1; secondEdge++) {
+		
+		double deltaSatisfaction;
+		
+		if (isValidEdgeExchange(instance, firstEdge, secondEdge, deltaSatisfaction)) {
+		    
+		    if (deltaSatisfaction > bestSatisfaction || (bestFirst == bestSecond)) {
+			bestSatisfaction = deltaSatisfaction;
+			bestFirst = firstEdge;
+			bestSecond = secondEdge;
+		    }
+		    
+		}
+	    }
+	}
 	
+	if (alwaysApply || bestSatisfaction >= 0) {
+	 
+	    performEdgeExchange(instance, bestFirst, bestSecond);
+	    
+	    return true;
+	}
     }
+    
+    return false;
+}
+
+bool TwoOPT::isValidEdgeExchange(Instance& instance, int firstEdge, int secondEdge, double& deltaSatisfaction)
+{
+
+    
+    
+}
+
+bool TwoOPT::performEdgeExchange(Instance& instance, int firstEdge, int secondEdge)
+{
+
+    
 }

@@ -72,6 +72,11 @@ public :
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);
     
 protected:
+    
+    bool isValidEdgeExchange(Instance& instance, int firstEdge, int secondEdge, double &deltaSatisfaction);
+    
+    bool performEdgeExchange(Instance& instance, int firstEdge, int secondEdge);
+    
 };
 
 

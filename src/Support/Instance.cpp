@@ -209,6 +209,14 @@ set<unsigned> Instance::getUnusedSpotIDs() const
 {
     set<unsigned> unused;
     
+    unsigned spots = problem.getSpots().size();
+    
+    for (unsigned i = 0; i < spots; i++) {
+	if (!usedSpots[i]) {
+	    unused.insert(i);
+	}
+    }
+    
     return unused;
 }
 
