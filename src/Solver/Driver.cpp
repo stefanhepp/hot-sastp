@@ -37,7 +37,7 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 {
     // TODO make the neighborhood for local search configurable
     
-    Neighborhood* nb = new OneOPT(env.getProblem());
+    Neighborhood* nb = new OneOPT(env);
     
     LocalSearch* ls;
     ls = new LocalSearch(env, *nb, init);
@@ -49,10 +49,10 @@ VND* Driver::getVND(Environment& env, const Instance& init)
 {
     VND* vnd = new VND(env, init);
     
-    Neighborhood* one = new OneOPT(env.getProblem());
+    Neighborhood* one = new OneOPT(env);
     vnd->addNeighborhood(*one);
     
-    Neighborhood* two = new TwoOPT(env.getProblem());
+    Neighborhood* two = new TwoOPT(env);
     vnd->addNeighborhood(*two);
 
     return vnd;

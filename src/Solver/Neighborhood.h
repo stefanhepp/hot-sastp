@@ -35,7 +35,7 @@ protected:
 class OneOPT: public Neighborhood
 {
 public :
-    OneOPT (SASTProblem& problem):Neighborhood(problem){};
+    OneOPT (Environment& env):Neighborhood(env){};
     
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);    
     
@@ -46,7 +46,7 @@ protected:
 class TwoOPT: public Neighborhood
 {
 public :
-    TwoOPT (SASTProblem& problem):Neighborhood(problem){};
+    TwoOPT (Environment& env):Neighborhood(env){};
     
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);
     

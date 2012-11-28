@@ -73,7 +73,7 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 	    
 	    // find first unused spot that is near to spot and gives an satisfaction improvement
 	    
-	    for (unsigned newSpot : env.getSpotSearch().findNearestSpots(instance, spot, unusedSpots.size())) {
+	    for (auto& newSpot : env.getSpotSearch().findNearestSpots(instance, spot, unusedSpots.size())) {
 		//TourValues diff = instance.getInsertDeltaValues(newSpot) - instance.getDeleteDeltaValues(oldSpot);
 		
 		//if (instance.isValid(diff)) {
