@@ -5,6 +5,7 @@
 #include "Framework/SASTPSolution.h"
 
 #include <vector>
+#include <set>
 
 struct TourNode {
     unsigned spot;
@@ -86,6 +87,7 @@ class Instance
     TourList tour;
     
     std::vector<bool> usedSpots;
+    std::set<unsigned> unusedSpotIDs;
     
 public:
     Instance(const SASTProblem& problem);
@@ -172,14 +174,23 @@ public:
     bool containsSpot(TourNode node) const { return containsSpot(node.spot); }
     
     /**
+     * @return a set of currently unused spot indices.
+     */
+    const std::set<unsigned> getUnusedSpotIDs() const { return unusedSpotIDs; }
+    
+    /**
      * Check if the current instance satisfies all constraints
      */
     bool isValid() const;
 
+    bool isValid(TourValues delta) const;
+    
+    double getSatisfactionPerTotalTimeRatio(TourValues values);
+    
     TourValues getUpdateDeltaValues(unsigned index, TourNode node);
     TourValues getInsertDeltaValues(unsigned index, TourNode node);
     TourValues getDeleteDeltaValues(unsigned index);
-
+    
     /**
      * Get the deltas for all values for a step from a node to another node, and then doing the action at the 'to' node.
      */

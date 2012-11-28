@@ -11,7 +11,7 @@
 class Neighborhood
 {
 public:
-    Neighborhood(SASTProblem& problem);
+    Neighborhood(Environment& env);
     
     /**
      * Perform a single step, using the given step function.
@@ -27,7 +27,8 @@ public:
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)=0;
     
 protected:
-    SASTProblem& problem;
+    
+    Environment& env;
     
 };
 
@@ -35,8 +36,9 @@ class OneOPT: public Neighborhood
 {
 public :
     OneOPT (SASTProblem& problem):Neighborhood(problem){};
-    //TODO implement the perform
+    
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);    
+    
 protected:
 };
 
@@ -45,8 +47,11 @@ class TwoOPT: public Neighborhood
 {
 public :
     TwoOPT (SASTProblem& problem):Neighborhood(problem){};
-    virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);    
+    
+    virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);
+    
 protected:
 };
+
 
 #endif // NEIGHBORHOOD_H
