@@ -47,6 +47,15 @@ public :
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);    
     
 protected:
+    
+    /**
+     * Perform the search for the first method such that inserting the selected spot would result in a valid tour.
+     * @param instance the instance to calculate the neighbor for
+     * @param where index of the spot in the tour chosen for removal 
+     * @param what index of the spot to be inserted
+     * @param method the index of the randomly chosen method
+     */
+    unsigned findRandomMethod(Instance& instance, unsigned int where, unsigned int what, unsigned method);
 };
 
 /**
