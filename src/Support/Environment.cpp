@@ -98,10 +98,10 @@ const option::Descriptor usage[] = {
         "\tSF_RANDOM = 0,\n\tSF_NEXT = 1,\n \tSF_BEST = 2."
     },
     {
-	MAXSTEPS, 0, "m", "maxSteps", Arg::Numeric, " -m <arg>, \t--maxSteps=<arg> \tMaximal number of steps with no improvement.\n"
+	MAXSTEPS, 0, "m", "maxSteps", Arg::Numeric, "  -m <arg>, \t--maxSteps=<arg> \tMaximal number of steps with no improvement.\n"
     },
     { TIMEOUT, 0, "t", "timeout", Arg::Numeric, "  -t <secs>, \t--timeout=<secs> \tTimeout for search in seconds.\n" },
-    { ALPHA , 0, "", "alpha", Arg::NonEmpty, " , \t--alpha=<arg> \t Alpaha for the construction of Restricted Candidates List. values in [0..1]\n"},
+    { ALPHA , 0, "", "alpha", Arg::NonEmpty, "   \t--alpha=<arg> \tAlpha for the construction of Restricted Candidates List. values in [0..1]\n"},
     {
         UNKNOWN, 0, "", "", Arg::None,
         "\nExamples:\n"
