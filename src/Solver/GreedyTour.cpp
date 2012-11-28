@@ -128,24 +128,83 @@ GreedyRandomHeuristic::GreedyRandomHeuristic (Environment& env) : GreedyTour (en
 
 }
 
-NearestSpotList GreedyRandomHeuristic::getRestrictedCandidates (NearestSpotList candidates)
+GreedyTour::SpotMethodList GreedyTour::getRestrictedCandidates (NearestSpotList candidates)
 {
 
+    
+    GreedyTour::SpotMethodList RCL;
+    double minRatio, maxRatio;
+    maxRatio = -10.0;
+    minRatio = 10000.0;
+    
+    RCL.reserve(candidates.size());
     // Anything to do here?
     //yes we have to select all the spots where cost(spot) < cost_min + alpha*(cost_max -cost_min )
     //where alpha is in [0..1].
     double min_cost, max_cost;
+   
     for( const auto& c : candidates){
-        int tournode = c.first;
+        SpotMethod sm; 
+       
+        unsigned tournode = c.first;
         unsigned spotId = c.second;
-        //find min and max cost 
+        
         Spot& spot = problem.getSpot(spotId);
+       
+        sm.first = spotId;
+       
+        unsigned bestInsert;
+        
+        double deltaTour = GreedyTour::helper.getInsertDeltaTourLength(instance, tournode, spot, env.getConfig().getNodeInsertMode(), bestInsert);
+                
+        // check all methods of this spot
+        unsigned methodId = 0;
+        for (const auto& m : spot.getMethods()) {
+            
+            double deltaTime;
+            double ratio = helper.calcInsertSatisfactionTimeRatio(instance.getRemainingStamina(), *m, deltaTour, deltaTime);
+            
+            // check if we have a new best value, but check for time constraints ..
+            if (instance.getTotalTime() + deltaTime <= problem.getMaxTime() && 
+                ratio > maxRatio) 
+            {
+                // found a new best candidate
+                maxRatio = ratio;
+            } else 
+                if( ratio < minRatio) 
+                    minRatio = ratio;
+            sm.second = methodId;
+            methodId++;
+            
+            RCL.push_back(sm);
+        }
+        
     }
     
-    return candidates;
+    
+    int eraseMe = 0;
+    for ( const auto& ite : RCL){
+        Spot& spot = problem.getSpot(ite.first);
+        Method m = spot.getMethod(ite.second);
+        
+        unsigned bestInsert;
+        
+        double deltaTour = GreedyTour::helper.getInsertDeltaTourLength(instance, candidates[0].first, spot, env.getConfig().getNodeInsertMode(), bestInsert);
+        
+        double deltaTime;
+        double ratio = GreedyTour::helper.calcInsertSatisfactionTimeRatio(instance.getRemainingStamina(), m, deltaTour, deltaTime);
+        double st = minRatio +(maxRatio-minRatio);
+        if( ratio > st) 
+             RCL.erase(RCL.begin()+eraseMe);
+        
+        eraseMe++;
+    } 
+    
+    
+    return RCL;
 
 }
-
+/*
 TourNode GreedyTour::selectRandomTourNode (NearestSpotList nearest, unsigned int& insertAt, Config::NodeInsertMode insertMode)
 {
     TourNode _random(-1,0);
@@ -158,6 +217,7 @@ TourNode GreedyTour::selectRandomTourNode (NearestSpotList nearest, unsigned int
     unsigned tourNode = nearest[randomChoice].first;
     unsigned spotId = nearest[randomChoice].second;
     
+    getRestrictedCandidates(nearest);
     //get the spot from the problem
     const Spot& randomSpot = problem.getSpot(spotId);
     
@@ -170,7 +230,25 @@ TourNode GreedyTour::selectRandomTourNode (NearestSpotList nearest, unsigned int
  
     return _random;
 }
-
+*/
+TourNode GreedyTour::selectRandomTourNode(SpotMethodList restricted)
+{
+    TourNode _random(-1,0);
+    
+    unsigned maxIndexNode = restricted.size();
+    unsigned randomChoice;
+    if (maxIndexNode != 0 ){
+        randomChoice = rand() % maxIndexNode;
+    
+    
+    _random.method = restricted[randomChoice].second;
+    _random.spot = restricted[randomChoice].first;
+    
+    return _random;}
+    else {
+        return _random;
+    }
+}
 
 unsigned int GreedyRandomHeuristic::insertSpot()
 {
@@ -180,12 +258,11 @@ unsigned int GreedyRandomHeuristic::insertSpot()
     //in our GRASP settings this is the candidates list 
     NearestSpotList candidateList = spotsearch.findNearestSpots(instance, lastNode, maxk);
     //compute the restricted candidates list 
-    NearestSpotList restrictedCandidates = getRestrictedCandidates(candidateList);
+    SpotMethodList restrictedCandidates = getRestrictedCandidates(candidateList);
     
     //pick a randomly from the restrictedCandidates one spot, 
     
-    unsigned insertAt;
-    TourNode random = selectRandomTourNode(restrictedCandidates, insertAt);
+    TourNode random = selectRandomTourNode(restrictedCandidates);
     return instance.addNode(random);
 }
 
