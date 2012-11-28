@@ -1,6 +1,7 @@
 #include "GreedyTour.h"
 
 #include <stdlib.h>
+#include <iostream>
 
 #include "Framework/SASTProblem.h"
 #include "Support/Instance.h"
@@ -182,21 +183,28 @@ GreedyTour::SpotMethodList GreedyTour::getRestrictedCandidates (NearestSpotList 
     }
     
     
-    int eraseMe = 0;
+   int eraseMe = 0;
+   SpotMethodList CleanRCL;
+   CleanRCL.reserve(RCL.size()/2);
+   
+   
     for ( const auto& ite : RCL){
         Spot& spot = problem.getSpot(ite.first);
         Method m = spot.getMethod(ite.second);
         
-        unsigned bestInsert;
+        SpotMethod sm ;
+        sm.first = ite.first;
+        sm.second = sm.second;
         
+        unsigned bestInsert;
         double deltaTour = GreedyTour::helper.getInsertDeltaTourLength(instance, candidates[0].first, spot, env.getConfig().getNodeInsertMode(), bestInsert);
         
         double deltaTime;
         double ratio = GreedyTour::helper.calcInsertSatisfactionTimeRatio(instance.getRemainingStamina(), m, deltaTour, deltaTime);
-        double st = minRatio +(maxRatio-minRatio);
-        if( ratio > st) 
-             RCL.erase(RCL.begin()+eraseMe);
-        
+        double st = minRatio + 0.5 * (maxRatio-minRatio);
+        if( ratio <= st)
+            CleanRCL.push_back(sm);
+              
         eraseMe++;
     } 
     
@@ -204,7 +212,7 @@ GreedyTour::SpotMethodList GreedyTour::getRestrictedCandidates (NearestSpotList 
     return RCL;
 
 }
-/*
+
 TourNode GreedyTour::selectRandomTourNode (NearestSpotList nearest, unsigned int& insertAt, Config::NodeInsertMode insertMode)
 {
     TourNode _random(-1,0);
@@ -230,7 +238,7 @@ TourNode GreedyTour::selectRandomTourNode (NearestSpotList nearest, unsigned int
  
     return _random;
 }
-*/
+
 TourNode GreedyTour::selectRandomTourNode(SpotMethodList restricted)
 {
     TourNode _random(-1,0);

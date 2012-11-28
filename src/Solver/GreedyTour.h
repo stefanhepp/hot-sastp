@@ -45,7 +45,7 @@ protected:
     
     SpotMethodList getRestrictedCandidates(NearestSpotList candidates);
     TourNode selectBestTourNode(NearestSpotList nearest, unsigned& insertAt, Config::NodeInsertMode insertMode = Config::NIM_ALWAYS_AFTER);
-  //  TourNode selectRandomTourNode(NearestSpotList nearest, unsigned& insertAt, Config::NodeInsertMode insertMode = Config::NIM_ALWAYS_AFTER);
+    TourNode selectRandomTourNode(NearestSpotList nearest, unsigned& insertAt, Config::NodeInsertMode insertMode = Config::NIM_ALWAYS_AFTER);
     TourNode selectRandomTourNode(SpotMethodList restricted);
 };
 
