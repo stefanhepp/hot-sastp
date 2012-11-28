@@ -131,14 +131,19 @@ void Driver::solve()
         break;
     }
     case Config::AT_GVNS: {
-        GreedyTour* greedy= getGreedyTour(env);
-        
-        greedy->run();
-        
+
+	VND* vnd = getVND(env, env.getEmptyInstance());
 	
+        GVNS gvns(env, *vnd, env.getEmptyInstance());
+	
+	// TODO add GVNS neighborhoods (different from VND neighborhoods!)
+	// gvns.addNeighborhood( new ..  );
+	
+
 	env.setPrintSteps(true);
+	gvns.run();
         
-        solution = greedy->getInstance().createSolution();
+        solution = gvns.getInstance().createSolution();
         break;
     }
   }  

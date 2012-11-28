@@ -5,17 +5,23 @@
 #include "Support/Instance.h"
 #include "Solver/AbstractSearch.h"
 #include "Solver/Neighborhood.h"
+#include "Solver/VND.h"
 
 #include <vector>
 
 class GVNS : public AbstractSearch
 {
+    VND& vnd;
     Instance instance;
     
+    std::vector<Neighborhood*> neighborhoods;
+    
 public:
-    GVNS(Environment& env, const Instance& init);
+    GVNS(Environment& env, VND& vnd, const Instance& init);
     
     virtual Instance& getInstance() { return instance; };
+    
+    void addNeighborhood(Neighborhood& nb) { neighborhoods.push_back(&nb); }
     
     virtual void reset(const Instance& init);
     
