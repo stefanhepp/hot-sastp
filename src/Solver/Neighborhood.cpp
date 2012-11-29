@@ -138,31 +138,66 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 	    
 	    for (auto& newSpot : env.getSpotSearch().findNearestSpots(instance, spot, unusedSpots.size())) {
                 
-             /*  
-                TourNode newNode(newSpot.first, m);
-		TourValues diff = instance.getInsertDeltaValues(spot,newNode) - instance.getDeleteDeltaValues(spot);
+              for( unsigned m = 0 ; m < env.getProblem().getSpot(newSpot.first).getMethods().size(); m++) {
+                 
+                  TourNode newNode(newSpot.first, m);
+                  
+                  TourValues diff = instance.getInsertDeltaValues(spot,newNode) - instance.getDeleteDeltaValues(spot);
 		
-		if (instance.isValid(diff)) {
+                  if (instance.isValid(diff)) {
 		    
 		     if (!alwaysApply && diff.satisfaction < 0) return false;
 		    
                      instance.deleteNode(spot);
-                     instance.insertNode(spot, newSpot);
+                     instance.insertNode(spot, newSpot.first, m);
                      return true;
 		    // remove old spot from tour
 		    // insert new spot + method into tour
 		    // return true
 		    
-		}*/
+		}
+              }
 	    }
 	    
 	}
 	
-	
+	return false;
     } else {
+        //set of unused spotID's 
+	set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
 	
-	for (auto& node : instance.getTour()) {
+        double diffSatisfaction = 0; 
+        unsigned maxWhatToRemove = 0;
+        unsigned maxWhatToInsert = 0;
+        
+        //for each node in the tour
+        for (auto& node : instance.getTour()) {
 	    
+            instance.getSpot(node);
+            NearestSpotList nearest = env.getSpotSearch().findNearestSpots(instance, node.spot, unusedSpots.size());
+            //check for all unused spots for the one which gives the best improvement
+            for (auto& nearSpot : nearest){
+                int tournode = nearSpot.first;
+                unsigned spotId = nearSpot.second;
+                unsigned m = 0;
+                const Spot& nearestspot = env.getProblem().getSpot(spotId);
+                for( auto& meth : nearestspot.getMethods()){
+                    
+                    TourNode n(spotId, m);
+                    TourValues diff = instance.getInsertDeltaValues( ,n) - instance.getDeleteDeltaValues(node.spot);
+                 /*   if( instance.isValid(diff) ) 
+                    {
+                        //just to test how bad we crash 
+                       instance.deleteNode(node.spot);
+                       instance.insertNode(node.spot, n.spot, m);
+                        return true;
+                        
+                    }*/
+                    m++;
+                }
+            }
+            
+            //keep track of the maximal improvement 
 	    // find first unused spot that is near to spot and gives an satisfaction improvement
 	    
 	    //for (unsigned newSpot : env.getSpotSearch().findNearestSpots(instance, spot, unusedSpots.size())) {
@@ -179,10 +214,13 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 	// if satisfaction did not increase and we do not want worse solutions, continue random search
 	// if (!alwaysApply && diff.satisfaction < 0) return false;
 	
-	// remove old spot from tour
-	// insert new spot + method into tour
+         //remove the spot from the tour, and introduce the new one with the method 
 	
 	// return false if no spot with an improvement was found
+	if(diffSatisfaction== 0 || maxWhatToInsert == 0 || maxWhatToRemove == 0)
+            return false;
+        else 
+            return true;
     }
 }
 

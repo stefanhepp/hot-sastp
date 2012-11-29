@@ -91,7 +91,9 @@ const option::Descriptor usage[] = {
     { DOT, 0, "d", "dot", Arg::None, "  -d, \t--dot \tGenerate dot file from solution. " },
     { VERBOSE, 0, "v", "verbose", Arg::None, "  -v, \t--verbose \tBe verbosive."},
     { PRINT_CSV, 0, "c", "csv", Arg::None, "  -c, \t--csv \tPrint result as CSV output." },
+
     { PRINT_ALL_STEPS, 0, "p", "allsteps", Arg::None, "  -p, \t--allsteps \tPrint result of all intermediate steps." },
+
     {
         INSERTMODE, 0, "i", "inMode", Arg::Numeric, "  -i <arg>, \t--inMode=<arg> \tNode insertion"
         "mode can take the following options:\n "
