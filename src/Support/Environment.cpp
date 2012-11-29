@@ -15,6 +15,7 @@ Config::Config()
 {
     // Set some default values
     _algorithm = AT_GREEDY_IN;
+    _neighborhood = NT_ONE_OPT;
     _maxKNearestSpots = 5;
     _nodeInsertMode = NIM_SHORTEST_PATH;
     _stepFunction = SF_RANDOM;
@@ -68,7 +69,7 @@ struct Arg: public option::Arg {
     }
 };
 
-enum optionIndex {UNKNOWN, HELP, ALGORITHM, KNEAREST, VERBOSE, DOT, PRINT_CSV, PRINT_ALL_STEPS, TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA};
+enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, KNEAREST, VERBOSE, DOT, PRINT_CSV, PRINT_ALL_STEPS, TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA};
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -77,8 +78,11 @@ const option::Descriptor usage[] = {
     { HELP, 0, "h", "help", Arg::None, "  \t--help  \tPrint usage and exit." },
     {
         ALGORITHM , 0, "a", "algorithm", Arg::Numeric, "  -a <arg>, \t--algorithm=<arg>"
-        "  \tTakes an integer argument.\n \tOptions:\n \tAT_GREEDY_IN = 0 ,\n \tAT_GREEDY_NN =1 ,\n \tAT_LOCALSEARCH = 2"
+        "  \tTakes an integer argument.\n \tOptions:\n \tAT_GREEDY_IN = 0 ,\n \tAT_GREEDY_NN = 1 ,\n \tAT_LOCALSEARCH = 2"
         ",\n \tAT_VND = 3, \n \tAT_GRASP = 4, \n \tAT_GVNS = 5. \n"
+    },
+    { NEIGHBORHOOD, 0, "n", "neighborhood", Arg::Numeric, "  -n <arg>, \t--neighborhood=<arg>"
+        " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0 ,\n \tNT_TWO_OPT = 1. \n" 
     },
     {
         KNEAREST, 0, "k", "knear", Arg::Numeric, "  -k <arg>, \t--knear=<arg> \tMust have as an"
@@ -183,6 +187,20 @@ int Config::parseArguments (int argc, char* argv[])
                     exit (2);
                 }
                 break;
+	    case NEIGHBORHOOD:
+		assert(opt.arg);
+		switch (atoi(opt.arg)) {
+		    case NeighborhoodTag::NT_ONE_OPT:
+			_neighborhood = NT_ONE_OPT;
+			break;
+		    case NeighborhoodTag::NT_TWO_OPT:
+			_neighborhood = NT_TWO_OPT;
+			break;
+		    default:
+			printHelp();
+			exit(2);
+		}
+		break;	    
             case DOT:
                 assert (!opt.arg);
                 _writeDot = true;

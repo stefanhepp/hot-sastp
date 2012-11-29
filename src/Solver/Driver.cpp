@@ -1,6 +1,5 @@
 #include "Driver.h"
 
-
 #include <iostream>
 
 using namespace std;
@@ -37,7 +36,15 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 {
     // TODO make the neighborhood for local search configurable
     
-    Neighborhood* nb = new OneOPT(env);
+    Neighborhood* nb;
+    switch (env.getConfig().getNeighborhood()) {
+	case Config::NT_ONE_OPT:
+	    nb = new OneOPT(env);
+	    break;
+	case Config::NT_TWO_OPT:
+	    nb = new TwoOPT(env);
+	    break;
+    }
     
     LocalSearch* ls;
     ls = new LocalSearch(env, *nb, init);

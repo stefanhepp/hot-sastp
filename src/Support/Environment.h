@@ -53,6 +53,8 @@ public:
     int parseArguments(int argc, char* argv[]);
     AlgorithmTag getAlgorithm() const {return _algorithm;}
   
+    NeighborhoodTag getNeighborhood() const { return _neighborhood; }
+  
     NodeInsertMode getNodeInsertMode() const { return _nodeInsertMode; }
   
     StepFunction getStepFunction() const { return _stepFunction; }
@@ -87,6 +89,7 @@ private:
     std::string _outputFile;
     
     AlgorithmTag _algorithm;       
+    NeighborhoodTag _neighborhood;
     NodeInsertMode _nodeInsertMode;
     StepFunction _stepFunction;
     
