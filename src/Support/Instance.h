@@ -182,6 +182,11 @@ public:
     
     void deleteNode(unsigned index);
     
+    /**
+     * Perform a crossover of edges (firstEdge-1,firstEdge) and (secondEdge-1,secondEdge)
+     */
+    void crossOverEdges(unsigned firstEdge, unsigned secondEdge);
+    
     bool containsSpot(unsigned spotId) const;
     bool containsSpot(TourNode node) const { return containsSpot(node.spot); }
     
@@ -202,6 +207,8 @@ public:
     TourValues getUpdateDeltaValues(unsigned index, TourNode node);
     TourValues getInsertDeltaValues(unsigned index, TourNode node);
     TourValues getDeleteDeltaValues(unsigned index);
+    
+    TourValues getCrossOverDeltaValues(unsigned firstEdge, unsigned secondEdge);
     
     /**
      * Get the deltas for all values for a step from a node to another node, and then doing the action at the 'to' node.

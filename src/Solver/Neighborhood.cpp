@@ -272,25 +272,13 @@ bool TwoOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 
 bool TwoOPT::isValidEdgeExchange(Instance& instance, int firstEdge, int secondEdge, double& deltaSatisfaction)
 {
-    const Spot& f1 = instance.getSpot(firstEdge - 1);
-    const Spot& f2 = instance.getSpot(firstEdge);
-    const Spot& s2 = instance.getSpot(secondEdge - 1);
-    const Spot& s1 = instance.getSpot(secondEdge);
+    TourValues delta = instance.getCrossOverDeltaValues(firstEdge, secondEdge);
+    deltaSatisfaction = delta.satisfaction;
     
-    const SASTProblem& problem = instance.getProblem();
-    
-    double diff = problem.getDistance(f1, s2) + problem.getDistance(s1, f2) 
-                - problem.getDistance(f1, f2) - problem.getDistance(s1, s2);
-
-    double deltaTime = diff / problem.getVelocity();
-    deltaSatisfaction = -diff * problem.getAlpha();
-    
-    
-    return instance.getTotalTime() + deltaTime < problem.getMaxTime();
+    return instance.getTotalTime() + delta.tourTime < instance.getProblem().getMaxTime();
 }
 
-bool TwoOPT::performEdgeExchange(Instance& instance, int firstEdge, int secondEdge)
+void TwoOPT::performEdgeExchange(Instance& instance, int firstEdge, int secondEdge)
 {
-
-    
+    instance.crossOverEdges(firstEdge, secondEdge);
 }

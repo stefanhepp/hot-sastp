@@ -75,7 +75,7 @@ protected:
     
     bool isValidEdgeExchange(Instance& instance, int firstEdge, int secondEdge, double &deltaSatisfaction);
     
-    bool performEdgeExchange(Instance& instance, int firstEdge, int secondEdge);
+    void performEdgeExchange(Instance& instance, int firstEdge, int secondEdge);
     
 };
 

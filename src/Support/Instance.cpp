@@ -101,6 +101,29 @@ void Instance::deleteNode(unsigned int index)
     tour.erase(tour.begin() + index);
 }
 
+void Instance::crossOverEdges(unsigned int firstEdge, unsigned int secondEdge)
+{
+    addTourValues( getCrossOverDeltaValues(firstEdge, secondEdge) );
+    
+    if (firstEdge > secondEdge) {
+	unsigned tmp = firstEdge;
+	firstEdge = secondEdge;
+	secondEdge = tmp;
+    }
+    
+    unsigned steps = (secondEdge - firstEdge) / 2;
+    
+    for ( int pos = firstEdge; pos < steps; pos++) {
+	unsigned p1 = firstEdge + pos;
+	unsigned p2 = secondEdge - pos - 1;
+	
+	TourNode tmp = tour[p1];
+	tour[p1] = tour[p2];
+	tour[p2] = tmp;
+    }
+}
+
+
 bool Instance::containsSpot ( unsigned int spotId ) const 
 {
     return usedSpots[spotId];
@@ -180,6 +203,22 @@ TourValues Instance::getDeleteDeltaValues(unsigned int index)
     values -= oldSpot.getMethod(node.method);
     
     return values;
+}
+
+TourValues Instance::getCrossOverDeltaValues(unsigned int firstEdge, unsigned int secondEdge)
+{
+    const Spot& f1 = getSpot(firstEdge - 1);
+    const Spot& f2 = getSpot(firstEdge);
+    const Spot& s2 = getSpot(secondEdge - 1);
+    const Spot& s1 = getSpot(secondEdge);
+    
+    double diff = problem.getDistance(f1, s2) + problem.getDistance(s1, f2) 
+                - problem.getDistance(f1, f2) - problem.getDistance(s1, s2);
+
+    double deltaTime = diff / problem.getVelocity();
+    double deltaSatisfaction = -diff * problem.getAlpha();
+
+    return TourValues(deltaTime, deltaSatisfaction, 0.0);
 }
 
 TourValues Instance::getStepValues(const TourNode& from, const TourNode& to)
