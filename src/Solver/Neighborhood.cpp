@@ -195,7 +195,17 @@ bool TwoOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 	int firstEdge = rand() % (instance.getTourLength() - 1);
 	int secondEdge = rand() % (instance.getTourLength() - firstEdge) + firstEdge + 1;
 	
+	double deltaSatisfaction;
+	if (!isValidEdgeExchange(instance, firstEdge, secondEdge, deltaSatisfaction)) {
+	    // TODO should we continue a random search to find a valid solution?
+	    // but how do we keep track of invalid solutions efficiently??
+	    return false;
+	}
 	
+	if (alwaysApply || deltaSatisfaction >= 0) {
+	    performEdgeExchange(instance, firstEdge, secondEdge);
+	    return true;
+	}
 	
     } else if (stepFunction == Config::SF_NEXT) {
 	
