@@ -62,6 +62,16 @@ protected:
      * Insert the whatToInsert in the tour 
      */
     void performReplaceNode(Instance& instance, unsigned whereToInsert, unsigned whatToInsert, unsigned method);
+    
+    /**
+     * returns the diff and initializes method with the appropriate method and nodeIndex with the replacement 
+     * node index.
+     */
+    bool performNextStep(Instance& instance, bool alwaysApply);
+    bool performRandomStep(Instance& instance, bool alwaysApply);
+    bool performMaxStep(Instance& instance, bool alwaysApply);
+    
+    
 };
 
 /**

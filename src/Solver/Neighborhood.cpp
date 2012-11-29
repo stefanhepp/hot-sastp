@@ -52,12 +52,60 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 {
     if (stepFunction == Config::SF_RANDOM) {
 
-        set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
+        return performRandomStep(instance,alwaysApply);
+
+    } else if (stepFunction == Config::SF_NEXT) {
+        
+        return performNextStep(instance, alwaysApply);
+    
+    } else {
+        
+        return performMaxStep(instance, alwaysApply);
+    }
+}
+
+bool OneOPT::performNextStep(Instance& instance, bool alwaysApply){
+ 
+    set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
+    
+    //for each node in the tour
+    unsigned index = 0;
+    for (auto & node : instance.getTour()) {
+
+        NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, index, unusedSpots.size());
+        //check for all unused spots for the one which gives the best improvement
+        for (auto & nearSpot : nearest) {
+                
+            unsigned spotId = nearSpot.second;
+            const Spot& nearestspot = env.getProblem().getSpot(spotId);
+        
+            unsigned m = 0;
+            for (auto & metod : nearestspot.getMethods()) {
+            
+                TourNode n (spotId, m);
+                TourValues diff = instance.getInsertDeltaValues (index , n) - instance.getDeleteDeltaValues (index);
+                if (instance.isValid (diff) && diff.satisfaction > 0) {
+                   // if we found some improvement, make the node exchange and return 
+                    performReplaceNode(instance,index,n.spot,m);
+                    return true;
+                }
+                ++m;
+            }
+        }
+    ++index;
+    }
+   
+    return false;
+        
+    
+}
+
+bool OneOPT::performRandomStep(Instance& instance, bool alwaysApply){
+    set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
 
         unsigned spotWhereToInsert;
         // repeat
         while (unusedSpots.size() >= 1) {
-            //std::cout<< unusedSpots.size()<<std::endl;
             // pick random spot where to insert
             spotWhereToInsert = rand() % instance.getTourLength();
 
@@ -65,7 +113,6 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
             unsigned unusedRandomSpot = rand() % unusedSpots.size();
             set<unsigned>::iterator it (unusedSpots.begin());
             advance (it, unusedRandomSpot);
-            //std::cout<<*it<<endl;
             // method = find random method of spot
             unsigned m = rand() % instance.getProblem().getSpot (*it).getMethods().size();
             // check if solution is feasible
@@ -110,165 +157,139 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
         // repeat select random spot until unusedSpots.size()
 
         return false;
-
-    } else if (stepFunction == Config::SF_NEXT) {
-
-        set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
-
+    
+}
+bool OneOPT::performMaxStep(Instance& instance, bool alwaysApply){
+    //set of unused spotID's
+    set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
+    
+    double maxSatisfaction = 0;
+    unsigned maxWhatToRemove = 1;
+    unsigned maxWhatToInsert = 1;
+    unsigned method = 0;
+    //for each node in the tour
+    unsigned index = 0;
     for (auto & node : instance.getTour()) {
 
-        NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, node.spot, unusedSpots.size());
-            //check for all unused spots for the first one which gives some improvement
+        NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, index, unusedSpots.size());
+        //check for all unused spots for the one which gives the best improvement
         for (auto & nearSpot : nearest) {
-
-                unsigned spotId = nearSpot.second;
-                //keeps track of the methods which were already tested
-                unsigned m = 0;
-                const Spot& nearestspot = env.getProblem().getSpot (spotId);
-                for (auto & meth : nearestspot.getMethods()) {
-                    TourNode n (spotId, m);
-                    TourValues diff = instance.getInsertDeltaValues (instance.getNodeIndex (node.spot) , n) - instance.getDeleteDeltaValues (instance.getNodeIndex (node.spot));
-                    if (instance.isValid (diff)) {
-                        performReplaceNode(instance,node.spot,nearSpot.second,m);
-                        return true;
-                    }
-                    m++;
-                }
-            }
-        }
-        return false;
+                
+            unsigned spotId = nearSpot.second;
+            unsigned m = 0;
+            const Spot& nearestspot = env.getProblem().getSpot(spotId);
         
-    } else {
-        //set of unused spotID's
-        set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
-
-
-        double maxSatisfaction = 0;
-        unsigned maxWhatToRemove = 1;
-        unsigned maxWhatToInsert = 1;
-        unsigned method = 0;
-        //for each node in the tour
-    for (auto & node : instance.getTour()) {
-
-            NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, node.spot, unusedSpots.size());
-            //check for all unused spots for the one which gives the best improvement
-        for (auto & nearSpot : nearest) {
-               
-                unsigned spotId = nearSpot.second;
-                unsigned m = 0;
-                const Spot& nearestspot = env.getProblem().getSpot (spotId);
             for (auto & meth : nearestspot.getMethods()) {
-                    TourNode n (spotId, m);
-                    TourValues diff = instance.getInsertDeltaValues (instance.getNodeIndex (node.spot) , n) - instance.getDeleteDeltaValues (instance.getNodeIndex (node.spot));
-                    if (instance.isValid (diff) && diff.satisfaction > maxSatisfaction) {
-                        //keep track of the maximal improvement
-                        maxSatisfaction = diff.satisfaction;
-                        maxWhatToInsert = n.spot;
-                        maxWhatToRemove = node.spot;
-                        method = m;
+            
+                TourNode n (spotId, m);
+                TourValues diff = instance.getInsertDeltaValues (index , n) - instance.getDeleteDeltaValues (index);
+                if (instance.isValid (diff) && diff.satisfaction > maxSatisfaction) {
+                    //keep track of the maximal improvement
+                    maxSatisfaction = diff.satisfaction;
+                    maxWhatToInsert = n.spot;
+                    maxWhatToRemove = index;
+                    method = m;
 
-                    }
-                    m++;
                 }
+                ++m;
             }
-
         }
+    ++index;
+    }
 
-        // return false if no spot with an improvement was found
-        if (maxSatisfaction == 0 || maxWhatToInsert == 0 || maxWhatToRemove == 0)
-            return false;
-        else {
-            //some improvement was found
-            //remove the spot from the tour, and introduce the new one with the method
-            performReplaceNode(instance,maxWhatToRemove,maxWhatToInsert,method);
-            return true;
-
-        }
+    // return false if no spot with an improvement was found
+    if (maxSatisfaction == 0 || maxWhatToInsert == 0 || maxWhatToRemove == 0)
+        return false;
+    else {
+        //some improvement was found
+        //remove the spot from the tour, and introduce the new one with the method
+        performReplaceNode(instance,maxWhatToRemove,maxWhatToInsert,method);
+        return true;
     }
 }
 
 bool TwoOPT::performStep (Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
 {
-    if ( instance.getTourLength() < 3 ) return false;
-    
-    if (stepFunction == Config::SF_RANDOM) {
-	
-	int firstEdge = rand() % (instance.getTourLength() - 1);
-	int secondEdge = rand() % (instance.getTourLength() - firstEdge) + firstEdge + 1;
-	
-	double deltaSatisfaction;
-	if (!isValidEdgeExchange(instance, firstEdge, secondEdge, deltaSatisfaction)) {
-	    // TODO should we continue a random search to find a valid solution?
-	    // but how do we keep track of invalid solutions efficiently??
-	    return false;
-	}
-	
-	if (alwaysApply || deltaSatisfaction >= 0) {
-	    performEdgeExchange(instance, firstEdge, secondEdge);
-	    return true;
-	}
-	
-    } else if (stepFunction == Config::SF_NEXT) {
-	
-	int tourLength = instance.getTourLength();
-	int maxDist = (tourLength + 1) / 2;
-	
-	// iterate first over the first edge, then the *distance* between the edges
-	for (int distance = 2; distance <= maxDist; distance++) {
-	    
-	    unsigned numEdges = (tourLength % 2 && distance == maxDist) ? (tourLength + 1) / 2 : tourLength + 1;
-	    
-	    for (int firstEdge = 0; firstEdge < tourLength; firstEdge++) {
-		int secondEdge = (firstEdge + distance) % (tourLength + 1);
-		
-		double deltaSatisfaction;
-		if (isValidEdgeExchange(instance, firstEdge, secondEdge, deltaSatisfaction)) {
-		    
-		    if (alwaysApply || deltaSatisfaction >= 0) {
-			
-			performEdgeExchange(instance, firstEdge, secondEdge);
+    if (instance.getTourLength() < 3) return false;
 
-			return true;
-		    }
-		}
-		
-	    }
-	    
-	}
-	
+    if (stepFunction == Config::SF_RANDOM) {
+
+        int firstEdge = rand() % (instance.getTourLength() - 1);
+        int secondEdge = rand() % (instance.getTourLength() - firstEdge) + firstEdge + 1;
+
+        double deltaSatisfaction;
+        if (!isValidEdgeExchange (instance, firstEdge, secondEdge, deltaSatisfaction)) {
+            // TODO should we continue a random search to find a valid solution?
+            // but how do we keep track of invalid solutions efficiently??
+            return false;
+        }
+
+        if (alwaysApply || deltaSatisfaction >= 0) {
+            performEdgeExchange (instance, firstEdge, secondEdge);
+            return true;
+        }
+
+    } else if (stepFunction == Config::SF_NEXT) {
+
+        int tourLength = instance.getTourLength();
+        int maxDist = (tourLength + 1) / 2;
+
+        // iterate first over the first edge, then the *distance* between the edges
+        for (int distance = 2; distance <= maxDist; distance++) {
+
+            unsigned numEdges = (tourLength % 2 && distance == maxDist) ? (tourLength + 1) / 2 : tourLength + 1;
+
+            for (int firstEdge = 0; firstEdge < tourLength; firstEdge++) {
+                int secondEdge = (firstEdge + distance) % (tourLength + 1);
+
+                double deltaSatisfaction;
+                if (isValidEdgeExchange (instance, firstEdge, secondEdge, deltaSatisfaction)) {
+
+                    if (alwaysApply || deltaSatisfaction >= 0) {
+
+                        performEdgeExchange (instance, firstEdge, secondEdge);
+
+                        return true;
+                    }
+                }
+
+            }
+
+        }
+
     } else {
-	int tourLength = instance.getTourLength();
-	
-	int bestFirst = 0;
-	int bestSecond = 0;
-	double bestSatisfaction;
-	
-	for (int firstEdge = 0; firstEdge < tourLength - 1; firstEdge++) {
-	    unsigned lastEdge = (firstEdge == 0) ? tourLength : tourLength + 1;
-	    for (int secondEdge = firstEdge + 2; secondEdge < lastEdge; secondEdge++) {
-		
-		double deltaSatisfaction;
-		
-		if (isValidEdgeExchange(instance, firstEdge, secondEdge, deltaSatisfaction)) {
-		    
-		    if (deltaSatisfaction > bestSatisfaction || (bestFirst == bestSecond)) {
-			bestSatisfaction = deltaSatisfaction;
-			bestFirst = firstEdge;
-			bestSecond = secondEdge;
-		    }
-		    
-		}
-	    }
-	}
-	
-	if (alwaysApply || bestSatisfaction >= 0) {
-	    
-	    performEdgeExchange(instance, bestFirst, bestSecond);
-	    
-	    return true;
-	}
+        int tourLength = instance.getTourLength();
+
+        int bestFirst = 0;
+        int bestSecond = 0;
+        double bestSatisfaction;
+
+        for (int firstEdge = 0; firstEdge < tourLength - 1; firstEdge++) {
+            unsigned lastEdge = (firstEdge == 0) ? tourLength : tourLength + 1;
+            for (int secondEdge = firstEdge + 2; secondEdge < lastEdge; secondEdge++) {
+
+                double deltaSatisfaction;
+
+                if (isValidEdgeExchange (instance, firstEdge, secondEdge, deltaSatisfaction)) {
+
+                    if (deltaSatisfaction > bestSatisfaction || (bestFirst == bestSecond)) {
+                        bestSatisfaction = deltaSatisfaction;
+                        bestFirst = firstEdge;
+                        bestSecond = secondEdge;
+                    }
+
+                }
+            }
+        }
+
+        if (alwaysApply || bestSatisfaction >= 0) {
+
+            performEdgeExchange (instance, bestFirst, bestSecond);
+
+            return true;
+        }
     }
-    
+
     return false;
 }
 
