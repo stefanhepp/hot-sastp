@@ -56,6 +56,12 @@ protected:
      * @param method the index of the randomly chosen method
      */
     unsigned findRandomMethod(Instance& instance, unsigned int where, unsigned int what, unsigned method);
+    
+    /**
+     * Perform the deletion of the node whereToInsert from the tour
+     * Insert the whatToInsert in the tour 
+     */
+    void performReplaceNode(Instance& instance, unsigned whereToInsert, unsigned whatToInsert, unsigned method);
 };
 
 /**

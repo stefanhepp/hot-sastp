@@ -41,193 +41,149 @@ unsigned OneOPT::findRandomMethod (Instance& instance, unsigned where, unsigned 
     return method;
 }
 
+void OneOPT::performReplaceNode (Instance& instance, unsigned int whereToInsert, unsigned whatToInsert, unsigned int method)
+{
+    instance.deleteNode (whereToInsert);
+    instance.insertNode (whereToInsert, whatToInsert, method);
+}
+
+
 bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
 {
     if (stepFunction == Config::SF_RANDOM) {
-	
-	set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
-	
+
+        set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
+
         unsigned spotWhereToInsert;
-	// repeat
-	while(unusedSpots.size() >= 1){
-             //std::cout<< unusedSpots.size()<<std::endl;
-            // pick random spot where to insert 
+        // repeat
+        while (unusedSpots.size() >= 1) {
+            //std::cout<< unusedSpots.size()<<std::endl;
+            // pick random spot where to insert
             spotWhereToInsert = rand() % instance.getTourLength();
-           
+
             // spot = find random unused spot
             unsigned unusedRandomSpot = rand() % unusedSpots.size();
-            set<unsigned>::iterator it(unusedSpots.begin());
-            advance(it, unusedRandomSpot);
+            set<unsigned>::iterator it (unusedSpots.begin());
+            advance (it, unusedRandomSpot);
             //std::cout<<*it<<endl;
             // method = find random method of spot
-            unsigned m = rand() % instance.getProblem().getSpot(*it).getMethods().size();
+            unsigned m = rand() % instance.getProblem().getSpot (*it).getMethods().size();
             // check if solution is feasible
-            
-            TourNode newNode(*it,m);
-            
-            TourValues diff = instance.getInsertDeltaValues(spotWhereToInsert,newNode);
-            diff -= instance.getDeleteDeltaValues(spotWhereToInsert);
-                       
-            if (instance.isValid(diff)) {
-	   
-                if((diff.satisfaction) > 0.0){
-                //this means we incereased the total satisfaction   
-                // remove old spot from tour
-                // insert new spot + method into tour
-                 instance.deleteNode(spotWhereToInsert);
-                 instance.insertNode(spotWhereToInsert,*it, m);
-                    
-                 return true;
 
-                } else     
+            TourNode newNode (*it, m);
+
+            TourValues diff = instance.getInsertDeltaValues (spotWhereToInsert, newNode);
+            diff -= instance.getDeleteDeltaValues (spotWhereToInsert);
+
+            if (instance.isValid (diff)) {
+
+                if ( (diff.satisfaction) > 0.0) {
+                    //this means we incereased the total satisfaction
+                    // remove old spot from tour
+                    // insert new spot + method into tour
+                    performReplaceNode(instance,spotWhereToInsert,*it, m);
+                    return true;
+
+                } else
                     // if satisfaction did not increase and we do not want worse solutions, continue random search
                     if (!alwaysApply && diff.satisfaction < 0) return false;
-	    
-	    
+
+
             } else {
-                
-	    unsigned otherMethods = findRandomMethod(instance, spotWhereToInsert, *it, m);
-            std::set<unsigned>::iterator tmp;
-            // check other methods if any one is feasible
-	    if (m == otherMethods){
-                //this means none of the methods is feasable 
-                tmp = it;
-                ++tmp;
-                unusedSpots.erase(it);
-                it = tmp;
-                
-            }
-                else {
-                    instance.deleteNode(spotWhereToInsert);
-                    instance.insertNode(spotWhereToInsert, *it, otherMethods);
+
+                unsigned otherMethods = findRandomMethod (instance, spotWhereToInsert, *it, m);
+                std::set<unsigned>::iterator tmp;
+                // check other methods if any one is feasible
+                if (m == otherMethods) {
+                    //this means none of the methods is feasable
+                    tmp = it;
+                    ++tmp;
+                    unusedSpots.erase (it);
+                    it = tmp;
+
+                } else {
+                    performReplaceNode(instance,spotWhereToInsert,*it,otherMethods);
                     return true;
                 }
             }
         }
-        // repeat select random spot until unusedSpots.size() 
-       
-	return false;
-	
+        // repeat select random spot until unusedSpots.size()
+
+        return false;
+
     } else if (stepFunction == Config::SF_NEXT) {
-	
-	set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
-	
-	vector<unsigned> sortedNodes;
-	sortedNodes.reserve(instance.getTour().size());
-	
-	vector<double> ratios;
-	ratios.reserve(instance.getTour().size());
-	
-	for(auto& node : instance.getTour()) {
-	    // get satisfaction / total Time ratio per spot
-	    TourValues diff = instance.getStepValues(node.spot);
-	
-	    double ratio = instance.getSatisfactionPerTotalTimeRatio(diff);
-	    
-	    // insert spot into sortedNodes according to ratio
-	    
-	    auto it = upper_bound(ratios.begin(), ratios.end(), ratio);
-	    ratios.insert(it, ratio);
-	    sortedNodes.insert(sortedNodes.begin() + (it - ratios.begin()), node.spot);
-	}
-	
-	
-	for (unsigned spot : sortedNodes) {
-	    
-	    // find first unused spot that is near to spot and gives an satisfaction improvement
-	    
-	    for (auto& newSpot : env.getSpotSearch().findNearestSpots(instance, spot, unusedSpots.size())) {
-                
-              for( unsigned m = 0 ; m < env.getProblem().getSpot(newSpot.first).getMethods().size(); m++) {
-                 
-                  TourNode newNode(newSpot.first, m);
-                  
-                  TourValues diff = instance.getInsertDeltaValues(spot,newNode) - instance.getDeleteDeltaValues(spot);
-		
-                  if (instance.isValid(diff)) {
-		    
-		     if (!alwaysApply && diff.satisfaction < 0) return false;
-		    
-                     instance.deleteNode(spot);
-                     instance.insertNode(spot, newSpot.first, m);
-                     return true;
-		    // remove old spot from tour
-		    // insert new spot + method into tour
-		    // return true
-		    
-		}
-              }
-	    }
-	    
-	}
-	
-	return false;
-    } else {
-        //set of unused spotID's 
-	set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
-	
 
-        double maxSatisfaction = 0; 
-        unsigned maxWhatToRemove = -1;
-        unsigned maxWhatToInsert = -1;
-        
-        //for each node in the tour
-        for (auto& node : instance.getTour()) {
-	    
-            NearestSpotList nearest = env.getSpotSearch().findNearestSpots(instance, node.spot, unusedSpots.size());
-            //check for all unused spots for the one which gives the best improvement
-            for (auto& nearSpot : nearest){
-                int tournode = nearSpot.first;
+        set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
+
+    for (auto & node : instance.getTour()) {
+
+        NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, node.spot, unusedSpots.size());
+            //check for all unused spots for the first one which gives some improvement
+        for (auto & nearSpot : nearest) {
+
                 unsigned spotId = nearSpot.second;
+                //keeps track of the methods which were already tested
                 unsigned m = 0;
-                const Spot& nearestspot = env.getProblem().getSpot(spotId);
-                for( auto& meth : nearestspot.getMethods()){
-                    
-                    TourNode n(spotId, m);
-
-                  //  TourValues diff = instance.getInsertDeltaValues( ,n) - instance.getDeleteDeltaValues(node.spot);
-                 /*   if( instance.isValid(diff) ) 
-
-                    TourValues diff = instance.getInsertDeltaValues(node.spot,n) - instance.getDeleteDeltaValues(node.spot);
-                    if( instance.isValid(diff) ) 
-
-                    {
-                        //just to test how bad we crash 
-                       instance.deleteNode(node.spot);
-                       instance.insertNode(node.spot, n.spot, m);
+                const Spot& nearestspot = env.getProblem().getSpot (spotId);
+                for (auto & meth : nearestspot.getMethods()) {
+                    TourNode n (spotId, m);
+                    TourValues diff = instance.getInsertDeltaValues (instance.getNodeIndex (node.spot) , n) - instance.getDeleteDeltaValues (instance.getNodeIndex (node.spot));
+                    if (instance.isValid (diff)) {
+                        performReplaceNode(instance,node.spot,nearSpot.second,m);
                         return true;
-                        
-
-                    }*/
+                    }
                     m++;
                 }
             }
-            
-            //keep track of the maximal improvement 
-	    // find first unused spot that is near to spot and gives an satisfaction improvement
-	    
-	    //for (unsigned newSpot : env.getSpotSearch().findNearestSpots(instance, spot, unusedSpots.size())) {
-		//TourValues diff = instance.getInsertDeltaValues(newSpot) - instance.getDeleteDeltaValues(oldSpot);
-		
-		//if (instance.isValid(diff)) {
-		    
-		    
-		//}
-	    //}
-	    
-	}
-    
-	// if satisfaction did not increase and we do not want worse solutions, continue random search
-	// if (!alwaysApply && diff.satisfaction < 0) return false;
-	
-         //remove the spot from the tour, and introduce the new one with the method 
-	
-	// return false if no spot with an improvement was found
-	if(maxSatisfaction== 0 || maxWhatToInsert == 0 || maxWhatToRemove == 0)
+        }
+        return false;
+        
+    } else {
+        //set of unused spotID's
+        set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
 
+
+        double maxSatisfaction = 0;
+        unsigned maxWhatToRemove = 1;
+        unsigned maxWhatToInsert = 1;
+        unsigned method = 0;
+        //for each node in the tour
+    for (auto & node : instance.getTour()) {
+
+            NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, node.spot, unusedSpots.size());
+            //check for all unused spots for the one which gives the best improvement
+        for (auto & nearSpot : nearest) {
+               
+                unsigned spotId = nearSpot.second;
+                unsigned m = 0;
+                const Spot& nearestspot = env.getProblem().getSpot (spotId);
+            for (auto & meth : nearestspot.getMethods()) {
+                    TourNode n (spotId, m);
+                    TourValues diff = instance.getInsertDeltaValues (instance.getNodeIndex (node.spot) , n) - instance.getDeleteDeltaValues (instance.getNodeIndex (node.spot));
+                    if (instance.isValid (diff) && diff.satisfaction > maxSatisfaction) {
+                        //keep track of the maximal improvement
+                        maxSatisfaction = diff.satisfaction;
+                        maxWhatToInsert = n.spot;
+                        maxWhatToRemove = node.spot;
+                        method = m;
+
+                    }
+                    m++;
+                }
+            }
+
+        }
+
+        // return false if no spot with an improvement was found
+        if (maxSatisfaction == 0 || maxWhatToInsert == 0 || maxWhatToRemove == 0)
             return false;
-        else 
+        else {
+            //some improvement was found
+            //remove the spot from the tour, and introduce the new one with the method
+            performReplaceNode(instance,maxWhatToRemove,maxWhatToInsert,method);
             return true;
+
+        }
     }
 }
 

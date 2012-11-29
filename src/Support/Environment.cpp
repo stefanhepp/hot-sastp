@@ -21,7 +21,7 @@ Config::Config()
     _stepFunction = SF_RANDOM;
     _verbose = false;
     _writeDot = false;
-    _maxStepsWithNoChange = 10u;
+    _maxStepsWithNoChange = 25u;
     _printAllSteps = false;
     _printCSVOutput = false;
     _printSolution = false;
