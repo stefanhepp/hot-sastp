@@ -166,14 +166,14 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
         //set of unused spotID's 
 	set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
 	
-        double diffSatisfaction = 0; 
-        unsigned maxWhatToRemove = 0;
-        unsigned maxWhatToInsert = 0;
+
+        double maxSatisfaction = 0; 
+        unsigned maxWhatToRemove = -1;
+        unsigned maxWhatToInsert = -1;
         
         //for each node in the tour
         for (auto& node : instance.getTour()) {
 	    
-            instance.getSpot(node);
             NearestSpotList nearest = env.getSpotSearch().findNearestSpots(instance, node.spot, unusedSpots.size());
             //check for all unused spots for the one which gives the best improvement
             for (auto& nearSpot : nearest){
@@ -184,14 +184,20 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
                 for( auto& meth : nearestspot.getMethods()){
                     
                     TourNode n(spotId, m);
+
                     TourValues diff = instance.getInsertDeltaValues( ,n) - instance.getDeleteDeltaValues(node.spot);
                  /*   if( instance.isValid(diff) ) 
+
+                    TourValues diff = instance.getInsertDeltaValues(node.spot,n) - instance.getDeleteDeltaValues(node.spot);
+                    if( instance.isValid(diff) ) 
+
                     {
                         //just to test how bad we crash 
                        instance.deleteNode(node.spot);
                        instance.insertNode(node.spot, n.spot, m);
                         return true;
                         
+
                     }*/
                     m++;
                 }
@@ -218,6 +224,7 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 	
 	// return false if no spot with an improvement was found
 	if(diffSatisfaction== 0 || maxWhatToInsert == 0 || maxWhatToRemove == 0)
+
             return false;
         else 
             return true;
