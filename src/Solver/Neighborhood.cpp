@@ -185,7 +185,7 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
                     
                     TourNode n(spotId, m);
 
-                    TourValues diff = instance.getInsertDeltaValues( ,n) - instance.getDeleteDeltaValues(node.spot);
+                  //  TourValues diff = instance.getInsertDeltaValues( ,n) - instance.getDeleteDeltaValues(node.spot);
                  /*   if( instance.isValid(diff) ) 
 
                     TourValues diff = instance.getInsertDeltaValues(node.spot,n) - instance.getDeleteDeltaValues(node.spot);
@@ -223,7 +223,7 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
          //remove the spot from the tour, and introduce the new one with the method 
 	
 	// return false if no spot with an improvement was found
-	if(diffSatisfaction== 0 || maxWhatToInsert == 0 || maxWhatToRemove == 0)
+	if(maxSatisfaction== 0 || maxWhatToInsert == 0 || maxWhatToRemove == 0)
 
             return false;
         else 
