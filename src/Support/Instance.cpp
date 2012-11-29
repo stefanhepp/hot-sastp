@@ -113,7 +113,7 @@ void Instance::crossOverEdges(unsigned int firstEdge, unsigned int secondEdge)
     
     unsigned steps = (secondEdge - firstEdge) / 2;
     
-    for ( int pos = firstEdge; pos < steps; pos++) {
+    for ( int pos = 0; pos < steps; pos++) {
 	unsigned p1 = firstEdge + pos;
 	unsigned p2 = secondEdge - pos - 1;
 	
