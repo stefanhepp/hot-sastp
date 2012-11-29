@@ -243,7 +243,8 @@ bool TwoOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 	double bestSatisfaction;
 	
 	for (int firstEdge = 0; firstEdge < tourLength - 1; firstEdge++) {
-	    for (int secondEdge = firstEdge + 2; secondEdge < tourLength + 1; secondEdge++) {
+	    unsigned lastEdge = (firstEdge == 0) ? tourLength : tourLength + 1;
+	    for (int secondEdge = firstEdge + 2; secondEdge < lastEdge; secondEdge++) {
 		
 		double deltaSatisfaction;
 		
@@ -260,7 +261,7 @@ bool TwoOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 	}
 	
 	if (alwaysApply || bestSatisfaction >= 0) {
-	 
+	    
 	    performEdgeExchange(instance, bestFirst, bestSecond);
 	    
 	    return true;
