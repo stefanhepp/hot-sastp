@@ -290,6 +290,108 @@ bool TwoOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
         }
     }
 
+
+bool TwoOPT::performStep (Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
+{
+    int tourLength = instance.getTourLength();
+
+    if ( tourLength < 3 ) return false;
+
+    if (stepFunction == Config::SF_RANDOM) {
+	
+	// First thing we need to do is to build up a list of all valid candidates, so that we can randomly choose a 
+	// *valid* exchange. The list should not be that long for a nearly-optimal solution anyway.
+	
+	std::vector<std::pair<unsigned,unsigned>> candidates;
+	
+	for (int firstEdge = 0; firstEdge < tourLength - 1; firstEdge++) {
+	    unsigned lastEdge = (firstEdge == 0) ? tourLength : tourLength + 1;
+	    for (int secondEdge = firstEdge + 2; secondEdge < lastEdge; secondEdge++) {
+		
+		double deltaSatisfaction;
+		
+		if (isValidEdgeExchange(instance, firstEdge, secondEdge, deltaSatisfaction)) {
+		    
+		    // TODO if !alwaysApply and deltaSatisfaction < 0, do not add?
+		    //      but this would not be consistent with the definition of the algorithms
+		    if (!alwaysApply && deltaSatisfaction < 0) continue;
+		    		    
+		    candidates.push_back( make_pair(firstEdge, secondEdge) );
+		}
+	    }
+	}
+
+	// Pick a random pair of edges
+	int r = rand() % candidates.size();
+	pair<unsigned,unsigned> c = candidates[r];
+	unsigned firstEdge = c.first;
+	unsigned secondEdge = c.second;
+	
+	// We only have valid pairs, no need to check again if not necessary
+	double deltaSatisfaction = 1.0;
+	if (alwaysApply || isValidEdgeExchange(instance, firstEdge, secondEdge, deltaSatisfaction)) {
+	    if (deltaSatisfaction >= 0) {
+		performEdgeExchange(instance, firstEdge, secondEdge);
+		return true;
+	    }
+	}
+	
+    } else if (stepFunction == Config::SF_NEXT) {
+	
+	int maxDist = (tourLength + 1) / 2;
+	
+	// iterate first over the first edge, then the *distance* between the edges
+	for (int distance = 2; distance <= maxDist; distance++) {
+	    
+	    unsigned numEdges = (tourLength % 2 && distance == maxDist) ? (tourLength + 1) / 2 : tourLength + 1;
+	    
+	    for (int firstEdge = 0; firstEdge < tourLength; firstEdge++) {
+		int secondEdge = (firstEdge + distance) % (tourLength + 1);
+		
+		double deltaSatisfaction;
+		if (isValidEdgeExchange(instance, firstEdge, secondEdge, deltaSatisfaction)) {
+		    
+		    if (alwaysApply || deltaSatisfaction >= 0) {
+			
+			performEdgeExchange(instance, firstEdge, secondEdge);
+
+			return true;
+		    }
+		}
+	    }
+	}
+	
+    } else {	
+	int bestFirst = 0;
+	int bestSecond = 0;
+	double bestSatisfaction;
+	
+	for (int firstEdge = 0; firstEdge < tourLength - 1; firstEdge++) {
+	    unsigned lastEdge = (firstEdge == 0) ? tourLength : tourLength + 1;
+	    for (int secondEdge = firstEdge + 2; secondEdge < lastEdge; secondEdge++) {
+		
+		double deltaSatisfaction;
+		
+		if (isValidEdgeExchange(instance, firstEdge, secondEdge, deltaSatisfaction)) {
+		    
+		    if (deltaSatisfaction > bestSatisfaction || (bestFirst == bestSecond)) {
+			bestSatisfaction = deltaSatisfaction;
+			bestFirst = firstEdge;
+			bestSecond = secondEdge;
+		    }
+		    
+		}
+	    }
+	}
+	
+	if (alwaysApply || bestSatisfaction >= 0) {
+	    
+	    performEdgeExchange(instance, bestFirst, bestSecond);
+	    
+	    return true;
+	}
+    }
+    
     return false;
 }
 
