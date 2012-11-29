@@ -14,7 +14,7 @@ using namespace std;
 Config::Config()
 {
     // Set some default values
-    _algorithm = AT_GREEDY_NN;
+    _algorithm = AT_GREEDY_IN;
     _maxKNearestSpots = 5;
     _nodeInsertMode = NIM_SHORTEST_PATH;
     _stepFunction = SF_RANDOM;

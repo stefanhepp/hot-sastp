@@ -79,7 +79,7 @@ void Driver::solve()
 
     case Config::AT_LOCALSEARCH: {
         GreedyTour* greedy = getGreedyTour(env);
-        
+        //GreedyTour* greedy = new GreedyRandomHeuristic(env);
         greedy->run();
         
         LocalSearch* local = getLocalSearch(env, greedy->getInstance());

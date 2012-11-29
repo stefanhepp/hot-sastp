@@ -3,6 +3,7 @@
 #include <set>
 #include <algorithm>
 
+#include <iostream>
 using namespace std;
 
 Neighborhood::Neighborhood(Environment& env)
@@ -14,7 +15,7 @@ unsigned OneOPT::findRandomMethod (Instance& instance, unsigned where, unsigned 
 {
     //check from the method position until the end of the methods for the first suitable 
     //method which gives some improvement, if found return the index
-    for ( unsigned i = method+1 ; i < instance.getSpot(what).getMethods().size(); i++) 
+    for ( unsigned i = method+1 ; i < instance.getProblem().getSpot(what).getMethods().size(); i++) 
     {
         TourNode newNode(what, i);
         TourValues diff = instance.getInsertDeltaValues(where,newNode);
@@ -46,19 +47,23 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 	
 	set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
 	
+        unsigned spotWhereToInsert;
 	// repeat
-	do{
+	while(unusedSpots.size() >= 1){
+             //std::cout<< unusedSpots.size()<<std::endl;
             // pick random spot where to insert 
-            unsigned spotWhereToInsert = rand() % instance.getTourLength();
+            spotWhereToInsert = rand() % instance.getTourLength();
            
             // spot = find random unused spot
             unsigned unusedRandomSpot = rand() % unusedSpots.size();
-            
+            set<unsigned>::iterator it(unusedSpots.begin());
+            advance(it, unusedRandomSpot);
+            //std::cout<<*it<<endl;
             // method = find random method of spot
-            unsigned m = rand() % instance.getSpot(unusedRandomSpot).getMethods().size();
+            unsigned m = rand() % instance.getProblem().getSpot(*it).getMethods().size();
             // check if solution is feasible
             
-            TourNode newNode(unusedRandomSpot,m);
+            TourNode newNode(*it,m);
             
             TourValues diff = instance.getInsertDeltaValues(spotWhereToInsert,newNode);
             diff -= instance.getDeleteDeltaValues(spotWhereToInsert);
@@ -70,7 +75,7 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
                 // remove old spot from tour
                 // insert new spot + method into tour
                  instance.deleteNode(spotWhereToInsert);
-                 instance.insertNode(spotWhereToInsert, unusedRandomSpot, m);
+                 instance.insertNode(spotWhereToInsert,*it, m);
                     
                  return true;
 
@@ -81,20 +86,26 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 	    
             } else {
                 
-	    unsigned otherMethods = findRandomMethod(instance, spotWhereToInsert, unusedRandomSpot, m);
+	    unsigned otherMethods = findRandomMethod(instance, spotWhereToInsert, *it, m);
+            std::set<unsigned>::iterator tmp;
             // check other methods if any one is feasible
-	    if (m == otherMethods)
+	    if (m == otherMethods){
                 //this means none of the methods is feasable 
-                unusedSpots.erase(unusedRandomSpot);
+                tmp = it;
+                ++tmp;
+                unusedSpots.erase(it);
+                it = tmp;
+                
+            }
                 else {
                     instance.deleteNode(spotWhereToInsert);
-                    instance.insertNode(spotWhereToInsert, unusedRandomSpot, otherMethods);
+                    instance.insertNode(spotWhereToInsert, *it, otherMethods);
                     return true;
                 }
             }
-        }while(unusedSpots.size() <= 1);
+        }
         // repeat select random spot until unusedSpots.size() 
-        
+       
 	return false;
 	
     } else if (stepFunction == Config::SF_NEXT) {
@@ -102,10 +113,10 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 	set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
 	
 	vector<unsigned> sortedNodes;
-	sortedNodes.reserve(unusedSpots.size());
+	sortedNodes.reserve(instance.getTour().size());
 	
 	vector<double> ratios;
-	ratios.reserve(unusedSpots.size());
+	ratios.reserve(instance.getTour().size());
 	
 	for(auto& node : instance.getTour()) {
 	    // get satisfaction / total Time ratio per spot
@@ -126,18 +137,23 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 	    // find first unused spot that is near to spot and gives an satisfaction improvement
 	    
 	    for (auto& newSpot : env.getSpotSearch().findNearestSpots(instance, spot, unusedSpots.size())) {
-		//TourValues diff = instance.getInsertDeltaValues(newSpot) - instance.getDeleteDeltaValues(oldSpot);
+                
+             /*  
+                TourNode newNode(newSpot.first, m);
+		TourValues diff = instance.getInsertDeltaValues(spot,newNode) - instance.getDeleteDeltaValues(spot);
 		
-		//if (instance.isValid(diff)) {
+		if (instance.isValid(diff)) {
 		    
-		    // if satisfaction did not increase and we do not want worse solutions, continue random search
-		    // if (!alwaysApply && diff.satisfaction < 0) return false;
+		     if (!alwaysApply && diff.satisfaction < 0) return false;
 		    
+                     instance.deleteNode(spot);
+                     instance.insertNode(spot, newSpot);
+                     return true;
 		    // remove old spot from tour
 		    // insert new spot + method into tour
 		    // return true
 		    
-		//}
+		}*/
 	    }
 	    
 	}
