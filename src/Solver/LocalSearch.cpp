@@ -32,7 +32,7 @@ void LocalSearch::run()
 	
 	deltaSatisfaction = -instance.getTotalSatisfaction();
 	
-	bool applied = neighborhood.performStep(instance, stepFunction, false);
+	neighborhood.performStep(instance, stepFunction, false);
 	
 	deltaSatisfaction += instance.getTotalSatisfaction();
 	

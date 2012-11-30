@@ -25,11 +25,6 @@ void VND::run()
     double deltaSatisfaction;
     unsigned i = 0;
     
-    if (stepFunction == Config::SF_RANDOM) {
-	cout << "Cannot use RANDOM step function for VND, using NEXT instead!" << endl;
-	stepFunction = Config::SF_NEXT;
-    }
-    
     start();
     
     do {

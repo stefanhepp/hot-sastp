@@ -41,8 +41,8 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 	case Config::NT_ONE_OPT:
 	    nb = new OneOPT(env);
 	    break;
-	case Config::NT_TWO_OPT:
-	    nb = new TwoOPT(env);
+	case Config::NT_EDGE_TWO_OPT:
+	    nb = new EdgeTwoOPT(env);
 	    break;
     }
     
@@ -59,7 +59,7 @@ VND* Driver::getVND(Environment& env, const Instance& init)
     Neighborhood* one = new OneOPT(env);
     vnd->addNeighborhood(*one);
     
-    Neighborhood* two = new TwoOPT(env);
+    Neighborhood* two = new EdgeTwoOPT(env);
     vnd->addNeighborhood(*two);
 
     return vnd;
