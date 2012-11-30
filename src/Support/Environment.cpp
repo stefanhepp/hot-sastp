@@ -80,11 +80,12 @@ const option::Descriptor usage[] = {
     { HELP, 0, "h", "help", Arg::None, "  \t--help  \tPrint usage and exit." },
     {
         ALGORITHM , 0, "a", "algorithm", Arg::Numeric, "  -a <arg>, \t--algorithm=<arg>"
-        "  \tTakes an integer argument.\n \tOptions:\n \tAT_GREEDY = 0 ,\n \tAT_LOCALSEARCH = 1"
+        "  \tTakes an integer argument.\n \tOptions:\n \tAT_GREEDY = 0 ,\n \tAT_LOCALSEARCH = 1 "
         ",\n \tAT_VND = 2, \n \tAT_GRASP_LS = 3, \n \tAT_GRASP_VND = 4 ,\n \tAT_GVNS = 5. \n"
     },
     { NEIGHBORHOOD, 0, "n", "neighborhood", Arg::Numeric, "  -n <arg>, \t--neighborhood=<arg>"
-        " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0 ,\n \tNT_EDGE_TWO_OPT = 1 ,\n \tNT_METHOD_TWO_OPT = 2. \n" 
+        " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0 ,\n \tNT_EDGE_TWO_OPT = 1 ,\n \tNT_METHOD_TWO_OPT = 2 ,\n"
+	" \tNT_NEAREST_TOUR_CONSEC = 3 ,\n \tNT_NEAREST_TOUR_RANDOM = 4. \n"
     },
     { GREEDY_NN, 0, "g", "greedy-nearest", Arg::None, "  -g, \t--greedy-nearest \tUse nearest neighbor instead of insert heuristic for greedy. " },
     {
@@ -201,6 +202,12 @@ int Config::parseArguments (int argc, char* argv[])
 			break;
 		    case NeighborhoodTag::NT_METHOD_TWO_OPT:
 			_neighborhood = NT_METHOD_TWO_OPT;
+			break;
+		    case NeighborhoodTag::NT_NEAREST_TOUR_CONSEC:
+			_neighborhood = NT_NEAREST_TOUR_CONSEC;
+			break;
+		    case NeighborhoodTag::NT_NEAREST_TOUR_RANDOM:
+			_neighborhood = NT_NEAREST_TOUR_RANDOM;
 			break;
 		    default:
 			printHelp();

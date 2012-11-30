@@ -44,7 +44,9 @@ public:
     enum NeighborhoodTag{
       NT_ONE_OPT = 0,
       NT_EDGE_TWO_OPT = 1,
-      NT_METHOD_TWO_OPT = 2
+      NT_METHOD_TWO_OPT = 2,
+      NT_NEAREST_TOUR_CONSEC = 3,
+      NT_NEAREST_TOUR_RANDOM = 4
     };
     
     /**

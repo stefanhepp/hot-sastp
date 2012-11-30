@@ -1,5 +1,14 @@
 #include "Driver.h"
 
+#include "Support/DotPrinter.h"
+
+#include "Solver/GreedyTour.h"
+#include "Solver/VND.h"
+#include "Solver/Grasp.h"
+#include "Solver/GVNS.h"
+#include "Solver/Neighborhood.h"
+#include "Solver/TourNeighborhood.h"
+
 #include <iostream>
 
 using namespace std;
@@ -55,6 +64,16 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 	    if (env.getConfig().isVerbose()) cout << "Creating local search with Method-2-opt neighborhood .." << endl;
 	    
 	    nb = new MethodTwoOPT(env);
+	    break;
+	case Config::NT_NEAREST_TOUR_CONSEC:
+	    if (env.getConfig().isVerbose()) cout << "Creating local search with Nearest Tour (consecutive) neighborhood .." << endl;
+	    
+	    nb = new NearestTourNodes(env, 4, true, env.getConfig().getMaxKNearestSpots(), true);
+	    break;
+	case Config::NT_NEAREST_TOUR_RANDOM:
+	    if (env.getConfig().isVerbose()) cout << "Creating local search with Nearest Tour (random) neighborhood .." << endl;
+	    
+	    nb = new NearestTourNodes(env, 2, false, env.getConfig().getMaxKNearestSpots(), false);
 	    break;
     }
     
