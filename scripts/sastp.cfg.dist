@@ -1,3 +1,0 @@
-SOLVER=../../hot-sastp-obj/src/sastpsolver
-INSTANCEDIR=../instances
-OUTPUTDIR=../results
