@@ -1,0 +1,3 @@
+SOLVER=../build/src/sastpsolver
+INSTANCEDIR=../instances
+OUTPUTDIR=../results
