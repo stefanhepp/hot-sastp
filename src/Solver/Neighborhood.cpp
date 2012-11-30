@@ -69,8 +69,7 @@ bool OneOPT::performNextStep(Instance& instance, bool alwaysApply){
     unsigned maxk = instance.getProblem().getSpots().size() - 1;
 
     //for each node in the tour
-    unsigned index = 0;
-    for (auto & node : instance.getTour()) {
+    for (unsigned index : instance.getRatioSortedNodes()) {
 
         NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, index, maxk, true);
         //check for all unused spots for the one which gives the best improvement
@@ -91,9 +90,7 @@ bool OneOPT::performNextStep(Instance& instance, bool alwaysApply){
                 }
                 ++m;
             }
-        }
-        
-	++index;
+        }        
     }
    
     return false;
@@ -167,8 +164,8 @@ bool OneOPT::performMaxStep(Instance& instance, bool alwaysApply){
     unsigned maxk = instance.getProblem().getSpots().size() - 1;
     
     //for each node in the tour
-    unsigned index = 0;
-    for (auto & node : instance.getTour()) {
+    unsigned tourLength = instance.getTourLength();
+    for (unsigned index = 0; index < tourLength; index++) {
 
         NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, index, maxk, true);
         //check for all unused spots for the one which gives the best improvement
@@ -193,8 +190,6 @@ bool OneOPT::performMaxStep(Instance& instance, bool alwaysApply){
                 ++m;
             }
         }
-        
-	++index;
     }
 
     // return false if no spot with an improvement was found

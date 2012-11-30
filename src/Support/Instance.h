@@ -202,7 +202,12 @@ public:
 
     bool isValid(TourValues delta) const;
     
-    double getSatisfactionPerTotalTimeRatio(TourValues values);
+    double getSatisfactionPerTotalTimeRatio(TourValues values) const;
+    
+    /**
+     * Get the indices of the tour nodes, sorted by satisfaction / time ratio
+     */
+    std::vector<unsigned> getRatioSortedNodes() const;
     
     TourValues getUpdateDeltaValues(unsigned index, TourNode node);
     TourValues getInsertDeltaValues(unsigned index, TourNode node);
@@ -213,11 +218,11 @@ public:
     /**
      * Get the deltas for all values for a step from a node to another node, and then doing the action at the 'to' node.
      */
-    TourValues getStepValues(const TourNode& from, const TourNode& to);
-    TourValues getStepValues(int fromNode, int toNode) { return getStepValues(getNode(fromNode), getNode(toNode)); }
-    TourValues getStepValues(unsigned fromSpot, unsigned fromMethod, unsigned toSpot, unsigned toMethod) 
+    TourValues getStepValues(const TourNode& from, const TourNode& to) const;
+    TourValues getStepValues(int fromNode, int toNode) const { return getStepValues(getNode(fromNode), getNode(toNode)); }
+    TourValues getStepValues(unsigned fromSpot, unsigned fromMethod, unsigned toSpot, unsigned toMethod) const
                   { return getStepValues(TourNode(fromSpot, fromMethod), TourNode(toSpot, toMethod)); }
-    TourValues getStepValues(unsigned toNode) { return getStepValues(getNode(toNode-1), getNode(toNode)); }
+    TourValues getStepValues(unsigned toNode) const { return getStepValues(getNode(toNode-1), getNode(toNode)); }
     
     SASTPSolution* createSolution() const;
   

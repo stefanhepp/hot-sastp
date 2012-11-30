@@ -16,7 +16,7 @@ Config::Config()
     // Set some default values
     _algorithm = AT_GREEDY_IN;
     _neighborhood = NT_ONE_OPT;
-    _maxKNearestSpots = 5;
+    _maxKNearestSpots = 10;
     _nodeInsertMode = NIM_SHORTEST_PATH;
     _stepFunction = SF_RANDOM;
     _verbose = false;
@@ -113,7 +113,7 @@ const option::Descriptor usage[] = {
         "\nExamples:\n"
         "Default values for the options are: \n"
 	" algorithm : AT_GREEDY_IN; \n"
-	" maxKNearestSpots : 5;\n"
+	" maxKNearestSpots : 10;\n"
 	" nodeInsertMode : NIM_SHORTEST_PATH;\n"
 	" stepFunction : SF_BEST; \n"
 	" verbose : false; \n"

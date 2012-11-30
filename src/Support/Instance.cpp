@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <iostream>
 #include <set>
+#include <algorithm>
 
 using namespace std;
 
@@ -221,7 +222,7 @@ TourValues Instance::getCrossOverDeltaValues(unsigned int firstEdge, unsigned in
     return TourValues(deltaTime, deltaSatisfaction, 0.0);
 }
 
-TourValues Instance::getStepValues(const TourNode& from, const TourNode& to)
+TourValues Instance::getStepValues(const TourNode& from, const TourNode& to) const
 {
     // Step from hotel to hotel
     if (from.spot == -1 && to.spot == -1) return TourValues();
@@ -276,7 +277,7 @@ bool Instance::isValid(TourValues delta) const
     return time < problem.getMaxTime();
 }
 
-double Instance::getSatisfactionPerTotalTimeRatio(TourValues delta)
+double Instance::getSatisfactionPerTotalTimeRatio(TourValues delta) const
 {
     double time = tourTime + delta.tourTime;
     double stamina = remainingStamina - delta.stamina;
@@ -287,6 +288,36 @@ double Instance::getSatisfactionPerTotalTimeRatio(TourValues delta)
     double ratio = delta.satisfaction / time;
     return ratio;
 }
+
+std::vector< unsigned int > Instance::getRatioSortedNodes() const
+{
+    unsigned tourLength = tour.size();
+    
+    vector<unsigned> sorted;
+    sorted.reserve(tourLength);
+    
+    vector<double> ratios;
+    ratios.reserve(tourLength);
+    
+    unsigned index = 0;
+    TourNode lastNode = getHotelNode();
+    
+    for (auto& node : tour) {
+	
+	double ratio = getSatisfactionPerTotalTimeRatio(getStepValues(lastNode, node));
+	
+	auto it = upper_bound(ratios.begin(), ratios.end(), ratio);
+	ratios.insert(it, ratio);
+	
+	sorted.insert(sorted.begin() + (it - ratios.begin()), index);
+	
+	lastNode = node;
+	index++;
+    }
+    
+    return sorted;
+}
+
 
 SASTPSolution* Instance::createSolution() const
 {
