@@ -66,13 +66,13 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
 
 bool OneOPT::performNextStep(Instance& instance, bool alwaysApply){
  
-    set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
-    
+    unsigned maxk = instance.getProblem().getSpots().size() - 1;
+
     //for each node in the tour
     unsigned index = 0;
     for (auto & node : instance.getTour()) {
 
-        NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, index, unusedSpots.size());
+        NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, index, maxk, true);
         //check for all unused spots for the one which gives the best improvement
         for (auto & nearSpot : nearest) {
                 
@@ -92,86 +92,85 @@ bool OneOPT::performNextStep(Instance& instance, bool alwaysApply){
                 ++m;
             }
         }
-    ++index;
+        
+	++index;
     }
    
     return false;
-        
-    
 }
 
 bool OneOPT::performRandomStep(Instance& instance, bool alwaysApply){
     set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
 
-        unsigned spotWhereToInsert;
-        // repeat
-        while (unusedSpots.size() >= 1) {
-            // pick random spot where to insert
-            spotWhereToInsert = rand() % instance.getTourLength();
+    unsigned spotWhereToInsert;
+    // repeat
+    while (unusedSpots.size() >= 1) {
+	// pick random spot where to insert
+	spotWhereToInsert = rand() % instance.getTourLength();
 
-            // spot = find random unused spot
-            unsigned unusedRandomSpot = rand() % unusedSpots.size();
-            set<unsigned>::iterator it (unusedSpots.begin());
-            advance (it, unusedRandomSpot);
-            // method = find random method of spot
-            unsigned m = rand() % instance.getProblem().getSpot (*it).getMethods().size();
-            // check if solution is feasible
+	// spot = find random unused spot
+	unsigned unusedRandomSpot = rand() % unusedSpots.size();
+	set<unsigned>::iterator it (unusedSpots.begin());
+	advance (it, unusedRandomSpot);
+	// method = find random method of spot
+	unsigned m = rand() % instance.getProblem().getSpot (*it).getMethods().size();
+	// check if solution is feasible
 
-            TourNode newNode (*it, m);
+	TourNode newNode (*it, m);
 
-            TourValues diff = instance.getInsertDeltaValues (spotWhereToInsert, newNode);
-            diff -= instance.getDeleteDeltaValues (spotWhereToInsert);
+	TourValues diff = instance.getInsertDeltaValues (spotWhereToInsert, newNode);
+	diff -= instance.getDeleteDeltaValues (spotWhereToInsert);
 
-            if (instance.isValid (diff)) {
+	if (instance.isValid (diff)) {
 
-                if ( (diff.satisfaction) > 0.0) {
-                    //this means we incereased the total satisfaction
-                    // remove old spot from tour
-                    // insert new spot + method into tour
-                    performReplaceNode(instance,spotWhereToInsert,*it, m);
-                    return true;
+	    if ( (diff.satisfaction) > 0.0) {
+		//this means we incereased the total satisfaction
+		// remove old spot from tour
+		// insert new spot + method into tour
+		performReplaceNode(instance,spotWhereToInsert,*it, m);
+		return true;
 
-                } else
-                    // if satisfaction did not increase and we do not want worse solutions, continue random search
-                    if (!alwaysApply && diff.satisfaction < 0) return false;
+	    } else
+		// if satisfaction did not increase and we do not want worse solutions, continue random search
+		if (!alwaysApply && diff.satisfaction < 0) return false;
 
 
-            } else {
+	} else {
 
-                unsigned otherMethods = findRandomMethod (instance, spotWhereToInsert, *it, m);
-                std::set<unsigned>::iterator tmp;
-                // check other methods if any one is feasible
-                if (m == otherMethods) {
-                    //this means none of the methods is feasable
-                    tmp = it;
-                    ++tmp;
-                    unusedSpots.erase (it);
-                    it = tmp;
+	    unsigned otherMethods = findRandomMethod (instance, spotWhereToInsert, *it, m);
+	    std::set<unsigned>::iterator tmp;
+	    // check other methods if any one is feasible
+	    if (m == otherMethods) {
+		//this means none of the methods is feasable
+		tmp = it;
+		++tmp;
+		unusedSpots.erase (it);
+		it = tmp;
 
-                } else {
-                    performReplaceNode(instance,spotWhereToInsert,*it,otherMethods);
-                    return true;
-                }
-            }
-        }
-        // repeat select random spot until unusedSpots.size()
+	    } else {
+		performReplaceNode(instance,spotWhereToInsert,*it,otherMethods);
+		return true;
+	    }
+	}
+    }
+    // repeat select random spot until unusedSpots.size()
 
-        return false;
+    return false;
     
 }
 bool OneOPT::performMaxStep(Instance& instance, bool alwaysApply){
-    //set of unused spotID's
-    set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
-    
     double maxSatisfaction = 0;
-    unsigned maxWhatToRemove = 1;
-    unsigned maxWhatToInsert = 1;
+    unsigned maxWhatToRemove = -1;
+    unsigned maxWhatToInsert = -1;
     unsigned method = 0;
+
+    unsigned maxk = instance.getProblem().getSpots().size() - 1;
+    
     //for each node in the tour
     unsigned index = 0;
     for (auto & node : instance.getTour()) {
 
-        NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, index, unusedSpots.size());
+        NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, index, maxk, true);
         //check for all unused spots for the one which gives the best improvement
         for (auto & nearSpot : nearest) {
                 
@@ -183,7 +182,7 @@ bool OneOPT::performMaxStep(Instance& instance, bool alwaysApply){
             
                 TourNode n (spotId, m);
                 TourValues diff = instance.getInsertDeltaValues (index , n) - instance.getDeleteDeltaValues (index);
-                if (instance.isValid (diff) && diff.satisfaction > maxSatisfaction) {
+                if (instance.isValid(diff) && (diff.satisfaction > maxSatisfaction || maxWhatToInsert == -1)) {
                     //keep track of the maximal improvement
                     maxSatisfaction = diff.satisfaction;
                     maxWhatToInsert = n.spot;
@@ -194,11 +193,12 @@ bool OneOPT::performMaxStep(Instance& instance, bool alwaysApply){
                 ++m;
             }
         }
-    ++index;
+        
+	++index;
     }
 
     // return false if no spot with an improvement was found
-    if (maxSatisfaction == 0 || maxWhatToInsert == 0 || maxWhatToRemove == 0)
+    if ((!alwaysApply && maxSatisfaction < 0) || maxWhatToInsert == -1 || maxWhatToRemove == -1)
         return false;
     else {
         //some improvement was found

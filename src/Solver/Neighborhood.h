@@ -74,10 +74,11 @@ protected:
     
 };
 
+
 /**
  * Exchange two edges in the tour.
  * - SF_RANDOM: pick two random edges to exchange
- * - SF_NEXT: TODO
+ * - SF_NEXT: find first possible combination to exchange, search by increasing edge distance
  * - SF_BEST: search all pairs of edges in the tour for possible improvements
  */
 class EdgeTwoOPT: public Neighborhood
@@ -94,6 +95,25 @@ protected:
     void performEdgeExchange(Instance& instance, int firstEdge, int secondEdge);
     
 };
+
+
+/**
+ * Exchange two methods in the tour.
+ * - SF_RANDOM: pick two random spots to exchange
+ * - SF_NEXT: use first possible combination to exchange
+ * - SF_BEST: search all pairs of spots in the tour for possible improvements
+ */
+class MethodTwoOPT: public Neighborhood
+{
+public :
+    MethodTwoOPT (Environment& env):Neighborhood(env){};
+    
+    virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);
+    
+protected:
+        
+};
+
 
 
 #endif // NEIGHBORHOOD_H

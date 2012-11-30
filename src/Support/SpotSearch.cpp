@@ -137,7 +137,7 @@ NearestSpotList SpotSearch::findNearestSpots(const Instance& tour, int tournode,
     std::vector<unsigned>* nearest = nearestSpots[spot+1];
 
     // return a vector containing the first k entries
-    assert(k <= nearest->size());
+    if (k > nearest->size()) k = nearest->size();
     
     NearestSpotList pairs;
 
