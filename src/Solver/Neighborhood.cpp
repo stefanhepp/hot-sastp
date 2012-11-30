@@ -71,7 +71,7 @@ bool SpotOneOPT::performNextStep(Instance& instance, bool alwaysApply){
             const Spot& nearestspot = env.getProblem().getSpot(spotId);
         
             unsigned m = 0;
-            for (auto & metod : nearestspot.getMethods()) {
+            for (auto & method : nearestspot.getMethods()) {
             
                 TourNode n (spotId, m);
                 TourValues diff = instance.getUpdateDeltaValues (index , n);
@@ -106,9 +106,9 @@ bool SpotOneOPT::performRandomStep(Instance& instance, bool alwaysApply){
 	
 	// find feasible solution
 	double deltaSatisfaction;
-	unsigned otherMethods = findRandomMethod (instance, spotWhereToInsert, *it, m, deltaSatisfaction);
+	unsigned validMethod = findRandomMethod (instance, spotWhereToInsert, *it, m, deltaSatisfaction);
 
-	if (m == otherMethods) {
+	if (m == validMethod) {
 	    //this means none of the methods is feasable
 	    unusedSpots.erase (it);
 
@@ -118,7 +118,7 @@ bool SpotOneOPT::performRandomStep(Instance& instance, bool alwaysApply){
 		//this means we incereased the total satisfaction
 		// remove old spot from tour
 		// insert new spot + method into tour
-		performReplaceNode(instance,spotWhereToInsert,*it, m);
+		performReplaceNode(instance,spotWhereToInsert,*it, validMethod);
 		return true;
 
 	    } else {
@@ -311,13 +311,52 @@ bool MethodTwoOPT::performStep(Instance& instance, Config::StepFunction stepFunc
     if (stepFunction == Config::SF_RANDOM) {
 	
 	// Pick two random nodes
-	unsigned firstNodeId = rand() & tourLength;
-	unsigned secondNodeId = rand() & tourLength - 1;
+	unsigned firstNodeId = rand() % tourLength;
+	unsigned secondNodeId = rand() % (tourLength - 1);
 	
 	if (secondNodeId == firstNodeId) secondNodeId++;
 	
-	// try to find methods
+	TourNode firstNode = instance.getNode(firstNodeId);
+	const Spot& firstSpot = instance.getSpot(firstNode);
+	TourNode secondNode = instance.getNode(secondNodeId);
+	const Spot& secondSpot = instance.getSpot(secondNode);
 	
+	unsigned firstMethodLength = firstSpot.getMethods().size();
+	unsigned secondMethodLength = secondSpot.getMethods().size();
+	
+	// try to find methods
+	unsigned firstStart = rand() % firstMethodLength;
+	for (int i = 0; i < firstMethodLength; i++) {
+	    unsigned firstMethodId = (firstStart + i) % firstMethodLength;
+	    const Method& firstMethod = firstSpot.getMethod(firstMethodId);
+	    
+	    unsigned secondStart = rand() % secondMethodLength;
+	    for (int j = 0; j < secondMethodLength; j++) {
+		unsigned secondMethodId = (secondStart + j) % secondMethodLength;
+		const Method& secondMethod = secondSpot.getMethod(secondMethodId);
+		
+		if (firstMethodId == firstNode.method && secondMethodId == secondNode.method) continue;
+		
+		double deltaSatisfaction;
+		if (isValidMethodExchange(instance, firstSpot.getMethod(firstNode.method), 
+		  				     secondSpot.getMethod(secondNode.method), 
+						     firstMethod, secondMethod, deltaSatisfaction)) 
+		{
+		    if (alwaysApply || deltaSatisfaction > 0) {
+			instance.updateNode(firstNodeId, firstNode.spot, firstMethodId);
+			instance.updateNode(secondNodeId, secondNode.spot, secondMethodId);
+			
+			return true;
+		    } else {
+			return false;
+		    }
+		}
+		
+	    }
+	}
+	
+	// Do not continue random spot search if no valid combination has been found, just return false
+	return false;
 	
     } else {	
 	int bestFirstNodeId = 0;
