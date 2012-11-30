@@ -71,7 +71,8 @@ struct Arg: public option::Arg {
     }
 };
 
-enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DEBUG, DOT, PRINT_CSV, PRINT_ALL_STEPS, TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA};
+enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DEBUG, DOT, PRINT_CSV, PRINT_ALL_STEPS, 
+                  TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA};
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -80,12 +81,12 @@ const option::Descriptor usage[] = {
     { HELP, 0, "h", "help", Arg::None, "  \t--help  \tPrint usage and exit." },
     {
         ALGORITHM , 0, "a", "algorithm", Arg::Numeric, "  -a <arg>, \t--algorithm=<arg>"
-        "  \tTakes an integer argument.\n \tOptions:\n \tAT_GREEDY = 0 ,\n \tAT_LOCALSEARCH = 1 "
-        ",\n \tAT_VND = 2, \n \tAT_GRASP_LS = 3, \n \tAT_GRASP_VND = 4 ,\n \tAT_GVNS = 5. \n"
+        "  \tTakes an integer argument.\n \tOptions:\n \tAT_GREEDY = 0,\n \tAT_LOCALSEARCH = 1"
+        ",\n \tAT_VND = 2, \n \tAT_GRASP_LS = 3, \n \tAT_GRASP_VND = 4,\n \tAT_GVNS = 5. \n"
     },
     { NEIGHBORHOOD, 0, "n", "neighborhood", Arg::Numeric, "  -n <arg>, \t--neighborhood=<arg>"
-        " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0 ,\n \tNT_EDGE_TWO_OPT = 1 ,\n \tNT_METHOD_TWO_OPT = 2 ,\n"
-	" \tNT_NEAREST_TOUR_CONSEC = 3 ,\n \tNT_NEAREST_TOUR_RANDOM = 4. \n"
+        " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0,\n \tNT_EDGE_TWO_OPT = 1,\n \tNT_METHOD_TWO_OPT = 2"
+	",\n \tNT_NEAREST_TOUR_CONSEC = 3,\n \tNT_NEAREST_TOUR_RANDOM = 4 \n"
     },
     { GREEDY_NN, 0, "g", "greedy-nearest", Arg::None, "  -g, \t--greedy-nearest \tUse nearest neighbor instead of insert heuristic for greedy. " },
     {
@@ -115,7 +116,6 @@ const option::Descriptor usage[] = {
     { ALPHA , 0, "", "alpha", Arg::NonEmpty, "   \t--alpha=<arg> \tAlpha for the construction of Restricted Candidates List. values in [0..1]\n"},
     {
         UNKNOWN, 0, "", "", Arg::None,
-        "\nExamples:\n"
         "Default values for the options are: \n"
 	" algorithm : AT_GREEDY; \n"
 	" maxKNearestSpots : 10;\n"
