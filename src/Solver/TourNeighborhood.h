@@ -16,11 +16,12 @@ class NearestNodesNeighborhood : public Neighborhood
 {
     
 public:
-    NearestNodesNeighborhood(Environment& env, unsigned int maxk, bool insertConsecutive);
+    NearestNodesNeighborhood(Environment& env, unsigned int maxk, bool insertConsecutive, bool insertUsed);
 
 protected:
     unsigned maxk;
     bool insertConsecutive;
+    bool insertUsed;
     
 };
 
@@ -34,7 +35,7 @@ class NearestTourExchange : public NearestNodesNeighborhood
     unsigned maxRemove;
     
 public:
-    NearestTourExchange(Environment& env, unsigned int maxRemove, unsigned int maxk, bool insertConsecutive);
+    NearestTourExchange(Environment& env, unsigned int maxRemove, unsigned int maxk, bool insertConsecutive, bool insertUsed);
     
     virtual std::string getName() const;
     
@@ -50,7 +51,7 @@ class TwoNodesTourExchange : public NearestNodesNeighborhood
     unsigned maxRemove;
     
 public:
-    TwoNodesTourExchange(Environment& env, unsigned int maxk, bool insertConsecutive);
+    TwoNodesTourExchange(Environment& env, unsigned int maxk, bool insertConsecutive, bool insertUsed);
     
     virtual std::string getName() const;
     
