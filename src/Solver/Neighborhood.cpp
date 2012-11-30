@@ -11,7 +11,7 @@ Neighborhood::Neighborhood(Environment& env)
 {
 }
 
-unsigned OneOPT::findRandomMethod (Instance& instance, unsigned nodeToUpdate, unsigned spot, unsigned method, double &deltaSatisfaction)
+unsigned SpotOneOPT::findRandomMethod (Instance& instance, unsigned nodeToUpdate, unsigned spot, unsigned method, double &deltaSatisfaction)
 {
     //check all methods for the first suitable 
     //method which gives some improvement, if found return the index
@@ -34,13 +34,13 @@ unsigned OneOPT::findRandomMethod (Instance& instance, unsigned nodeToUpdate, un
     return method;
 }
 
-void OneOPT::performReplaceNode (Instance& instance, unsigned int nodeToUpdate, unsigned spotToInsert, unsigned int method)
+void SpotOneOPT::performReplaceNode (Instance& instance, unsigned int nodeToUpdate, unsigned spotToInsert, unsigned int method)
 {
     instance.updateNode(nodeToUpdate, spotToInsert, method);
 }
 
 
-bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
+bool SpotOneOPT::performStep (Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
 {
     if (stepFunction == Config::SF_RANDOM) {
 
@@ -56,7 +56,7 @@ bool OneOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
     }
 }
 
-bool OneOPT::performNextStep(Instance& instance, bool alwaysApply){
+bool SpotOneOPT::performNextStep(Instance& instance, bool alwaysApply){
  
     unsigned maxk = instance.getProblem().getSpots().size() - 1;
 
@@ -88,7 +88,7 @@ bool OneOPT::performNextStep(Instance& instance, bool alwaysApply){
     return false;
 }
 
-bool OneOPT::performRandomStep(Instance& instance, bool alwaysApply){
+bool SpotOneOPT::performRandomStep(Instance& instance, bool alwaysApply){
     set<unsigned> unusedSpots = instance.getUnusedSpotIDs();
 
     unsigned spotWhereToInsert;
@@ -133,7 +133,7 @@ bool OneOPT::performRandomStep(Instance& instance, bool alwaysApply){
     return false;
     
 }
-bool OneOPT::performMaxStep(Instance& instance, bool alwaysApply){
+bool SpotOneOPT::performMaxStep(Instance& instance, bool alwaysApply){
     double maxSatisfaction = 0;
     unsigned maxWhatToRemove = -1;
     unsigned maxWhatToInsert = -1;

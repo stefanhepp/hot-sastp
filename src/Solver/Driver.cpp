@@ -44,7 +44,7 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 	case Config::NT_ONE_OPT:
 	    if (env.getConfig().isVerbose()) cout << "Creating local search with Spot-1-opt neighborhood .." << endl;
 	    
-	    nb = new OneOPT(env);
+	    nb = new SpotOneOPT(env);
 	    break;
 	case Config::NT_EDGE_TWO_OPT:
 	    if (env.getConfig().isVerbose()) cout << "Creating local search with Edge-2-opt neighborhood .." << endl;
@@ -63,7 +63,7 @@ VND* Driver::getVND(Environment& env, const Instance& init)
 {
     VND* vnd = new VND(env, init);
     
-    Neighborhood* one = new OneOPT(env);
+    Neighborhood* one = new SpotOneOPT(env);
     vnd->addNeighborhood(*one);
     
     Neighborhood* two = new EdgeTwoOPT(env);

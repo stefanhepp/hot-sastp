@@ -39,10 +39,10 @@ protected:
  *   that gives some improvement on exchange
  * - SF_BEST: search all combinations of nodes in the tour and unused nodes to find best spot to replace
  */
-class OneOPT: public Neighborhood
+class SpotOneOPT: public Neighborhood
 {
 public :
-    OneOPT (Environment& env):Neighborhood(env){};
+    SpotOneOPT (Environment& env):Neighborhood(env){};
     
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);    
     
