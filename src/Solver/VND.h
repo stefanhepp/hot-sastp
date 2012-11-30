@@ -16,11 +16,20 @@ class VND : public AbstractSearch
     Instance instance;
     
     std::vector<Neighborhood*> neighborhoods;
+    std::vector<Config::StepFunction> stepFunctions;
     
 public:
     VND(Environment& env, const Instance& init);
 
-    void addNeighborhood(Neighborhood& nb) { neighborhoods.push_back(&nb); }
+    void addNeighborhood(Neighborhood& nb) { 
+	neighborhoods.push_back(&nb); 
+	stepFunctions.push_back(stepFunction);
+    }
+    
+    void addNeighborhood(Neighborhood& nb, Config::StepFunction sf) { 
+	neighborhoods.push_back(&nb); 
+	stepFunctions.push_back(sf);
+    }
     
     virtual Instance& getInstance() { return instance; }
     

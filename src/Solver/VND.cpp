@@ -31,7 +31,7 @@ void VND::run()
 	
 	// Choose best or next x' in N(x), apply if f(x') <= f(x)
 	
-	if ( neighborhoods[i]->performStep(instance, stepFunction, false) ) {
+	if ( neighborhoods[i]->performStep(instance, stepFunctions[i], false) ) {
 	    i = 1;
 	} else {
 	    i++;
