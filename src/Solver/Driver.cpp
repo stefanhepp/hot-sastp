@@ -19,7 +19,7 @@ void Driver::prepare()
 
 GreedyTour* Driver::getGreedyTour(Environment& env){
     GreedyTour* gt;
-    if(env.getConfig().getAlgorithm() == Config::AT_GREEDY_IN)
+    if(env.getConfig().useGreedyInsertHeuristic())
     {
 	if (env.getConfig().isVerbose()) cout << "Creating insert heuristic greedy search .." << endl;
 	
@@ -81,8 +81,7 @@ void Driver::solve()
   bool verbose = env.getConfig().isVerbose();
     
   switch(env.getConfig().getAlgorithm()){
-    case Config::AT_GREEDY_IN:
-    case Config::AT_GREEDY_NN:
+    case Config::AT_GREEDY:
     {
 	GreedyTour* greedy = getGreedyTour(env);
 	

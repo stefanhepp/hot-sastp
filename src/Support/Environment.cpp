@@ -14,11 +14,12 @@ using namespace std;
 Config::Config()
 {
     // Set some default values
-    _algorithm = AT_GREEDY_IN;
+    _algorithm = AT_GREEDY;
     _neighborhood = NT_ONE_OPT;
     _maxKNearestSpots = 10;
     _nodeInsertMode = NIM_SHORTEST_PATH;
     _stepFunction = SF_RANDOM;
+    _greedyInsertHeuristic = true;
     _verbose = false;
     _writeDot = false;
     _maxStepsWithNoChange = 25u;
@@ -69,7 +70,7 @@ struct Arg: public option::Arg {
     }
 };
 
-enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, KNEAREST, VERBOSE, DOT, PRINT_CSV, PRINT_ALL_STEPS, TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA};
+enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DOT, PRINT_CSV, PRINT_ALL_STEPS, TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA};
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -78,12 +79,13 @@ const option::Descriptor usage[] = {
     { HELP, 0, "h", "help", Arg::None, "  \t--help  \tPrint usage and exit." },
     {
         ALGORITHM , 0, "a", "algorithm", Arg::Numeric, "  -a <arg>, \t--algorithm=<arg>"
-        "  \tTakes an integer argument.\n \tOptions:\n \tAT_GREEDY_IN = 0 ,\n \tAT_GREEDY_NN = 1 ,\n \tAT_LOCALSEARCH = 2"
-        ",\n \tAT_VND = 3, \n \tAT_GRASP = 4, \n \tAT_GVNS = 5. \n"
+        "  \tTakes an integer argument.\n \tOptions:\n \tAT_GREEDY = 0 ,\n \tAT_LOCALSEARCH = 1"
+        ",\n \tAT_VND = 2, \n \tAT_GRASP_LS = 3, \n \tAT_GRASP_VND = 4 ,\n \tAT_GVNS = 5. \n"
     },
     { NEIGHBORHOOD, 0, "n", "neighborhood", Arg::Numeric, "  -n <arg>, \t--neighborhood=<arg>"
         " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0 ,\n \tNT_EDGE_TWO_OPT = 1. \n" 
     },
+    { GREEDY_NN, 0, "g", "greedy-nearest", Arg::None, "  -g, \t--greedy-nearest \tUse nearest neighbor instead of insert heuristic for greedy. " },
     {
         KNEAREST, 0, "k", "knear", Arg::Numeric, "  -k <arg>, \t--knear=<arg> \tMust have as an"
         " argument a number -maximal KNearest Spots."
@@ -112,7 +114,7 @@ const option::Descriptor usage[] = {
         UNKNOWN, 0, "", "", Arg::None,
         "\nExamples:\n"
         "Default values for the options are: \n"
-	" algorithm : AT_GREEDY_IN; \n"
+	" algorithm : AT_GREEDY; \n"
 	" maxKNearestSpots : 10;\n"
 	" nodeInsertMode : NIM_SHORTEST_PATH;\n"
 	" stepFunction : SF_BEST; \n"
@@ -165,11 +167,8 @@ int Config::parseArguments (int argc, char* argv[])
                         case AT_GRASP_VND:
                             _algorithm = AT_GRASP_VND;
                             break;
-                        case AT_GREEDY_NN:
-                            _algorithm = AT_GREEDY_NN;
-                            break;
-                        case AT_GREEDY_IN:
-                            _algorithm = AT_GREEDY_IN;
+                        case AT_GREEDY:
+                            _algorithm = AT_GREEDY;
                             break;
                         case AT_GVNS:
                             _algorithm = AT_GVNS;
@@ -203,6 +202,10 @@ int Config::parseArguments (int argc, char* argv[])
 			exit(2);
 		}
 		break;	    
+	    case GREEDY_NN:
+		assert(!opt.arg);
+		_greedyInsertHeuristic = false;
+		break;
             case DOT:
                 assert (!opt.arg);
                 _writeDot = true;
@@ -355,6 +358,7 @@ void Environment::printStepResult(const Instance& instance)
 	cout << "Finished step (time: " << instance.getTotalTime() << 
 	                        ", satisfaction: " << instance.getTotalSatisfaction() << 
 	                        ", stamina: " << instance.getRemainingStamina() << 
+	                        ", length: " << instance.getTour().size() << 
 	                        ", runtime: " << getCurrentTime() << ")" << endl;
     }
     
@@ -368,6 +372,7 @@ void Environment::printSolution(const SASTPSolution& solution)
 	cout << "Found solution to " << problemName << " (time: " << solution.getTourTime() << 
 	                                                  ", satisfaction: " << solution.getSatisfaction() << 
 	                                                  ", stamina: " << solution.getStamina() << 
+	                                                  ", length: " << solution.getTour().size() << 
 	                                                  ", runtime: " << getCurrentTime() << ")" << endl;
     }
 }

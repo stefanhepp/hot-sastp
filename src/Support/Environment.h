@@ -16,13 +16,12 @@ public:
     void printHelp();
     
     enum AlgorithmTag{
-	AT_GREEDY_NN = 0,
-        AT_GREEDY_IN = 1,
-	AT_LOCALSEARCH = 2,
-	AT_VND = 3,
-	AT_GRASP_LS = 4,
-        AT_GRASP_VND = 5,
-	AT_GVNS = 6
+	AT_GREEDY = 0,
+	AT_LOCALSEARCH = 1,
+	AT_VND = 2,
+	AT_GRASP_LS = 3,
+        AT_GRASP_VND = 4,
+	AT_GVNS = 5
     };
     
     enum NodeInsertMode {
@@ -59,6 +58,8 @@ public:
   
     StepFunction getStepFunction() const { return _stepFunction; }
   
+    bool useGreedyInsertHeuristic() const { return _greedyInsertHeuristic; }
+  
     /**
      * @return the maximum number of nearest spots that should be searched for.
      */
@@ -82,22 +83,23 @@ public:
      * @return maximum allowed runtime in seconds
      */
     unsigned getMaxRuntime() const { return _maxRuntime; }
-    double getAlpha() const {return _alphaRCL; }
+    double getAlpha() const { return _alphaRCL; }
     
 private: 
     std::string _inputFile;
     std::string _outputFile;
     
-    AlgorithmTag _algorithm;       
-    NeighborhoodTag _neighborhood;
-    NodeInsertMode _nodeInsertMode;
-    StepFunction _stepFunction;
+    AlgorithmTag     _algorithm;       
+    NeighborhoodTag  _neighborhood;
+    NodeInsertMode   _nodeInsertMode;
+    StepFunction     _stepFunction;
+    bool             _greedyInsertHeuristic;
     
     unsigned _maxKNearestSpots;
     unsigned _maxStepsWithNoChange;
     
     unsigned _maxRuntime;
-    double _alphaRCL;
+    double   _alphaRCL;
     
     bool _verbose;
     bool _writeDot;

@@ -11,39 +11,32 @@ Neighborhood::Neighborhood(Environment& env)
 {
 }
 
-unsigned OneOPT::findRandomMethod (Instance& instance, unsigned where, unsigned what, unsigned method)
+unsigned OneOPT::findRandomMethod (Instance& instance, unsigned nodeToUpdate, unsigned spot, unsigned method, double &deltaSatisfaction)
 {
-    //check from the method position until the end of the methods for the first suitable 
+    //check all methods for the first suitable 
     //method which gives some improvement, if found return the index
-    for ( unsigned i = method+1 ; i < instance.getProblem().getSpot(what).getMethods().size(); i++) 
+    unsigned numMethods = instance.getProblem().getSpot(spot).getMethods().size();
+    
+    for ( unsigned i = 0; i < numMethods; i++) 
     {
-        TourNode newNode(what, i);
-        TourValues diff = instance.getInsertDeltaValues(where,newNode);
-        diff -= instance.getDeleteDeltaValues(where);
+	unsigned m = (method + i) % numMethods;
+	
+        TourNode newNode(spot, m);
+        TourValues diff = instance.getUpdateDeltaValues(nodeToUpdate,newNode);
         
-        if (instance.isValid(diff))
-            return i;
-        
-    }
-    //now check from the index 0 of the methods until method the first one which gives some improvement
-    // if one is found return the index
-    for ( unsigned i = 0 ; i < method; i++) 
-    {
-        TourNode newNode(what, i);
-        TourValues diff = instance.getInsertDeltaValues(where,newNode);
-        diff -= instance.getDeleteDeltaValues(where);
-        
-        if (instance.isValid(diff))
-            return i;
+        if (instance.isValid(diff)) {
+	    deltaSatisfaction = diff.satisfaction;
+            return m;
+	}
         
     }
     //this means that none of the methods gives any improvement
     return method;
 }
 
-void OneOPT::performReplaceNode (Instance& instance, unsigned int whereToInsert, unsigned whatToInsert, unsigned int method)
+void OneOPT::performReplaceNode (Instance& instance, unsigned int nodeToUpdate, unsigned spotToInsert, unsigned int method)
 {
-    instance.updateNode(whereToInsert, whatToInsert, method);
+    instance.updateNode(nodeToUpdate, spotToInsert, method);
 }
 
 
@@ -110,44 +103,30 @@ bool OneOPT::performRandomStep(Instance& instance, bool alwaysApply){
 	advance (it, unusedRandomSpot);
 	// method = find random method of spot
 	unsigned m = rand() % instance.getProblem().getSpot (*it).getMethods().size();
-	// check if solution is feasible
+	
+	// find feasible solution
+	double deltaSatisfaction;
+	unsigned otherMethods = findRandomMethod (instance, spotWhereToInsert, *it, m, deltaSatisfaction);
 
-	TourNode newNode (*it, m);
+	if (m == otherMethods) {
+	    //this means none of the methods is feasable
+	    unusedSpots.erase (it);
 
-	TourValues diff = instance.getInsertDeltaValues (spotWhereToInsert, newNode);
-	diff -= instance.getDeleteDeltaValues (spotWhereToInsert);
-
-	if (instance.isValid (diff)) {
-
-	    if ( (diff.satisfaction) > 0.0) {
+	} else {
+	    
+	    if ( alwaysApply || (deltaSatisfaction) > 0.0) {
 		//this means we incereased the total satisfaction
 		// remove old spot from tour
 		// insert new spot + method into tour
 		performReplaceNode(instance,spotWhereToInsert,*it, m);
 		return true;
 
-	    } else
-		// if satisfaction did not increase and we do not want worse solutions, continue random search
-		if (!alwaysApply && diff.satisfaction < 0) return false;
-
-
-	} else {
-
-	    unsigned otherMethods = findRandomMethod (instance, spotWhereToInsert, *it, m);
-	    std::set<unsigned>::iterator tmp;
-	    // check other methods if any one is feasible
-	    if (m == otherMethods) {
-		//this means none of the methods is feasable
-		tmp = it;
-		++tmp;
-		unusedSpots.erase (it);
-		it = tmp;
-
 	    } else {
-		performReplaceNode(instance,spotWhereToInsert,*it,otherMethods);
-		return true;
+		// if satisfaction did not increase and we do not want worse solutions, continue random search
+		return false;
 	    }
 	}
+	
     }
     // repeat select random spot until unusedSpots.size()
 
@@ -232,6 +211,8 @@ bool EdgeTwoOPT::performStep (Instance& instance, Config::StepFunction stepFunct
 		}
 	    }
 	}
+	
+	if (candidates.empty()) return false;
 
 	// Pick a random pair of edges
 	int r = rand() % candidates.size();

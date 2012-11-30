@@ -51,17 +51,18 @@ protected:
     /**
      * Perform the search for the first method such that inserting the selected spot would result in a valid tour.
      * @param instance the instance to calculate the neighbor for
-     * @param where index of the spot in the tour chosen for removal 
-     * @param what index of the spot to be inserted
+     * @param nodeToUpdate index of the spot in the tour chosen for removal 
+     * @param spotToInsert index of the spot to be inserted
      * @param method the index of the randomly chosen method
+     * @param deltaSatisfaction returns the satisfaction difference
      */
-    unsigned findRandomMethod(Instance& instance, unsigned int where, unsigned int what, unsigned method);
+    unsigned findRandomMethod(Instance& instance, unsigned int nodeToUpdate, unsigned int spotToInsert, unsigned method, double &deltaSatisfaction);
     
     /**
      * Perform the deletion of the node whereToInsert from the tour
      * Insert the whatToInsert in the tour 
      */
-    void performReplaceNode(Instance& instance, unsigned whereToInsert, unsigned whatToInsert, unsigned method);
+    void performReplaceNode(Instance& instance, unsigned nodeToUpdate, unsigned spotToInsert, unsigned method);
     
     /**
      * returns the diff and initializes method with the appropriate method and nodeIndex with the replacement 
