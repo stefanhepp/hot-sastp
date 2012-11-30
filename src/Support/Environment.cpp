@@ -82,7 +82,7 @@ const option::Descriptor usage[] = {
         ",\n \tAT_VND = 3, \n \tAT_GRASP = 4, \n \tAT_GVNS = 5. \n"
     },
     { NEIGHBORHOOD, 0, "n", "neighborhood", Arg::Numeric, "  -n <arg>, \t--neighborhood=<arg>"
-        " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0 ,\n \tNT_TWO_OPT = 1. \n" 
+        " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0 ,\n \tNT_EDGE_TWO_OPT = 1. \n" 
     },
     {
         KNEAREST, 0, "k", "knear", Arg::Numeric, "  -k <arg>, \t--knear=<arg> \tMust have as an"
@@ -195,8 +195,8 @@ int Config::parseArguments (int argc, char* argv[])
 		    case NeighborhoodTag::NT_ONE_OPT:
 			_neighborhood = NT_ONE_OPT;
 			break;
-		    case NeighborhoodTag::NT_TWO_OPT:
-			_neighborhood = NT_TWO_OPT;
+		    case NeighborhoodTag::NT_EDGE_TWO_OPT:
+			_neighborhood = NT_EDGE_TWO_OPT;
 			break;
 		    default:
 			printHelp();

@@ -209,7 +209,7 @@ bool OneOPT::performMaxStep(Instance& instance, bool alwaysApply){
 }
 
 
-bool TwoOPT::performStep (Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
+bool EdgeTwoOPT::performStep (Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
 {
     int tourLength = instance.getTourLength();
 
@@ -313,7 +313,7 @@ bool TwoOPT::performStep (Instance& instance, Config::StepFunction stepFunction,
     return false;
 }
 
-bool TwoOPT::isValidEdgeExchange(Instance& instance, int firstEdge, int secondEdge, double& deltaSatisfaction)
+bool EdgeTwoOPT::isValidEdgeExchange(Instance& instance, int firstEdge, int secondEdge, double& deltaSatisfaction)
 {
     TourValues delta = instance.getCrossOverDeltaValues(firstEdge, secondEdge);
     deltaSatisfaction = delta.satisfaction;
@@ -321,7 +321,7 @@ bool TwoOPT::isValidEdgeExchange(Instance& instance, int firstEdge, int secondEd
     return instance.getTotalTime() + delta.tourTime < instance.getProblem().getMaxTime();
 }
 
-void TwoOPT::performEdgeExchange(Instance& instance, int firstEdge, int secondEdge)
+void EdgeTwoOPT::performEdgeExchange(Instance& instance, int firstEdge, int secondEdge)
 {
     instance.crossOverEdges(firstEdge, secondEdge);
 }

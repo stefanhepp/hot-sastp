@@ -25,18 +25,13 @@ void VND::run()
     double deltaSatisfaction;
     unsigned i = 0;
     
-    if (stepFunction == Config::SF_RANDOM) {
-	cout << "Cannot use RANDOM step function for VND, using NEXT instead!" << endl;
-	stepFunction = Config::SF_NEXT;
-    }
-    
     start();
     
     do {
 	
 	// Choose best or next x' in N(x), apply if f(x') <= f(x)
 	
-	if ( neighborhoods[i]->performStep(instance, stepFunction, false) ) {
+	if ( neighborhoods[i]->performStep(instance, stepFunctions[i], false) ) {
 	    i = 1;
 	} else {
 	    i++;

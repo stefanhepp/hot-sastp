@@ -80,10 +80,10 @@ protected:
  * - SF_NEXT: TODO
  * - SF_BEST: search all pairs of edges in the tour for possible improvements
  */
-class TwoOPT: public Neighborhood
+class EdgeTwoOPT: public Neighborhood
 {
 public :
-    TwoOPT (Environment& env):Neighborhood(env){};
+    EdgeTwoOPT (Environment& env):Neighborhood(env){};
     
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);
     
