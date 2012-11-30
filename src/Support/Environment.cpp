@@ -21,6 +21,7 @@ Config::Config()
     _stepFunction = SF_RANDOM;
     _greedyInsertHeuristic = true;
     _verbose = false;
+    _debug = false;
     _writeDot = false;
     _maxStepsWithNoChange = 25u;
     _printAllSteps = false;
@@ -70,7 +71,7 @@ struct Arg: public option::Arg {
     }
 };
 
-enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DOT, PRINT_CSV, PRINT_ALL_STEPS, TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA};
+enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DEBUG, DOT, PRINT_CSV, PRINT_ALL_STEPS, TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA};
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -83,7 +84,7 @@ const option::Descriptor usage[] = {
         ",\n \tAT_VND = 2, \n \tAT_GRASP_LS = 3, \n \tAT_GRASP_VND = 4 ,\n \tAT_GVNS = 5. \n"
     },
     { NEIGHBORHOOD, 0, "n", "neighborhood", Arg::Numeric, "  -n <arg>, \t--neighborhood=<arg>"
-        " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0 ,\n \tNT_EDGE_TWO_OPT = 1. \n" 
+        " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0 ,\n \tNT_EDGE_TWO_OPT = 1 ,\n \tNT_METHOD_TWO_OPT = 2. \n" 
     },
     { GREEDY_NN, 0, "g", "greedy-nearest", Arg::None, "  -g, \t--greedy-nearest \tUse nearest neighbor instead of insert heuristic for greedy. " },
     {
@@ -92,6 +93,7 @@ const option::Descriptor usage[] = {
     },
     { DOT, 0, "d", "dot", Arg::None, "  -d, \t--dot \tGenerate dot file from solution. " },
     { VERBOSE, 0, "v", "verbose", Arg::None, "  -v, \t--verbose \tBe verbosive."},
+    { DEBUG, 0, "x", "debug", Arg::None, "  -x, \t--debug \tPrint out debug infos." },
     { PRINT_CSV, 0, "c", "csv", Arg::None, "  -c, \t--csv \tPrint result as CSV output." },
 
     { PRINT_ALL_STEPS, 0, "p", "allsteps", Arg::None, "  -p, \t--allsteps \tPrint result of all intermediate steps." },
@@ -197,6 +199,9 @@ int Config::parseArguments (int argc, char* argv[])
 		    case NeighborhoodTag::NT_EDGE_TWO_OPT:
 			_neighborhood = NT_EDGE_TWO_OPT;
 			break;
+		    case NeighborhoodTag::NT_METHOD_TWO_OPT:
+			_neighborhood = NT_METHOD_TWO_OPT;
+			break;
 		    default:
 			printHelp();
 			exit(2);
@@ -226,6 +231,10 @@ int Config::parseArguments (int argc, char* argv[])
                 assert (!opt.arg);
                 _verbose = true;
                 break;
+	    case DEBUG:
+		assert(!opt.arg);
+		_debug = true;
+		break;
             case INSERTMODE:
                 if (opt.arg) {
                     switch (atoi (opt.arg)) {

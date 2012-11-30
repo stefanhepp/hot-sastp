@@ -300,3 +300,110 @@ void EdgeTwoOPT::performEdgeExchange(Instance& instance, int firstEdge, int seco
 {
     instance.crossOverEdges(firstEdge, secondEdge);
 }
+
+
+bool MethodTwoOPT::performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
+{
+    int tourLength = instance.getTourLength();
+
+    if ( tourLength < 2 ) return false;
+
+    if (stepFunction == Config::SF_RANDOM) {
+	
+	// Pick two random nodes
+	unsigned firstNodeId = rand() & tourLength;
+	unsigned secondNodeId = rand() & tourLength - 1;
+	
+	if (secondNodeId == firstNodeId) secondNodeId++;
+	
+	// try to find methods
+	
+	
+    } else {	
+	int bestFirstNodeId = 0;
+	int bestSecondNodeId = 0;
+	TourNode bestFirstNode;
+	TourNode bestSecondNode;
+	int bestFirstMethod = 0;
+	int bestSecondMethod = 0;
+	double bestSatisfaction = 0;
+	
+	for (int firstNodeId = 0; firstNodeId < tourLength - 1; firstNodeId++) {
+	    TourNode firstNode = instance.getNode(firstNodeId);
+	    const Spot& firstSpot = instance.getSpot(firstNode);
+	    
+	    for (int secondNodeId = firstNodeId + 1; secondNodeId < tourLength; secondNodeId++) {
+		TourNode secondNode = instance.getNode(secondNodeId);
+		const Spot& secondSpot = instance.getSpot(secondNode);
+		
+		unsigned firstMethodId = -1;
+		for (const auto& firstMethod : firstSpot.getMethods()) {
+		    firstMethodId++;
+		    
+		    unsigned secondMethodId = -1;
+		    for (const auto& secondMethod : secondSpot.getMethods()) {
+			secondMethodId++;
+			
+			if (firstMethodId == firstNode.method && secondMethodId == secondNode.method) continue;
+			
+			double deltaSatisfaction;
+			if (isValidMethodExchange(instance, firstSpot.getMethod(firstNode.method), 
+			                                    secondSpot.getMethod(secondNode.method), 
+							     *firstMethod, *secondMethod, deltaSatisfaction)) {
+			    
+			    if (stepFunction == Config::SF_NEXT) {
+				
+				if (alwaysApply || deltaSatisfaction > 0) {
+				    instance.updateNode(firstNodeId, firstNode.spot, firstMethodId);
+				    instance.updateNode(secondNodeId, secondNode.spot, secondMethodId);
+				    
+				    return true;
+				}
+				
+			    } else {
+				
+				if (deltaSatisfaction > bestSatisfaction || (bestFirstNodeId == bestSecondNodeId)) {
+				    bestFirstNodeId = firstNodeId;
+				    bestSecondNodeId = secondNodeId;
+				    bestFirstNode = firstNode;
+				    bestSecondNode = secondNode;
+				    bestFirstMethod = firstMethodId;
+				    bestSecondMethod = secondMethodId;
+				    bestSatisfaction = deltaSatisfaction;
+				}
+				
+			    }
+			}
+		    }
+		}
+	    }
+	}
+
+	if (stepFunction == Config::SF_BEST) {
+	    if (alwaysApply || bestSatisfaction > 0) {
+		instance.updateNode(bestFirstNodeId, bestFirstNode.spot, bestFirstMethod);
+		instance.updateNode(bestSecondNodeId, bestSecondNode.spot, bestSecondMethod);
+		
+		return true;
+	    }
+	}
+    }
+    
+    return false;    
+}
+
+bool MethodTwoOPT::isValidMethodExchange(Instance& instance, const Method& firstOldMethod, const Method& secondOldMethod, 
+					  const Method& firstNewMethod, const Method& secondNewMethod, double& deltaSatisfaction)
+{
+    TourValues values;
+    values += firstNewMethod;
+    values += secondNewMethod;
+    values -= firstOldMethod;
+    values -= secondOldMethod;
+    
+    deltaSatisfaction = values.satisfaction;
+    
+    return instance.isValid(values);
+}
+
+

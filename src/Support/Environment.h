@@ -43,7 +43,8 @@ public:
 
     enum NeighborhoodTag{
       NT_ONE_OPT = 0,
-      NT_EDGE_TWO_OPT = 1
+      NT_EDGE_TWO_OPT = 1,
+      NT_METHOD_TWO_OPT = 2
     };
     
     /**
@@ -70,6 +71,8 @@ public:
     std::string getOutputFilename() const {return _outputFile;}
 
     bool isVerbose() const { return _verbose; }
+    
+    bool isDebug() const { return _debug; }
     
     bool doWriteDotFile() const { return _writeDot; }
     
@@ -102,6 +105,7 @@ private:
     double   _alphaRCL;
     
     bool _verbose;
+    bool _debug;
     bool _writeDot;
     bool _printSolution;
     bool _printCSVOutput;

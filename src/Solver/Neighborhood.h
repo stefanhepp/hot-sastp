@@ -5,6 +5,8 @@
 #include "Support/Environment.h"
 #include "Support/Instance.h"
 
+#include <string>
+
 /**
  * Base class for neighborhoods
  */
@@ -12,6 +14,8 @@ class Neighborhood
 {
 public:
     Neighborhood(Environment& env);
+    
+    virtual std::string getName() const =0;
     
     /**
      * Perform a single step, using the given step function.
@@ -44,9 +48,11 @@ class SpotOneOPT: public Neighborhood
 public :
     SpotOneOPT (Environment& env):Neighborhood(env){};
     
+    virtual std::string getName() const { return "Spot-1-Opt"; }
+    
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);    
     
-protected:
+private:
     
     /**
      * Perform the search for the first method such that inserting the selected spot would result in a valid tour.
@@ -87,9 +93,11 @@ class EdgeTwoOPT: public Neighborhood
 public :
     EdgeTwoOPT (Environment& env):Neighborhood(env){};
     
+    virtual std::string getName() const { return "Edge-2-Opt"; }
+    
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);
     
-protected:
+private:
     
     bool isValidEdgeExchange(Instance& instance, int firstEdge, int secondEdge, double &deltaSatisfaction);
     
@@ -109,10 +117,16 @@ class MethodTwoOPT: public Neighborhood
 public :
     MethodTwoOPT (Environment& env):Neighborhood(env){};
     
+    virtual std::string getName() const { return "Method-2-Opt"; }
+    
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);
     
-protected:
-        
+private:
+    
+    bool isValidMethodExchange(Instance& instance, 
+			       const Method& firstOldMethod, const Method& secondOldMethod,
+			       const Method& firstNewMethod, const Method& secondNewMethod, double &deltaSatisfaction);
+    
 };
 
 

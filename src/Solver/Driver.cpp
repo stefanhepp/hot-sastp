@@ -51,6 +51,11 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 	    
 	    nb = new EdgeTwoOPT(env);
 	    break;
+	case Config::NT_METHOD_TWO_OPT:
+	    if (env.getConfig().isVerbose()) cout << "Creating local search with Method-2-opt neighborhood .." << endl;
+	    
+	    nb = new MethodTwoOPT(env);
+	    break;
     }
     
     LocalSearch* ls;
@@ -61,14 +66,19 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 
 VND* Driver::getVND(Environment& env, const Instance& init)
 {
+    Neighborhood* nb;
+    
     VND* vnd = new VND(env, init);
     
-    Neighborhood* one = new SpotOneOPT(env);
-    vnd->addNeighborhood(*one);
+    nb = new SpotOneOPT(env);
+    vnd->addNeighborhood(*nb);
     
-    Neighborhood* two = new EdgeTwoOPT(env);
-    vnd->addNeighborhood(*two);
+    nb = new MethodTwoOPT(env);
+    vnd->addNeighborhood(*nb);
 
+    nb = new EdgeTwoOPT(env);
+    vnd->addNeighborhood(*nb);
+    
     return vnd;
 }
 

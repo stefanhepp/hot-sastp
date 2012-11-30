@@ -11,6 +11,8 @@ struct TourNode {
     unsigned spot;
     unsigned method;
     
+    TourNode() : spot(-1), method(0) {}
+    
     TourNode(unsigned spot, unsigned method) : spot(spot), method(method) {}
 
     bool operator==(const TourNode& n) {
@@ -47,13 +49,21 @@ struct TourValues {
 	tourTime += deltaDist / problem.getVelocity();
 	satisfaction -= deltaDist * problem.getAlpha();
     }
-       
+    
     const TourValues operator+(const TourValues& v) {
 	return TourValues(tourTime + v.tourTime, satisfaction + v.satisfaction, stamina + v.stamina);
     }
     
     const TourValues operator-(const TourValues& v) {
 	return TourValues(tourTime - v.tourTime, satisfaction - v.satisfaction, stamina - v.stamina);
+    }
+    
+    const TourValues operator+(const Method& m) {
+	return TourValues(tourTime + m.getTime(), satisfaction + m.getSatisfaction(), stamina + m.getStamina());
+    }
+    
+    const TourValues operator-(const Method& m) {
+	return TourValues(tourTime - m.getTime(), satisfaction - m.getSatisfaction(), stamina - m.getStamina());
     }
     
     TourValues& operator+=(const TourValues& v) {
