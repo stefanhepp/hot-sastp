@@ -65,15 +65,15 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 	    
 	    nb = new MethodTwoOPT(env);
 	    break;
-	case Config::NT_NEAREST_TOUR_CONSEC:
-	    if (env.getConfig().isVerbose()) cout << "Creating local search with Nearest Tour (consecutive) neighborhood .." << endl;
+	case Config::NT_NEAREST_TOUR_OPT:
+	    if (env.getConfig().isVerbose()) cout << "Creating local search with Nearest-Tour-exchange .." << endl;
 	    
-	    nb = new NearestTourNodes(env, 4, true, env.getConfig().getMaxKNearestSpots(), true);
+	    nb = new NearestTourExchange(env, 4, env.getConfig().getMaxKNearestSpots(), true);
 	    break;
-	case Config::NT_NEAREST_TOUR_RANDOM:
-	    if (env.getConfig().isVerbose()) cout << "Creating local search with Nearest Tour (random) neighborhood .." << endl;
+	case Config::NT_TWO_NODE_OPT:
+	    if (env.getConfig().isVerbose()) cout << "Creating local search with 2-Nodes-Exchange .." << endl;
 	    
-	    nb = new NearestTourNodes(env, 2, false, env.getConfig().getMaxKNearestSpots(), false);
+	    nb = new TwoNodesTourExchange(env, env.getConfig().getMaxKNearestSpots(), false);
 	    break;
     }
     

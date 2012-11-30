@@ -1,19 +1,49 @@
 #include "TourNeighborhood.h"
 
-NearestTourNodes::NearestTourNodes(Environment& env, unsigned int maxRemove, bool removeConsecutive, 
-				   unsigned int maxk, bool insertConsecutive)
-: Neighborhood(env), maxRemove(maxRemove), removeConsecutive(removeConsecutive), maxk(maxk), 
-  insertConsecutive(insertConsecutive)
+#include <vector>
+
+using namespace std;
+
+NearestNodesNeighborhood::NearestNodesNeighborhood(Environment& env, unsigned int maxk, bool insertConsecutive)
+: Neighborhood(env), maxk(maxk), insertConsecutive(insertConsecutive)
 {
 }
 
-std::string NearestTourNodes::getName() const
+
+NearestTourExchange::NearestTourExchange(Environment& env, unsigned int maxRemove, unsigned int maxk, bool insertConsecutive)
+: NearestNodesNeighborhood(env, maxk, insertConsecutive), maxRemove(maxRemove)
 {
-    // TODO generate name based on parameters
-    return "NearestTourNodes";
 }
 
-bool NearestTourNodes::performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
+std::string NearestTourExchange::getName() const
+{
+    // TODO add option values to name
+    return "Nearest-Tour-exchange"; 
+}
+
+bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
+{
+
+    
+    return false;
+}
+
+
+
+TwoNodesTourExchange::TwoNodesTourExchange(Environment& env, unsigned int maxk, bool insertConsecutive)
+: NearestNodesNeighborhood(env, maxk, insertConsecutive)
+{
+}
+
+std::string TwoNodesTourExchange::getName() const
+{
+    // TODO add option values to name
+    return "2-Nodes-exchange";
+}
+
+bool TwoNodesTourExchange::performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
 {
     
+    
+    return false;
 }

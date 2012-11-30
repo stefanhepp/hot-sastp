@@ -86,7 +86,7 @@ const option::Descriptor usage[] = {
     },
     { NEIGHBORHOOD, 0, "n", "neighborhood", Arg::Numeric, "  -n <arg>, \t--neighborhood=<arg>"
         " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0,\n \tNT_EDGE_TWO_OPT = 1,\n \tNT_METHOD_TWO_OPT = 2"
-	",\n \tNT_NEAREST_TOUR_CONSEC = 3,\n \tNT_NEAREST_TOUR_RANDOM = 4 \n"
+	",\n \tNT_NEAREST_TOUR_OPT = 3,\n \tNT_TWO_NODES_OPT = 4 \n"
     },
     { GREEDY_NN, 0, "g", "greedy-nearest", Arg::None, "  -g, \t--greedy-nearest \tUse nearest neighbor instead of insert heuristic for greedy. " },
     {
@@ -203,11 +203,11 @@ int Config::parseArguments (int argc, char* argv[])
 		    case NeighborhoodTag::NT_METHOD_TWO_OPT:
 			_neighborhood = NT_METHOD_TWO_OPT;
 			break;
-		    case NeighborhoodTag::NT_NEAREST_TOUR_CONSEC:
-			_neighborhood = NT_NEAREST_TOUR_CONSEC;
+		    case NeighborhoodTag::NT_NEAREST_TOUR_OPT:
+			_neighborhood = NT_NEAREST_TOUR_OPT;
 			break;
-		    case NeighborhoodTag::NT_NEAREST_TOUR_RANDOM:
-			_neighborhood = NT_NEAREST_TOUR_RANDOM;
+		    case NeighborhoodTag::NT_TWO_NODE_OPT:
+			_neighborhood = NT_TWO_NODE_OPT;
 			break;
 		    default:
 			printHelp();
