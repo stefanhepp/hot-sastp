@@ -43,8 +43,7 @@ unsigned OneOPT::findRandomMethod (Instance& instance, unsigned where, unsigned 
 
 void OneOPT::performReplaceNode (Instance& instance, unsigned int whereToInsert, unsigned whatToInsert, unsigned int method)
 {
-    instance.deleteNode (whereToInsert);
-    instance.insertNode (whereToInsert, whatToInsert, method);
+    instance.updateNode(whereToInsert, whatToInsert, method);
 }
 
 
@@ -82,7 +81,7 @@ bool OneOPT::performNextStep(Instance& instance, bool alwaysApply){
             for (auto & metod : nearestspot.getMethods()) {
             
                 TourNode n (spotId, m);
-                TourValues diff = instance.getInsertDeltaValues (index , n) - instance.getDeleteDeltaValues (index);
+                TourValues diff = instance.getUpdateDeltaValues (index , n);
                 if (instance.isValid (diff) && diff.satisfaction > 0) {
                    // if we found some improvement, make the node exchange and return 
                     performReplaceNode(instance,index,n.spot,m);
@@ -178,7 +177,7 @@ bool OneOPT::performMaxStep(Instance& instance, bool alwaysApply){
             for (auto & meth : nearestspot.getMethods()) {
             
                 TourNode n (spotId, m);
-                TourValues diff = instance.getInsertDeltaValues (index , n) - instance.getDeleteDeltaValues (index);
+                TourValues diff = instance.getUpdateDeltaValues (index , n);
                 if (instance.isValid(diff) && (diff.satisfaction > maxSatisfaction || maxWhatToInsert == -1)) {
                     //keep track of the maximal improvement
                     maxSatisfaction = diff.satisfaction;
