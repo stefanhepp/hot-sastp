@@ -21,12 +21,15 @@ GreedyTour* Driver::getGreedyTour(Environment& env){
     GreedyTour* gt;
     if(env.getConfig().getAlgorithm() == Config::AT_GREEDY_IN)
     {
+	if (env.getConfig().isVerbose()) cout << "Creating insert heuristic greedy search .." << endl;
+	
         gt = new GreedyInsertHeuristic(env);
         return gt;
-        
     }
     else
     { 
+	if (env.getConfig().isVerbose()) cout << "Creating nearest neighbor greedy search .." << endl;
+	
         gt = new GreedyNearestNeighbor(env);
         return gt;
     }
@@ -39,9 +42,13 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
     Neighborhood* nb;
     switch (env.getConfig().getNeighborhood()) {
 	case Config::NT_ONE_OPT:
+	    if (env.getConfig().isVerbose()) cout << "Creating local search with Spot-1-opt neighborhood .." << endl;
+	    
 	    nb = new OneOPT(env);
 	    break;
 	case Config::NT_EDGE_TWO_OPT:
+	    if (env.getConfig().isVerbose()) cout << "Creating local search with Edge-2-opt neighborhood .." << endl;
+	    
 	    nb = new EdgeTwoOPT(env);
 	    break;
     }
@@ -70,12 +77,16 @@ void Driver::solve()
 {
   env.startTimer();
   env.setPrintSteps(false);
+  
+  bool verbose = env.getConfig().isVerbose();
     
   switch(env.getConfig().getAlgorithm()){
     case Config::AT_GREEDY_IN:
     case Config::AT_GREEDY_NN:
     {
 	GreedyTour* greedy = getGreedyTour(env);
+	
+	if (verbose) cout << "Running greedy search .." << endl;
 	
 	env.setPrintSteps(true);
 	greedy->run();
@@ -86,10 +97,15 @@ void Driver::solve()
 
     case Config::AT_LOCALSEARCH: {
         GreedyTour* greedy = getGreedyTour(env);
-        greedy->run();
+
+	if (verbose) cout << "Running greedy search for initial solution .." << endl;
+
+	greedy->run();
         
         LocalSearch* local = getLocalSearch(env, greedy->getInstance());
         
+	if (verbose) cout << "Running local search .." << endl;
+	
 	env.setPrintSteps(true);
 	local->run();
 	
@@ -100,10 +116,14 @@ void Driver::solve()
     case Config::AT_VND: {
         GreedyTour* greedy = getGreedyTour(env);
         
+	if (verbose) cout << "Running greedy search for initial solution .." << endl;
+
         greedy->run();
         
 	VND* vnd = getVND(env, greedy->getInstance());
 	
+	if (verbose) cout << "Running VND search .." << endl;
+
 	env.setPrintSteps(true);
 	vnd->run();
 	
@@ -117,6 +137,8 @@ void Driver::solve()
 	
         Grasp grasp(env, *ls, env.getEmptyInstance());
 	
+	if (verbose) cout << "Running GRASP search with local search .." << endl;
+
 	env.setPrintSteps(true);
         grasp.run();
         
@@ -129,6 +151,8 @@ void Driver::solve()
 	VND* vnd = getVND(env, env.getEmptyInstance());
 	
         Grasp grasp(env, *vnd, env.getEmptyInstance());
+
+	if (verbose) cout << "Running GRASP search with VND .." << endl;
 
 	env.setPrintSteps(true);
 	grasp.run();
@@ -145,6 +169,7 @@ void Driver::solve()
 	// TODO add GVNS neighborhoods (different from VND neighborhoods!)
 	// gvns.addNeighborhood( new ..  );
 	
+	if (verbose) cout << "Running GVNS search with VND .." << endl;
 
 	env.setPrintSteps(true);
 	gvns.run();
