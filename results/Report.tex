@@ -1,0 +1,144 @@
+\documentclass{article}
+
+\usepackage{algorithm}
+\usepackage[noend]{algorithmic}
+
+\usepackage{multirow}
+\usepackage{datatool}
+\usepackage{graphicx}
+
+\begin{document}
+\section{General description of the framework and algorithms}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%% Here we load the files containing the results  %%%%%%%
+
+\DTLloaddb[]{greedyNN}{greedy/AT_GREEDY_NN/greedy_AT_GREEDY_NN.csv}
+\DTLloaddb[]{greedyIN}{greedy/AT_GREEDY_IN/greedy_AT_GREEDY_IN.csv}
+\DTLloaddb[]{localOne}{localSearch/OneOptRepo.csv }
+\DTLloaddb[]{localEdge}{localSearch/EdgeOptReport.csv}
+\DTLloaddb[]{localMethod}{localSearch/MethodOptReport.csv}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Results}
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Computed values using the greedy algorithm, nearest neighbour strategy}
+  \label{tab:crit:GreedyNN}
+  \setlength{\tabcolsep}{1.5mm}
+  \centering
+  \begin{tabular}{lrrrrl}
+    \bfseries Problem &
+    \bfseries Stamina &
+    \bfseries Time &
+    \bfseries Stam k=10& 
+   	\bfseries Time 
+    \DTLforeach{greedyNN}{\prob=problem,\stam=stamina,\time=time,\stamin=stamina1,\tim=time1}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \stam &\time & \stamin & \tim%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+\begin{table}
+  \vspace{-6mm}%
+  \caption{Computed values using the greedy algorithm, insertion neighbour strategy}
+  \label{tab:crit:GreedyIN}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrl}
+    \bfseries Problem &
+    \bfseries Stamina &
+    \bfseries Time &
+    \bfseries Stam k=10& 
+   	\bfseries Time 
+    \DTLforeach{greedyIN}{\prob=problem,\stam=stamina,\time=time,\stamin=stamina1,\tim=time1}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \stam &\time & \stamin & \tim%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+\begin{table}
+  \vspace{-6mm}%
+  \caption{Computed values using the local search algorithm, using SpotOneOpt}
+  \label{tab:crit:GreedyIN}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \bfseries Problem &
+    \bfseries St,Next &
+    \bfseries Time &
+    \bfseries St,Best &
+    \bfseries Time &
+    \bfseries Rand,k5 & 
+    \bfseries dev &
+    \bfseries Rand,k10& 
+   	\bfseries dev
+    \DTLforeach{localOne}{\prob=problem,\next=next,\ti=t1,\best=best,\tii=t2,\ki=k5,\devi=dev5,\kii=k10,\devii=dev10}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \next &\ti & \best & \tii & \ki & \devi & \kii &\devii%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}
+  \vspace{-6mm}%
+  \caption{Computed values using the local search algorithm, using Edge Two Opt}
+  \label{tab:crit:GreedyIN}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \bfseries Problem &
+    \bfseries St,Next &
+    \bfseries Time &
+    \bfseries St,Best &
+    \bfseries Time &
+    \bfseries Rand,k5 & 
+    \bfseries dev &
+    \bfseries Rand,k10& 
+   	\bfseries dev
+    \DTLforeach{localEdge}{\prob=problem,\next=next,\ti=t1,\best=best,\tii=t2,\ki=k5,\devi=dev5,\kii=k10,\devii=dev10}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \next &\ti & \best & \tii & \ki & \devi & \kii &\devii%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+\begin{table}
+  \vspace{-6mm}%
+  \caption{Computed values using the local search algorithm, using Method Two Opt}
+  \label{tab:crit:GreedyIN}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrr}
+    \bfseries Problem &
+    \bfseries St,Next &
+    \bfseries Time &
+    \bfseries Rand,k5 & 
+    \bfseries dev &
+    \bfseries Rand,k10& 
+   	\bfseries dev
+    \DTLforeach{localMethod}{\prob=problem,\next=next,\ti=t1,\ki=k5,\devi=dev5,\kii=k10,\devii=dev10}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \next &\ti & \ki & \devi & \kii &\devii%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+\section{Discussion}
+
+\end{document}
