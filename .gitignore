@@ -18,4 +18,5 @@
 *.kdev4
 *.kate-swp
 build
-results
+#results
+*.sol
