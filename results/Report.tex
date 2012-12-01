@@ -19,6 +19,8 @@
 \DTLloaddb[]{localOne}{localSearch/OneOptRepo.csv }
 \DTLloaddb[]{localEdge}{localSearch/EdgeOptReport.csv}
 \DTLloaddb[]{localMethod}{localSearch/MethodOptReport.csv}
+\DTLloaddb[]{vndDeterministic}{VND/VNDResD.csv}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Results}
@@ -138,6 +140,33 @@
   \end{tabular}
 
 \end{table}
+
+
+\begin{table}
+  \vspace{-6mm}%
+  \caption{Computed values using the VND, using step function Next and Best }
+  \label{tab:crit:GreedyIN}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \bfseries Problem &
+    \bfseries Next &
+    \bfseries K=5 &
+    \bfseries K=15 &
+    \bfseries AvgTime &
+    \bfseries Best & 
+    \bfseries K=5 &
+    \bfseries K=15& 
+   	\bfseries AvgTime
+    \DTLforeach{vndDeterministic}{\prob=problem,\next=next,\ti=nk5,\best=nk15,\tii=avgt1,\ki=best,\devi=k5,\kii=k15,\devii=avgt2}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \next &\ti & \best & \tii & \ki & \devi & \kii &\devii%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
 
 \section{Discussion}
 
