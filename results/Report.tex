@@ -46,7 +46,7 @@
 
 \end{table}
 
-\begin{table}
+\begin{table}[b!]
   \vspace{-6mm}%
   \caption{Computed values using the greedy algorithm, insertion neighbour strategy}
   \label{tab:crit:GreedyIN}
@@ -67,10 +67,10 @@
 
 \end{table}
 
-\begin{table}
+\begin{table}[b!]
   \vspace{-6mm}%
   \caption{Computed values using the local search algorithm, using SpotOneOpt}
-  \label{tab:crit:GreedyIN}
+  \label{tab:crit:localOne}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
@@ -93,10 +93,10 @@
 \end{table}
 
 
-\begin{table}
+\begin{table}[b!]
   \vspace{-6mm}%
   \caption{Computed values using the local search algorithm, using Edge Two Opt}
-  \label{tab:crit:GreedyIN}
+  \label{tab:crit:localEdge}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
@@ -118,10 +118,10 @@
 
 \end{table}
 
-\begin{table}
+\begin{table}[b!]
   \vspace{-6mm}%
   \caption{Computed values using the local search algorithm, using Method Two Opt}
-  \label{tab:crit:GreedyIN}
+  \label{tab:crit:localMethod}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrr}
@@ -142,10 +142,10 @@
 \end{table}
 
 
-\begin{table}
+\begin{table}[b!]
   \vspace{-6mm}%
   \caption{Computed values using the VND, using step function Next and Best }
-  \label{tab:crit:GreedyIN}
+  \label{tab:crit:vndDeterministic}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
@@ -158,9 +158,9 @@
     \bfseries K=5 &
     \bfseries K=15& 
    	\bfseries AvgTime
-    \DTLforeach{vndDeterministic}{\prob=problem,\next=next,\ti=nk5,\best=nk15,\tii=avgt1,\ki=best,\devi=k5,\kii=k15,\devii=avgt2}{%
+    \DTLforeach{vndDeterministic}{\prob=problem,\next=next,\nkv=nk5,\nkxv=nk15,\avgti=avgt1,\best=best,\kv=k5,\kxv=k15,\avgtii=avgt2}{%
       \DTLiffirstrow{\\\hline}{\\}%
-      \prob & \next &\ti & \best & \tii & \ki & \devi & \kii &\devii%
+      \prob & \next &\nkv & \nkxv & \avgti & \best & \kv & \kxv &\avgtii%
     }
     \\\hline
   \end{tabular}
