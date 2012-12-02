@@ -82,6 +82,18 @@ unsigned Instance::insertNode(unsigned int index, TourNode node)
     return index;
 }
 
+void Instance::insertNodes(const TourNodeIndexList& nodes)
+{
+    // TODO could be implemented more efficiently: insert dummy elements first to move tail,
+    //      then move elements between first and last insert position into correct position
+    
+    for (int i = nodes.size(); i >= 0; --i) {
+	insertNode(nodes[i].first, nodes[i].second);
+    }
+    
+}
+
+
 void Instance::updateNode(unsigned int index, TourNode node)
 {
     addTourValues( getUpdateDeltaValues(index, node) );
@@ -101,6 +113,22 @@ void Instance::deleteNode(unsigned int index)
     
     tour.erase(tour.begin() + index);
 }
+
+void Instance::deleteNodes(TourNodeIndexList& nodes)
+{
+    // TODO this can be implemented by using just one sweep over the array:
+    //      - start at the first node, copy elements up one position
+    //      - increase copy distance when trying to copy a node that has to be deleted
+    //      - afterwards, delete whole range to delete multiple nodes
+    //      - implement a getDeltaDeleteNodes() cost function (this is the tricky part..)
+    
+    for (int i = 0; i < nodes.size(); ++i) {
+	nodes[i].first -= i;
+	deleteNode(nodes[i].first);
+    }
+    
+}
+
 
 void Instance::crossOverEdges(unsigned int firstEdge, unsigned int secondEdge)
 {

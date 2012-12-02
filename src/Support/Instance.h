@@ -96,7 +96,16 @@ struct TourValues {
     
 };
 
+
+
 typedef std::vector<TourNode> TourList;
+
+/**
+ * List of pairs of (tour index,tour node)
+ */
+typedef std::vector< std::pair<unsigned, TourNode> > TourNodeIndexList;
+
+
 
 class Instance
 {
@@ -180,6 +189,8 @@ public:
      */
     unsigned insertNode(unsigned index, unsigned spot, unsigned method) { return insertNode(index, TourNode(spot, method)); }
     
+    void insertNodes(const TourNodeIndexList& nodes);
+    
     /**
      * @return the index of the new node in the tour.
      */
@@ -191,6 +202,13 @@ public:
     unsigned addNode(unsigned spot, unsigned method) { return addNode(TourNode(spot, method)); }
     
     void deleteNode(unsigned index);
+    
+    /**
+     * Delete the given nodes from the tour (first value in pair is the index to delete).
+     * List must be sorted by tour index. The index value of the nodes will be updated
+     * to point to the next index in the tour (so that insertNodes works correctly on the result).
+     */
+    void deleteNodes(TourNodeIndexList& nodes);
     
     /**
      * Perform a crossover of edges (firstEdge-1,firstEdge) and (secondEdge-1,secondEdge)
