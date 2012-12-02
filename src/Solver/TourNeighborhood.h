@@ -5,24 +5,56 @@
 #include "Support/Environment.h"
 #include "Solver/Neighborhood.h"
 
+#include <vector>
+#include <set>
+
 /*
  * This file contains neighborhoods that work on whole subtours
  */
+
+class NodeInserter {
+public:
+    NodeInserter(unsigned int maxk, bool insertUsed) : maxk(maxk), insertUsed(insertUsed) {}
+    
+protected:
+    unsigned maxk;
+    bool insertUsed;    
+};
+
+class ConsecutiveNodeInserter : public NodeInserter {
+public:
+    ConsecutiveNodeInserter(unsigned int maxk, bool insertUsed);
+    
+protected:
+    
+};
+
+class RandomNodeInserter : public NodeInserter {
+public:
+    RandomNodeInserter(unsigned int maxk, bool insertUsed);
+    
+protected:
+    
+};
 
 /**
  * Base class for nearest nodes exchange neighborhoods, provides some common functions
  */
 class NearestNodesNeighborhood : public Neighborhood
 {
-    
 public:
-    NearestNodesNeighborhood(Environment& env, unsigned int maxk, bool insertConsecutive, bool insertUsed);
+    NearestNodesNeighborhood(Environment& env, NodeInserter& nodeInserter);
 
 protected:
-    unsigned maxk;
-    bool insertConsecutive;
-    bool insertUsed;
+    NodeInserter& nodeInserter;
     
+    std::vector<unsigned> removedNodes;
+    // pair of <tournode after insert point, tournode to insert>
+    std::vector<std::pair<unsigned,TourNode>> insertNodes;
+    
+    double findRandomInsertNodes(const NearestSpotList& searchSpots);
+    
+    double findInsertNodes(const NearestSpotList& searchSpots, bool searchAll);
 };
 
 
@@ -35,7 +67,7 @@ class NearestTourExchange : public NearestNodesNeighborhood
     unsigned maxRemove;
     
 public:
-    NearestTourExchange(Environment& env, unsigned int maxRemove, unsigned int maxk, bool insertConsecutive, bool insertUsed);
+    NearestTourExchange(Environment& env, unsigned int maxRemove, NodeInserter& nodeInserter);
     
     virtual std::string getName() const;
     
@@ -48,10 +80,8 @@ private:
 
 class TwoNodesTourExchange : public NearestNodesNeighborhood
 {
-    unsigned maxRemove;
-    
 public:
-    TwoNodesTourExchange(Environment& env, unsigned int maxk, bool insertConsecutive, bool insertUsed);
+    TwoNodesTourExchange(Environment& env, NodeInserter& nodeInserter);
     
     virtual std::string getName() const;
     

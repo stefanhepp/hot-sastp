@@ -4,15 +4,31 @@
 
 using namespace std;
 
-NearestNodesNeighborhood::NearestNodesNeighborhood(Environment& env, unsigned int maxk, bool insertConsecutive, bool insertUsed)
-: Neighborhood(env), maxk(maxk), insertConsecutive(insertConsecutive), insertUsed(insertUsed)
+ConsecutiveNodeInserter::ConsecutiveNodeInserter(unsigned int maxk, bool insertUsed)
+: NodeInserter(maxk, insertUsed)
+{
+}
+
+RandomNodeInserter::RandomNodeInserter(unsigned int maxk, bool insertUsed)
+: NodeInserter(maxk, insertUsed)
 {
 }
 
 
-NearestTourExchange::NearestTourExchange(Environment& env, unsigned int maxRemove, unsigned int maxk, bool insertConsecutive, bool insertUsed)
-: NearestNodesNeighborhood(env, maxk, insertConsecutive, insertUsed), maxRemove(maxRemove)
+
+
+
+NearestNodesNeighborhood::NearestNodesNeighborhood(Environment& env, NodeInserter& nodeInserter)
+: Neighborhood(env), nodeInserter(nodeInserter)
 {
+}
+
+
+NearestTourExchange::NearestTourExchange(Environment& env, unsigned int maxRemove, NodeInserter& nodeInserter)
+: NearestNodesNeighborhood(env, nodeInserter), maxRemove(maxRemove)
+{
+    removedNodes.reserve(maxRemove);
+    insertNodes.reserve(maxRemove*2);
 }
 
 std::string NearestTourExchange::getName() const
@@ -26,7 +42,15 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
     unsigned tourLength = instance.getTourLength();
     if (tourLength < 1) return false;
 
-    
+    if (stepFunction == Config::SF_RANDOM) {
+	unsigned removeLength = rand() % min(maxRemove,tourLength);
+	unsigned removeFirst = rand() % (tourLength - maxRemove + 1);
+	
+	
+	
+    } else {
+	
+    }
     
     
     return false;
@@ -34,9 +58,11 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 
 
 
-TwoNodesTourExchange::TwoNodesTourExchange(Environment& env, unsigned int maxk, bool insertConsecutive, bool insertUsed)
-: NearestNodesNeighborhood(env, maxk, insertConsecutive, insertUsed)
+TwoNodesTourExchange::TwoNodesTourExchange(Environment& env, NodeInserter& nodeInserter)
+: NearestNodesNeighborhood(env, nodeInserter)
 {
+    removedNodes.resize(2);
+    insertNodes.reserve(5);
 }
 
 std::string TwoNodesTourExchange::getName() const
@@ -58,17 +84,6 @@ bool TwoNodesTourExchange::performStep(Instance& instance, Config::StepFunction 
 	if (firstNodeId == secondNodeId) secondNodeId++;
 	
 	// pick new nodes to insert (depending on how to insert)
-	if (insertConsecutive) {
-	    // pick node where to insert
-	    unsigned insertBefore = rand() % (tourLength + 1);
-	    
-	    // pick from k nearest nodes at insertion point
-	    
-	} else {
-	    // pick from k nearest nodes, insert at nearest node
-	    
-	    
-	}
 	
 	// pick methods to insert
 	

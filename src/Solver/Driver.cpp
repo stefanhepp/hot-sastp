@@ -46,9 +46,11 @@ GreedyTour* Driver::getGreedyTour(Environment& env){
 
 LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init) 
 {
-    // TODO make the neighborhood for local search configurable
+    // TODO we should clean up created neighborhoods
     
     Neighborhood* nb;
+    NodeInserter* ni;
+    
     switch (env.getConfig().getNeighborhood()) {
 	case Config::NT_ONE_OPT:
 	    if (env.getConfig().isVerbose()) cout << "Creating local search with Spot-1-opt neighborhood .." << endl;
@@ -68,12 +70,16 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 	case Config::NT_NEAREST_TOUR_OPT:
 	    if (env.getConfig().isVerbose()) cout << "Creating local search with Nearest-Tour-exchange .." << endl;
 	    
-	    nb = new NearestTourExchange(env, 4, env.getConfig().getMaxKNearestSpots(), true, true);
+	    ni = new ConsecutiveNodeInserter(env.getConfig().getMaxKNearestSpots(), true);
+	    
+	    nb = new NearestTourExchange(env, 4, *ni);
 	    break;
 	case Config::NT_TWO_NODE_OPT:
 	    if (env.getConfig().isVerbose()) cout << "Creating local search with 2-Nodes-Exchange .." << endl;
 	    
-	    nb = new TwoNodesTourExchange(env, env.getConfig().getMaxKNearestSpots(), false, true);
+	    ni = new RandomNodeInserter(env.getConfig().getMaxKNearestSpots(), true);
+	    
+	    nb = new TwoNodesTourExchange(env, *ni);
 	    break;
     }
     
