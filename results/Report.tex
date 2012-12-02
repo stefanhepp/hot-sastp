@@ -10,6 +10,47 @@
 \begin{document}
 \section{General description of the framework and algorithms}
 
+The solutions are represented as a list of spots to visit. The methods used to visit each spot is also stored in that list, but not the
+resting time at the spots. Instead, we keep track of the total amount of stamina needed for the tour and calculate the resting time required 
+at each node after the final solution has been selected. 
+Since the stamina gained by resting is independent of the spot where the rest is added, this can be done in the following way: 
+The total amount of required rest time is 
+\[
+\textit{total rest time} = \max\left(\frac{\textit{total required stamina} - \textit{initial stamina}}{\textit{habitus}},0\right)
+\]
+Beginning from the first spot in the tour, the amount of resting time for a spot is calculated as
+\[
+\textit{rest time} = \min\left(\textit{remaining rest time}, \frac{\textit{max stamina} - \textit{current stamina}}{\textit{habitus}}\right)
+\]
+
+By keeping track of the total time required to complete the tour (excluding rest times), the total satisfaction gained after the tour and
+the stamina reached at the end of the tour (excluding stamina gained by rests), new solutions can be calculated incrementally. 
+To check if a neighborhood step leads to a valid solution, the total tour time is calculated as the tour time excluding rest plus
+the total required rest time and compared with the maximum time allowed for the tour.
+\medskip
+
+Two greedy heuristics have been implemented that construct an initial solution by inserting spots with methods into the tour that have the highest ratio of gained satisfaction per
+used time. The nearest neighbor greedy heuristic adds one of the $k$ nearest spots of the last spot in the tour per step. The insert
+heuristic selects one of the $k$ nearest spots of all spots in the tour and inserts it into the tour so that the travel time is minimized.
+\medskip
+
+For the local search and the VND, several neighborhoods have been implemented. 
+
+% TODO describe neighborhoods
+
+
+
+The local search is configured with one neighborhood. In every iteration it selects a new neighbor from the neighborhood, depending on the
+step function. If the new neighbor results in a higher satisfaction, the search continues with that neighbor as the new solution. Otherwise
+the search stops for the deterministic \emph{next} and \emph{best} step functions, or continues with the old solution for the \emph{random}
+step function. In the latter case, the search terminates if either no improvement has been found for a fixed number of iterations or if a
+timeout has been reached.
+
+
+% TODO very short description of VND, Grasp: neighborhoods used and their order, termination criteria.
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%% Here we load the files containing the results  %%%%%%%
@@ -31,7 +72,8 @@
 \section{Results}
 In the following tables you can find the results of running different configurations on the set of problems. 
 
-First of the tables (\ref{tab:greedyNN}), 
+% TODO very short description of configurations for each table.
+%First of the tables (\ref{tab:greedyNN}), 
 
 \begin{table}[b!]
   \vspace{-6mm}%
@@ -271,7 +313,15 @@ First of the tables (\ref{tab:greedyNN}),
   \end{tabular}
 
 \end{table}
+
+% We could just put the description of the tables and the discussion into same section, i.e. just refer to the tables in the discusssion, no
+% need to describe them first separately?
 \section{Discussion}
+
+% TODO compare various configurations
+% - single neighborhoods not good enough if tour length does not change
+% - Order of neighborhoods in VND important for runtime, maybe for quality of results (TODO check results..)
+% - describe best configuration
 
 
 

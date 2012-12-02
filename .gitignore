@@ -20,3 +20,8 @@
 build
 #results
 *.sol
+
+# Latex stuff
+*.aux
+*.log
+results/Report.pdf

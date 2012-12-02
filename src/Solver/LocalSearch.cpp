@@ -36,5 +36,8 @@ void LocalSearch::run()
 	
 	deltaSatisfaction += instance.getTotalSatisfaction();
 	
+	// No need to continue if we use a deterministic step function..
+	if (deltaSatisfaction <= 0.0 && stepFunction != Config::SF_RANDOM) break;
+	
     } while (!shouldStop(deltaSatisfaction));
 }
