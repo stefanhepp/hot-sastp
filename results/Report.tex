@@ -20,10 +20,18 @@
 \DTLloaddb[]{localEdge}{localSearch/EdgeOptReport.csv}
 \DTLloaddb[]{localMethod}{localSearch/MethodOptReport.csv}
 \DTLloaddb[]{vndDeterministic}{VND/VNDResD.csv}
+\DTLloaddb[]{graspOne}{grasp/oneOpt/oneOpt.csv}
+\DTLloaddb[]{graspEdge}{grasp/edgeOpt/edgeOpt.csv}
+\DTLloaddb[]{graspMethod}{grasp/methodOpt/methodOpt.csv}
+\DTLloaddb[]{graspVND}{grasp/vndS.csv}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% Greedy %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Results}
+In the following tables you can find the results of running different configurations on the set of problems. 
+
+First of the tables (\ref{tab:greedyNN}), 
 
 \begin{table}[b!]
   \vspace{-6mm}%
@@ -43,7 +51,7 @@
     }
     \\\hline
   \end{tabular}
-
+\label{tab:greedyNN}
 \end{table}
 
 \begin{table}[b!]
@@ -66,6 +74,9 @@
   \end{tabular}
 
 \end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%% Local Search %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{table}[b!]
   \vspace{-6mm}%
@@ -140,7 +151,8 @@
   \end{tabular}
 
 \end{table}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% VND %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{table}[b!]
   \vspace{-6mm}%
@@ -167,7 +179,100 @@
 
 \end{table}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% GRASP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Grasp using the local search, oneOpt, using step function Next and Best and Random }
+  \label{tab:crit:vndDeterministic}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \bfseries Problem &
+    \bfseries Best &
+    \bfseries Dev &
+    \bfseries Next &
+    \bfseries Dev &
+    \bfseries Random & 
+    \bfseries Dev
+    \DTLforeach{graspOne}{\prob=problem,\best=best,\devb=devb,\next=next,\devn=devn,\rand=rand,\devr=devr}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob &\best & \devb & \next & \devn & \rand & \devr%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Grasp using the local search, edgeOption, using step function Next and Random }
+  \label{tab:crit:vndDeterministic}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \bfseries Problem &
+    \bfseries Best &
+    \bfseries Dev &
+    \bfseries Next &
+    \bfseries Dev &
+    \bfseries Random & 
+    \bfseries Dev
+    \DTLforeach{graspEdge}{\prob=problem,\best=best,\devb=devb,\next=next,\devn=devn,\rand=rand,\devr=devr}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob &\best & \devb & \next & \devn & \rand & \devr%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Grasp using the local search , methodOpt and step function Next and Best }
+  \label{tab:crit:vndDeterministic}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \bfseries Problem &
+    \bfseries Next &
+    \bfseries Dev &
+    \bfseries Random &
+    \bfseries Dev  
+    \DTLforeach{graspMethod}{\prob=problem,\next=next,\dev=dev,\random=random,\devr=devr}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \next &\dev & \random & \devr %
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Grasp using the VND with step function Next and Best }
+  \label{tab:crit:vndDeterministic}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \bfseries Problem &
+    \bfseries Next &
+    \bfseries Dev &
+    \bfseries AvgTime &
+    \bfseries Best & 
+    \bfseries Dev &
+    \bfseries AvgTime
+    \DTLforeach{graspVND}{\prob=problem,\next=next,\dev=dev,\time=time,\best=best,\bdev=bdev,\btime=btime}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \next &\dev & \time & \best & \bdev & \btime%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
 \section{Discussion}
+
+
 
 \end{document}
