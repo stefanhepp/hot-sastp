@@ -238,7 +238,7 @@ double ConsecutiveNodeInserter::findRandomInsertNodes(Instance& instance, const 
 
 double ConsecutiveNodeInserter::findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, bool findBestStep)
 {
-    unsigned tourLength = instance.getTourLength();
+    int tourLength = instance.getTourLength();
     
     // first: best method-id of spot, second: satisfaction/time
     MethodRatioList ratios;
@@ -249,7 +249,7 @@ double ConsecutiveNodeInserter::findInsertNodes(Instance& instance, const TourNo
     TourNodeIndexList bestNewNodes;
     
     
-    for (unsigned insertAt = -1; insertAt < tourLength; insertAt++) {
+    for (int insertAt = -1; insertAt < tourLength; insertAt++) {
 	
 	NearestSpotList nearestSpots = spotsearch.findNearestSpots(instance, insertAt, maxk, true);
 	
@@ -343,8 +343,8 @@ NearestNodesNeighborhood::NearestNodesNeighborhood(Environment& env, NodeInserte
 }
 
 
-NearestTourExchange::NearestTourExchange(Environment& env, unsigned int maxRemove, NodeInserter& nodeInserter)
-: NearestNodesNeighborhood(env, nodeInserter), maxRemove(maxRemove)
+NearestTourExchange::NearestTourExchange(Environment& env, unsigned minRemove, unsigned int maxRemove, NodeInserter& nodeInserter)
+: NearestNodesNeighborhood(env, nodeInserter), minRemove(minRemove), maxRemove(maxRemove)
 {
     removedNodes.reserve(maxRemove);
 }
@@ -358,13 +358,13 @@ std::string NearestTourExchange::getName() const
 bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
 {
     unsigned tourLength = instance.getTourLength();
-    if (tourLength < 1) return false;
+    if (tourLength < 2) return false;
 
     nodeInserter.prepareStep(instance, stepFunction);
     
     if (stepFunction == Config::SF_RANDOM) {
-	unsigned removeLength = rand() % min(maxRemove,tourLength);
-	unsigned removeFirst = rand() % (tourLength - maxRemove + 1);
+	unsigned removeLength = rand() % min(maxRemove - minRemove + 1,tourLength) + minRemove;
+	unsigned removeFirst = rand() % (tourLength - removeLength + 1);
 	
 	removedNodes.clear();
 	for (int i = removeFirst; i < removeFirst + removeLength; i++) {
@@ -407,7 +407,7 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 		// find nodes to insert
 		double deltaSatisfaction = nodeInserter.findInsertNodes(instance, removedNodes, stepFunction == Config::SF_BEST);
 		
-		if (stepFunction == Config::SF_BEST) {
+		if (stepFunction == Config::SF_NEXT) {
 		    if (deltaSatisfaction > 0.0) {
 			nodeInserter.insertNodes(instance, false);
 			return true;
@@ -509,7 +509,7 @@ bool TwoNodesTourExchange::performStep(Instance& instance, Config::StepFunction 
 		// find nodes to insert
 		double deltaSatisfaction = nodeInserter.findInsertNodes(instance, removedNodes, stepFunction == Config::SF_BEST);
 		
-		if (stepFunction == Config::SF_BEST) {
+		if (stepFunction == Config::SF_NEXT) {
 		    if (deltaSatisfaction > 0.0) {
 			nodeInserter.insertNodes(instance, false);
 			return true;

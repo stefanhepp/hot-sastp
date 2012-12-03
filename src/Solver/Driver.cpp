@@ -70,9 +70,9 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 	case Config::NT_NEAREST_TOUR_OPT:
 	    if (env.getConfig().isVerbose()) cout << "Creating local search with Nearest-Tour-exchange .." << endl;
 	    
-	    ni = new ConsecutiveNodeInserter(env, env.getConfig().getMaxKNearestSpots(), true);
+	    ni = new ConsecutiveNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
 	    
-	    nb = new NearestTourExchange(env, 4, *ni);
+	    nb = new NearestTourExchange(env, 2, 4, *ni);
 	    break;
 	case Config::NT_TWO_NODE_OPT:
 	    if (env.getConfig().isVerbose()) cout << "Creating local search with 2-Nodes-Exchange .." << endl;
@@ -88,7 +88,7 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 	    
 	    ni = new SearchNodeInserter(env, *as);
 	    
-	    nb = new TwoNodesTourExchange(env, *ni);
+	    nb = new NearestTourExchange(env, 2, 4, *ni);
 	    break;	    
     }
     
@@ -120,7 +120,7 @@ VND* Driver::getVND(Environment& env, const Instance& init)
     //vnd->addNeighborhood(*nb);
     
     ni = new ConsecutiveNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
-    nb = new NearestTourExchange(env, 4, *ni);
+    nb = new NearestTourExchange(env, 2, 4, *ni);
     vnd->addNeighborhood(*nb);
     
     return vnd;

@@ -169,10 +169,11 @@ protected:
  */
 class NearestTourExchange : public NearestNodesNeighborhood
 {
+    unsigned minRemove;
     unsigned maxRemove;
     
 public:
-    NearestTourExchange(Environment& env, unsigned int maxRemove, NodeInserter& nodeInserter);
+    NearestTourExchange(Environment& env, unsigned minRemove, unsigned maxRemove, NodeInserter& nodeInserter);
     
     virtual std::string getName() const;
     
