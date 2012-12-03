@@ -7,10 +7,18 @@
 \usepackage{datatool}
 \usepackage{graphicx}
 
+
+% TODO Add title
+% VU Heuristic Optimization
+%  SASTP, Exercise 1
+%  Ioan Dragan, 
+%  Stefan Hepp, 0026640
+
+
 \begin{document}
 \section{General description of the framework and algorithms}
 
-The solutions are represented as a list of spots to visit. The methods used to visit each spot is also stored in that list, but not the
+The solutions are represented as a list of spots to visit. The methods used to visit each spot are also stored in that list, but not the
 resting time at the spots. Instead, we keep track of the total amount of stamina needed for the tour and calculate the resting time required 
 at each node after the final solution has been selected. 
 Since the stamina gained by resting is independent of the spot where the rest is added, this can be done in the following way: 
@@ -23,21 +31,32 @@ Beginning from the first spot in the tour, the amount of resting time for a spot
 \textit{rest time} = \min\left(\textit{remaining rest time}, \frac{\textit{max stamina} - \textit{current stamina}}{\textit{habitus}}\right)
 \]
 
-By keeping track of the total time required to complete the tour (excluding rest times), the total satisfaction gained after the tour and
+By keeping track of the total time required to complete the tour (excluding rest times), as well as the total satisfaction gained after the tour and
 the stamina reached at the end of the tour (excluding stamina gained by rests), new solutions can be calculated incrementally. 
 To check if a neighborhood step leads to a valid solution, the total tour time is calculated as the tour time excluding rest plus
-the total required rest time and compared with the maximum time allowed for the tour.
+the total required rest time. The result is compared with the maximum time allowed for the tour.
 \medskip
 
-Two greedy heuristics have been implemented, they construct an initial solution by inserting spots with methods into the tour. The selection of the spots is done by keeping track of the highest ratio of gained satisfaction per used time. The nearest neighbor greedy heuristic adds one of the $k$ nearest spots of the last spot in the tour per step. The insert
-heuristic selects one of the $k$ nearest spots of all spots in the tour and inserts it into the tour so that the travel time is minimized.
+Two greedy heuristics have been implemented. They construct an initial solution by inserting spots with methods into the tour. The selection of the spots 
+is done by keeping track of the highest ratio of gained satisfaction per time required for the visit.
+The nearest neighbor greedy heuristic adds one of the $k$ nearest spots of the last spot at the end of the tour per step. The insert
+heuristic selects one of the $k$ nearest spots of all spots in the tour and inserts it into the tour so that the travel time increase is minimized.
 \medskip
 
 For the local search and the VND, several neighborhoods have been implemented. 
 
 % TODO describe neighborhoods
 
-The first neighborhood, $SpotOneOpt$ exchanges a single spot from the tour with an unused spot. The \emph{best} step function, for each node in the tour finds the best unused node to exchange with. This is done by keeping track of the node which promises the best improvement, and after checking all of them, swap the nodes and return the solution. The \emph{next} step function, iterate over all the nodes in the tour, and checks if by replacing the node with an unused one any improvement has been made to the tour. If that is the case, then the replacement of the nodes is done and the function returns the result. For the \emph{random} step function, one just picks a spot in the tour, and another spot from the k-nearest unused spots, and tries to exchange those two. As for method of the newly picked spot, it is also chosen randomly. If the method makes the tour infeasible, then we try to iterate over all the methods of that specific spot and pick the first one which makes the tour valid.
+The first neighborhood, $SpotOneOpt$, exchanges a single spot from the tour with an unused spot. 
+The \emph{best} step function searches for the best unused node to exchange with for all nodes in the tour.
+This is done by keeping track of the node which promises the best improvement. %, and after checking all of them, swap the nodes and return the solution. 
+The \emph{next} step function iterates over all the nodes in the tour and stops if replacing the node with an unused one leads to a valid
+tour and improves the total satisfaction. 
+For the \emph{random} step function a random spot in the tour and another spot from the $k$-nearest unused spots are selected. 
+The method is selected by starting at a random method of the spot and searching for the first feasible method that can be inserted into the
+tour.
+%As for method of the newly picked spot, it is also chosen randomly. 
+%If the method makes the tour infeasible, then we try to iterate over all the methods of that specific spot and pick the first one which makes the tour valid.
 \medskip
 
 The \emph{local search} is configured with one neighborhood. In every iteration it selects a new neighbor from the neighborhood, depending on the
