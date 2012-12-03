@@ -347,8 +347,6 @@ bool MethodTwoOPT::performStep(Instance& instance, Config::StepFunction stepFunc
 			instance.updateNode(secondNodeId, secondNode.spot, secondMethodId);
 			
 			return true;
-		    } else {
-			return false;
 		    }
 		}
 		
