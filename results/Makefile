@@ -13,4 +13,4 @@ GRAPHS=$(shell find graphs -iname "*.gnu" | sed "s/.gnu$$/.pdf/")
 graphs: $(GRAPHS)
 
 Report.pdf: Report.tex $(CSVFILES) $(GRAPHS) 
-	rubber -d Report.tex
+	rubber -fd Report.tex
