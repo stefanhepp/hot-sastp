@@ -16,7 +16,7 @@
 %  Stefan Hepp, 0026640
 
 \title{SASTP \\
-\small{Heuristic Optimization Techniques VU} }
+{VU Heuristic Optimization Techniques} }
 \author{Stefan Hepp, 0026640 \\
 Ioan Dragan, 0856561 }
 
@@ -51,18 +51,34 @@ heuristic selects one of the $k$ nearest spots of all spots in the tour and inse
 
 For the local search and the VND, several neighborhoods have been implemented. 
 
-% TODO describe neighborhoods
-
-The first neighborhood, $SpotOneOpt$, exchanges a single spot from the tour with an unused spot. 
+The first neighborhood, $SpotOneOpt$, exchanges a single spot from the tour with an unused spot. The idea behind this neighborhood is to
+be able to bring in outliers with with a high satisfaction value into the tour.
 The \emph{best} step function searches for the best unused node to exchange with for all nodes in the tour.
 This is done by keeping track of the node which promises the best improvement. %, and after checking all of them, swap the nodes and return the solution. 
 The \emph{next} step function iterates over all the nodes in the tour and stops if replacing the node with an unused one leads to a valid
 tour and improves the total satisfaction. 
-For the \emph{random} step function a random spot in the tour and another spot from the $k$-nearest unused spots are selected. 
+For the \emph{random} step function a random spot in the tour and another spot from the unused spots are selected. 
 The method is selected by starting at a random method of the spot and searching for the first feasible method that can be inserted into the
-tour.
+tour. If no method can be found, another random spot is choosen.
 %As for method of the newly picked spot, it is also chosen randomly. 
 %If the method makes the tour infeasible, then we try to iterate over all the methods of that specific spot and pick the first one which makes the tour valid.
+
+The $EdgeTwoOpt$ neighborhood performs a 2-exchange on the edges of the tour. It removes crossovers and thus minimizes the travel distance
+by crossing over two non-adjacent edges. 
+% We could comment out that part, should be obvious.. 
+The \emph{best} step function searches all pairs of edges for the best improvement. The \emph{next} step function looks at pairs of edges
+with increasing distance between the edges for the first tour length improvement. The \emph{random} step function selects a pair of edges at
+random. To simplify the implementation the random search does not continue if an infeasible edge exchange has been found.
+
+The $MethodTwoOpt$ neighborhood changes the methods of two spots in the tour to improve the satisfaction. It picks two spots in the tour and
+then searches all valid combinations of methods of the spots exhaustively for an improvement.
+% No text on different step functions, should be clear.
+
+
+% TODO NearestTourExchange, TwoNodeExchange
+
+
+
 \medskip
 
 The \emph{local search} is configured with one neighborhood. In every iteration it selects a new neighbor from the neighborhood, depending on the
@@ -70,12 +86,15 @@ step function. If the new neighbor results in a higher satisfaction, the search 
 the search stops for the deterministic \emph{next} and \emph{best} step functions, or continues with the old solution for the \emph{random}
 step function. In the latter case, the search terminates if either no improvement has been found for a fixed number of iterations or if a
 timeout has been reached.
-\medskip
-% TODO very short description of VND, Grasp: neighborhoods used and their order, termination criteria.
 
-\emph{VND} is configured with a list of neighborhoods.  In every iteration it selects a new neighborhood. Then it selects a new neighbor from the neighborhood, depending on the step function, and as long as there is an improvement in that neighborhood, it performs the steps. When that neighborhood does not provide an improvement the search checks for improvements in the other neighborhoods from the list. The order in which the neighborhoods are searched gives different results.  
+\emph{VND} is configured with a list of neighborhoods. In every iteration it selects a new neighbor from the neighborhood, depending on the
+step function. When the neighborhood finds an improvement, the search falls back to the first neighborhood. Otherwise VND searches for improvements in the following neighborhoods.
+The order in which the neighborhoods are searched has an impact on the results and the running times.
 
-For the \emph{grasp} procedure, a random greedy method is implemented. This provides the initial tour to optimize. Then either local search or VND is run and try to improve the solution. If the satisfaction of the newly found solution is bigger than the one we started with, then we keep this instance. These steps are repeated until either there is no change in the satisfaction of the solution for more than a fixed number of iterations or timeout has been reached.  
+For the \emph{GRASP} procedure, a random greedy method was implemented. This provides the initial tour to optimize. Afterwards either local
+search or VND is run to try to improve the solution. If the satisfaction of the newly found solution is greater than the one of the last
+iteration of \emph{GRASP}, then this instance is kept. These steps are repeated until either there is no change in the satisfaction of the
+solution for more than a fixed number of iterations or a timeout has been reached.  
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,10 +117,11 @@ For the \emph{grasp} procedure, a random greedy method is implemented. This prov
 
 \section{Results and discussion}
 
-% TODO very short description of configurations for each table.
 We have tested our approach with different configurations for the algorithms. 
 
-The greedy algorithm has been tested with both the strategies presented above. In tables \ref{tab:greedyNN} and \ref{tab:GreedyIN} one can observe the results obtained using this algorithm for each of the problems. We also tried different values for selecting the k-nearest spots. 
+The \emph{greedy algorithm} has been tested with both the strategies presented above. 
+%In tables \ref{tab:greedyNN} and \ref{tab:GreedyIN} one can observe the results obtained using this algorithm for each of the problems. 
+We also varied the value of $k$ for selecting the k-nearest spots (Table~\ref{tab:greedyNN} and Table~\ref{tab:GreedyIN}).
 \medskip
 
 \emph{Local search} was tested using all three neighborhoods, table \ref{tab:localOne} presents in more details the results obtained using spot exchange neighborhood. In table \ref{tab:localEdge} the same algorithm was run with the edge exchange neighborhood. As for the method exchange neighborhood, table \ref{tab:localMethod} presents the results. The best results using this search strategy were obtained with the spot exchange neighborhood. But the difference in stamina compared with the other neighborhoods is not that big. 
