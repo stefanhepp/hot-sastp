@@ -124,7 +124,7 @@ const option::Descriptor usage[] = {
 	" verbose : false; \n"
 	" writeDot : false; \n"
 	" maxStepsWithNoChange : 10; \n"
-        "\nExample configurations be added soon! \n"
+        "\nExample configurations will be added soon! \n"
     },
     { 0, 0, 0, 0, 0, 0 }
 };

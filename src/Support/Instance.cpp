@@ -1,5 +1,4 @@
 #include "Instance.h"
-#include <../../../../tcrest/ssd/patmos-gold/include/opcode/i370.h>
 
 #include <assert.h>
 #include <iostream>

@@ -64,7 +64,7 @@ bool SpotOneOPT::performNextStep(Instance& instance, bool alwaysApply){
     for (unsigned index : instance.getRatioSortedNodes()) {
 
         NearestSpotList nearest = env.getSpotSearch().findNearestSpots (instance, index, maxk, true);
-        //check for all unused spots for the one which gives the best improvement
+        //check for all unused spots for the one which gives the next improvement
         for (auto & nearSpot : nearest) {
                 
             unsigned spotId = nearSpot.second;

@@ -29,8 +29,7 @@ To check if a neighborhood step leads to a valid solution, the total tour time i
 the total required rest time and compared with the maximum time allowed for the tour.
 \medskip
 
-Two greedy heuristics have been implemented that construct an initial solution by inserting spots with methods into the tour that have the highest ratio of gained satisfaction per
-used time. The nearest neighbor greedy heuristic adds one of the $k$ nearest spots of the last spot in the tour per step. The insert
+Two greedy heuristics have been implemented, they construct an initial solution by inserting spots with methods into the tour. The selection of the spots is done by keeping track of the highest ratio of gained satisfaction per used time. The nearest neighbor greedy heuristic adds one of the $k$ nearest spots of the last spot in the tour per step. The insert
 heuristic selects one of the $k$ nearest spots of all spots in the tour and inserts it into the tour so that the travel time is minimized.
 \medskip
 
@@ -38,18 +37,20 @@ For the local search and the VND, several neighborhoods have been implemented.
 
 % TODO describe neighborhoods
 
+The first neighbourhood, $SpotOneOpt$ exchanges a single spot from the tour with an unused spot. The \emph{best} step function, for each node in the tour finds the best unused node to exchange with. This is done by keeping track of the node which promises the best improvement, and after checking all of them, swap the nodes and return the solution. The \emph{next} step function, iterate over all the nodes in the tour, and checks if by replacing the node with an unused one any imporovement has been made to the tour. If that is the case, then the replacement of the nodes is done and the function returns the result. For the \emph{random} step function, one just picks a spot in the tour, and another spot from the k-nearest unused spots, and tries to exchange those two. As for method of the newly picked spot, it is also chosen randomly. If the method makes the tour infeasable, then we try to iterate over all the methods of that specific spot and pick the first one which makes the tour valid.
+\medskip
 
-
-The local search is configured with one neighborhood. In every iteration it selects a new neighbor from the neighborhood, depending on the
+The \emph{local search} is configured with one neighborhood. In every iteration it selects a new neighbor from the neighborhood, depending on the
 step function. If the new neighbor results in a higher satisfaction, the search continues with that neighbor as the new solution. Otherwise
 the search stops for the deterministic \emph{next} and \emph{best} step functions, or continues with the old solution for the \emph{random}
 step function. In the latter case, the search terminates if either no improvement has been found for a fixed number of iterations or if a
 timeout has been reached.
-
-
+\medskip
 % TODO very short description of VND, Grasp: neighborhoods used and their order, termination criteria.
 
+\emph{VND} is configured with a list of neighbourhoods.  In every iteration it selects a new neighbourhood. Then it selects a new neighbor from the neighborhood, depending on the step function, and as long as there is an improvement in that neighborhood, it performs the steps. When that neighborhood does not provide an improvement the search checks for improvements in the other neighborhoods from the list. The order in which the neighborhoods are searched gives different results.  
 
+For the \emph{grasp} procedure, a random greedy method is implemented. This provides the initial tour to optimize. Then either local search or VND is run and try to improve the solution. If the satisfaction of the newly found solution is bigger than the one we started with, then we keep this instance. These steps are repeated until either there is no change in the satisfaction of the solution for more than a fixed number of iterations or timeout has been reached.  
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,6 +62,7 @@ timeout has been reached.
 \DTLloaddb[]{localEdge}{localSearch/EdgeOptReport.csv}
 \DTLloaddb[]{localMethod}{localSearch/MethodOptReport.csv}
 \DTLloaddb[]{vndDeterministic}{VND/VNDResD.csv}
+\DTLloaddb[]{vndThree}{VND/threeN/report.csv}
 \DTLloaddb[]{graspOne}{grasp/oneOpt/oneOpt.csv}
 \DTLloaddb[]{graspEdge}{grasp/edgeOpt/edgeOpt.csv}
 \DTLloaddb[]{graspMethod}{grasp/methodOpt/methodOpt.csv}
@@ -69,16 +71,28 @@ timeout has been reached.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%% Greedy %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Results}
-In the following tables you can find the results of running different configurations on the set of problems. 
+\section{Results and discussion}
 
 % TODO very short description of configurations for each table.
-%First of the tables (\ref{tab:greedyNN}), 
+We have tested our approach with different configurations for the algorithms. 
+
+The greedy algorithm has been tested with both the strategies presented above. In tables \ref{tab:greedyNN} and \ref{tab:GreedyIN} one can observe the results obtained using this algorithm for each of the problems. We also tried different values for selecting the k-nearest spots. 
+\medskip
+
+\emph{Local search} was tested using all three neighborhoods, table \ref{tab:localOne} presents in more details the results obtained using spot exchange neighborhood. In table \ref{tab:localEdge} the same algorithm was run with the edge exchange neighborhood. As for the method exchange neihborhood, table \ref{tab:localMethod} presents the results. The best results using this search strategy were obtained with the spot exchange neighborhood. But the difference in stamina compared with the other neighborhoods is not that big. 
+\medskip
+
+\emph{VND} was also tested in different configurations (tables \ref{tab:vndDeterministic} and \ref{tab:vndThree}). As mentioned above the order in which the neighborhoods are searched makes a difference in the runtime of the algorithm. Also which neighborhoods are searched gives some difference in the total satisfaction. If we run vnd with all three methods active, we tend to get the same results, but the time spent in finding the result is bigger.  
+\medskip
+
+For \emph{grasp} we have tested with both local search and VND as main search engine. The results differ a lot, as printed out in tables \ref{tab:graspLSOne},  \ref{tab:graspLSEdge}, \ref{tab:graspLSMethod} and \ref{tab:graspVNDTwo}. Since grasp is a randomized search heuristic we've done multiple tests using the same configuration, computed the standard deviation and the averege satisfaction for each of the problems. Using this approach the best results where observed while testing the configuration which uses VND as search procedure. Among the loacal search procedures the best performing, in terms of total satisfaction is the one spot exchange method. The two approaches of VND give similar results, but the one using only the edge exchange and method exchange tends to terminate faster. 
+\medskip
+
+Among all the tested configurations,one of the best approaches is VND, which gives the best ratio of satisfaction per time spent in finding the solution. This approach gives also the highest satisfaction we can get for the sastp1000 problem.
 
 \begin{table}[b!]
   \vspace{-6mm}%
   \caption{Computed values using the greedy algorithm, nearest neighbour strategy}
-  \label{tab:crit:GreedyNN}
   \setlength{\tabcolsep}{1.5mm}
   \centering
   \begin{tabular}{lrrrrl}
@@ -99,7 +113,7 @@ In the following tables you can find the results of running different configurat
 \begin{table}[b!]
   \vspace{-6mm}%
   \caption{Computed values using the greedy algorithm, insertion neighbour strategy}
-  \label{tab:crit:GreedyIN}
+  \label{tab:GreedyIN}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrl}
@@ -123,7 +137,7 @@ In the following tables you can find the results of running different configurat
 \begin{table}[b!]
   \vspace{-6mm}%
   \caption{Computed values using the local search algorithm, using SpotOneOpt}
-  \label{tab:crit:localOne}
+  \label{tab:localOne}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
@@ -149,7 +163,7 @@ In the following tables you can find the results of running different configurat
 \begin{table}[b!]
   \vspace{-6mm}%
   \caption{Computed values using the local search algorithm, using Edge Two Opt}
-  \label{tab:crit:localEdge}
+  \label{tab:localEdge}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
@@ -174,7 +188,7 @@ In the following tables you can find the results of running different configurat
 \begin{table}[b!]
   \vspace{-6mm}%
   \caption{Computed values using the local search algorithm, using Method Two Opt}
-  \label{tab:crit:localMethod}
+  \label{tab:localMethod}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrr}
@@ -198,8 +212,8 @@ In the following tables you can find the results of running different configurat
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Computed values using the VND, using step function Next and Best }
-  \label{tab:crit:vndDeterministic}
+  \caption{Computed values using the VND, using step function Next and Best, with only edge and method neighborhoods active }
+  \label{tab:vndDeterministic}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
@@ -221,13 +235,35 @@ In the following tables you can find the results of running different configurat
 
 \end{table}
 
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Computed values using the VND, using step function Next and Best with all three neighborhoods active }
+  \label{tab:vndThree}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrr}
+    \bfseries Problem &
+    \bfseries Next &
+    \bfseries NTime &
+    \bfseries Best & 
+    \bfseries Btime &
+    \bfseries Random &
+    \bfseries Rtime 
+    \DTLforeach{vndThree}{\prob=problem,\rand=rand,\rtime=rtime,\next=next,\ntime=ntime,\best=best,\btime=btime}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \next &\ntime & \best & \btime & \rand & \rtime%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% GRASP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{table}[b!]
   \vspace{-6mm}%
   \caption{Grasp using the local search, oneOpt, using step function Next and Best and Random }
-  \label{tab:crit:vndDeterministic}
+  \label{tab:graspLSOne}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
@@ -250,7 +286,7 @@ In the following tables you can find the results of running different configurat
 \begin{table}[b!]
   \vspace{-6mm}%
   \caption{Grasp using the local search, edgeOption, using step function Next and Random }
-  \label{tab:crit:vndDeterministic}
+  \label{tab:graspLSEdge}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
@@ -273,7 +309,7 @@ In the following tables you can find the results of running different configurat
 \begin{table}[b!]
   \vspace{-6mm}%
   \caption{Grasp using the local search , methodOpt and step function Next and Best }
-  \label{tab:crit:vndDeterministic}
+  \label{tab:graspLSMethod}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
@@ -293,8 +329,8 @@ In the following tables you can find the results of running different configurat
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Grasp using the VND with step function Next and Best }
-  \label{tab:crit:vndDeterministic}
+  \caption{Grasp using the VND with step function Next and Best, only EdgeOpt and MethodOpt active as neighborhoods }
+  \label{tab:graspVNDTwo}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
@@ -314,9 +350,8 @@ In the following tables you can find the results of running different configurat
 
 \end{table}
 
-% We could just put the description of the tables and the discussion into same section, i.e. just refer to the tables in the discusssion, no
-% need to describe them first separately?
-\section{Discussion}
+%TODO add the latest test results for grasp with vnd and all three neighbourhoods active -- still running... 
+
 
 % TODO compare various configurations
 % - single neighborhoods not good enough if tour length does not change
