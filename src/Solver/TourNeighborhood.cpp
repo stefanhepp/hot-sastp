@@ -291,11 +291,9 @@ double ConsecutiveNodeInserter::findInsertNodes(Instance& instance, const TourNo
 		} else {
 		    if (lastDelta.satisfaction > 0) {
 			return lastDelta.satisfaction;
-		    } else {
-			// no good tour found at this insert point, continue
-			break;
 		    }
 		}
+		break;
 	    }
 	}
     }
