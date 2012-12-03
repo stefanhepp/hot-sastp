@@ -209,6 +209,9 @@ int Config::parseArguments (int argc, char* argv[])
 		    case NeighborhoodTag::NT_TWO_NODE_OPT:
 			_neighborhood = NT_TWO_NODE_OPT;
 			break;
+		    case NeighborhoodTag::NT_GREEDY_TOUR_OPT:
+			_neighborhood = NT_GREEDY_TOUR_OPT;
+			break;
 		    default:
 			printHelp();
 			exit(2);

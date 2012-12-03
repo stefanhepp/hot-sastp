@@ -233,6 +233,14 @@ public:
     double getSatisfactionPerTotalTimeRatio(TourValues values) const;
     
     /**
+     * @param fromIndex index of the previous node
+     * @param toSpot spot to go to and to select method from
+     * @param bestMethod will be set to the best method id of the spot
+     * @return the satisfaction by time ratio to visit this spot using the best method
+     */
+    double getBestMethodRatio(unsigned fromIndex, const Spot& toSpot, unsigned& bestMethod) const;
+    
+    /**
      * Get the indices of the tour nodes, sorted by satisfaction / time ratio
      */
     std::vector<unsigned> getRatioSortedNodes() const;
@@ -242,6 +250,8 @@ public:
     TourValues getDeleteDeltaValues(unsigned index);
     
     TourValues getCrossOverDeltaValues(unsigned firstEdge, unsigned secondEdge);
+    
+    TourValues getTravelDeltaValues(const Spot& from, const Spot& to) const;
     
     /**
      * Get the deltas for all values for a step from a node to another node, and then doing the action at the 'to' node.

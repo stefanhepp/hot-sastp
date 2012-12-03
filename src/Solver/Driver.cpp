@@ -81,6 +81,15 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 	    
 	    nb = new TwoNodesTourExchange(env, *ni);
 	    break;
+	case Config::NT_GREEDY_TOUR_OPT:
+	    if (env.getConfig().isVerbose()) cout << "Creating local search with Greedy-tour-exchange .." << endl;
+	    
+	    AbstractSearch* as = new GreedyInsertHeuristic(env);
+	    
+	    ni = new SearchNodeInserter(env, *as);
+	    
+	    nb = new TwoNodesTourExchange(env, *ni);
+	    break;	    
     }
     
     LocalSearch* ls;
@@ -92,16 +101,26 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 VND* Driver::getVND(Environment& env, const Instance& init)
 {
     Neighborhood* nb;
+    NodeInserter* ni;
     
     VND* vnd = new VND(env, init);
     
-    nb = new SpotOneOPT(env);
-    vnd->addNeighborhood(*nb);
+    //nb = new SpotOneOPT(env);
+    //vnd->addNeighborhood(*nb);
     
     nb = new MethodTwoOPT(env);
     vnd->addNeighborhood(*nb);
 
     nb = new EdgeTwoOPT(env);
+    vnd->addNeighborhood(*nb);
+    
+    //AbstractSearch* as = new GreedyInsertHeuristic(env);
+    //ni = new SearchNodeInserter(env, *as);
+    //nb = new TwoNodesTourExchange(env, *ni);
+    //vnd->addNeighborhood(*nb);
+    
+    ni = new ConsecutiveNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
+    nb = new NearestTourExchange(env, 4, *ni);
     vnd->addNeighborhood(*nb);
     
     return vnd;

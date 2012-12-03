@@ -46,7 +46,8 @@ public:
       NT_EDGE_TWO_OPT = 1,
       NT_METHOD_TWO_OPT = 2,
       NT_NEAREST_TOUR_OPT = 3,
-      NT_TWO_NODE_OPT = 4
+      NT_TWO_NODE_OPT = 4,
+      NT_GREEDY_TOUR_OPT = 5
     };
     
     /**

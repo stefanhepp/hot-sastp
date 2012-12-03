@@ -4,6 +4,7 @@
 #include "Support/Instance.h"
 #include "Support/Environment.h"
 #include "Solver/Neighborhood.h"
+#include "Solver/AbstractSearch.h"
 
 #include <vector>
 #include <set>
@@ -11,6 +12,11 @@
 /*
  * This file contains neighborhoods that work on whole subtours
  */
+
+/**
+ * First in pair is method-id, second in pair is Satisfaction/Time ratio
+ */
+typedef std::vector< std::pair<unsigned, double> > MethodRatioList;
 
 class NodeInserter {
 public:
@@ -45,12 +51,12 @@ public:
      * @param insertBestStep if false, insert the nodes found by the last find{Random}InsertNodes call. If true, insert the
      *                       nodes stored by the last storeAsBestStep cal.
      */
-    void insertNodes(Instance& instance, bool insertBestStep);
+    virtual void insertNodes(Instance& instance, bool insertBestStep);
     
     /**
      * Store the last result found by find[Random]InsertNodes as current best result
      */
-    void storeAsBestStep();
+    virtual void storeAsBestStep();
     
 protected:
     Environment& env;
@@ -60,6 +66,52 @@ protected:
     
     TourNodeIndexList newNodes;
     TourNodeIndexList bestNewNodes;
+    
+    /**
+     * Insert a node into the newNodes list.
+     * @param insertAt the position to insert new node
+     * @param node the node to insert
+     * @param insertBest if true, allow insertion after insert point
+     * @return the index of the node in newNodes
+     */
+    unsigned addNewNode(const Instance& instance, unsigned insertAt, TourNode node, bool insertBest);
+    
+    TourValues getDeltaInsertValues(const Instance& instance);
+    
+    MethodRatioList getMethodRatios(const Instance& instance, NearestSpotList& nearestSpots, const TourNodeIndexList& removedNodes);
+    
+    unsigned findBestNearestNode(const MethodRatioList& ratioList);
+    
+    // TourNodeIndexList getRatioSortedNearestNodes(const Instance& instance, const NearestSpotList& nearest) const;
+  
+    bool skipNode(const TourNodeIndexList& removedNodes, unsigned spotId, unsigned methodId);
+};
+
+/**
+ * This node inserter uses another search to finish the current tour. Removed nodes are always reused, all step functions
+ * behave the same way.
+ */
+class SearchNodeInserter : public NodeInserter {
+public:
+    SearchNodeInserter(Environment& env, AbstractSearch& search);
+
+    virtual void prepareStep(Instance& instance, Config::StepFunction stepFunction);
+    
+    virtual double findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes);
+    
+    virtual double findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, bool findBestStep);
+    
+    virtual void insertNodes(Instance& instance, bool insertBestStep) { instance = insertBestStep ? bestNewTour : newTour; }
+    
+    virtual void storeAsBestStep() { bestNewTour = newTour; }
+
+protected:
+    AbstractSearch& search;
+    
+    Instance newTour;
+    Instance bestNewTour;
+    
+    double runSearch(Instance& instance);
 };
 
 class ConsecutiveNodeInserter : public NodeInserter {

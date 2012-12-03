@@ -1,4 +1,5 @@
 #include "Instance.h"
+#include <../../../../tcrest/ssd/patmos-gold/include/opcode/i370.h>
 
 #include <assert.h>
 #include <iostream>
@@ -87,7 +88,7 @@ void Instance::insertNodes(const TourNodeIndexList& nodes)
     // TODO could be implemented more efficiently: insert dummy elements first to move tail,
     //      then move elements between first and last insert position into correct position
     
-    for (int i = nodes.size(); i >= 0; --i) {
+    for (int i = nodes.size() - 1; i >= 0; --i) {
 	insertNode(nodes[i].first, nodes[i].second);
     }
     
@@ -250,6 +251,14 @@ TourValues Instance::getCrossOverDeltaValues(unsigned int firstEdge, unsigned in
     return TourValues(deltaTime, deltaSatisfaction, 0.0);
 }
 
+TourValues Instance::getTravelDeltaValues(const Spot& from, const Spot& to) const
+{
+    double dist = problem.getDistance(from, to);
+    
+    return TourValues(dist / problem.getVelocity(), -dist * problem.getAlpha(), 0 );
+}
+
+
 TourValues Instance::getStepValues(const TourNode& from, const TourNode& to) const
 {
     // Step from hotel to hotel
@@ -344,6 +353,33 @@ std::vector< unsigned int > Instance::getRatioSortedNodes() const
     }
     
     return sorted;
+}
+
+double Instance::getBestMethodRatio(unsigned int fromIndex, const Spot& toSpot, unsigned int& bestMethod) const
+{
+    const Spot& fromSpot = getSpot(fromIndex);
+    double bestRatio = -1;
+    
+    bestMethod = 0;
+    
+    double dist = problem.getDistance(fromSpot, toSpot);
+    
+    unsigned methodId = -1;
+    for (auto& method : toSpot.getMethods()) {
+	methodId++;
+	
+	double ratio = method->getSatisfaction() / (method->getTime() + method->getStamina() / problem.getHabitus());
+	if (ratio > bestRatio) {
+	    bestMethod = methodId;
+	    bestRatio = ratio;
+	}
+    }
+    
+    double totalSatisfaction = toSpot.getMethod(bestMethod).getSatisfaction() - dist * problem.getAlpha();
+    double totalTime = toSpot.getMethod(bestMethod).getTime() + dist / problem.getVelocity() + 
+                       toSpot.getMethod(bestMethod).getStamina() / problem.getHabitus();
+		       
+    return totalSatisfaction / totalTime;
 }
 
 
