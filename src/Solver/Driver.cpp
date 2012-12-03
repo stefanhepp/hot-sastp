@@ -68,21 +68,21 @@ LocalSearch* Driver::getLocalSearch(Environment& env, const Instance& init)
 	    nb = new MethodTwoOPT(env);
 	    break;
 	case Config::NT_NEAREST_TOUR_OPT:
-	    if (env.getConfig().isVerbose()) cout << "Creating local search with Nearest-Tour-exchange .." << endl;
+	    if (env.getConfig().isVerbose()) cout << "Creating local search with Nearest-Tour-exchange with consecutive inserter .." << endl;
 	    
 	    ni = new ConsecutiveNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
 	    
 	    nb = new NearestTourExchange(env, 2, 4, *ni);
 	    break;
 	case Config::NT_TWO_NODE_OPT:
-	    if (env.getConfig().isVerbose()) cout << "Creating local search with 2-Nodes-Exchange .." << endl;
+	    if (env.getConfig().isVerbose()) cout << "Creating local search with 2-Nodes-Exchange and random insert .." << endl;
 	    
 	    ni = new RandomNodeInserter(env, env.getConfig().getMaxKNearestSpots(), true);
 	    
 	    nb = new TwoNodesTourExchange(env, *ni);
 	    break;
 	case Config::NT_GREEDY_TOUR_OPT:
-	    if (env.getConfig().isVerbose()) cout << "Creating local search with Greedy-tour-exchange .." << endl;
+	    if (env.getConfig().isVerbose()) cout << "Creating local search with Greedy-tour-exchange and greedy inserter .." << endl;
 	    
 	    AbstractSearch* as = new GreedyInsertHeuristic(env);
 	    

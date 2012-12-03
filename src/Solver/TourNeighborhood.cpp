@@ -1,8 +1,16 @@
 #include "TourNeighborhood.h"
 
+#include <iostream>
 #include <vector>
 
 using namespace std;
+
+NodeInserter::NodeInserter(Environment& env, unsigned int maxk, bool insertUsed)
+: env(env), spotsearch(env.getSpotSearch()), maxk(maxk), insertUsed(insertUsed)
+{
+    skipMethodOnly = false;
+}
+
 
 void NodeInserter::insertNodes(Instance& instance, bool insertBestStep)
 {
@@ -133,6 +141,53 @@ unsigned int NodeInserter::findBestNearestNode(const MethodRatioList& ratioList)
     return bestIndex;
 }
 
+double NodeInserter::selectNewNodes(Instance& instance, NearestSpotList& nearestSpots, MethodRatioList *ratios, 
+				      const TourNodeIndexList& removedNodes, bool findBestStep)
+{
+    // add random nodes to tour as long as it is possible
+    TourValues lastDelta;
+    
+    newNodes.clear();
+    
+    while (!nearestSpots.empty()) {
+	
+	unsigned r = ratios ? findBestNearestNode(*ratios) : rand() % nearestSpots.size();
+	
+	//  pick a method
+	unsigned nodeId = nearestSpots[r].first;
+	unsigned spotId = nearestSpots[r].second;
+	const Spot& spot = instance.getProblem().getSpot(spotId);
+	
+	unsigned methodId = ratios ? ratios->at(r).first : rand() % spot.getMethods().size();
+	
+	if (!ratios && skipNode(removedNodes, spotId, methodId)) {
+	    if (skipMethodOnly) {
+		methodId = (methodId + 1) % spot.getMethods().size();
+	    } else {
+		continue;
+	    }
+	}
+	
+	unsigned pos = addNewNode(instance, nodeId, TourNode(spotId, methodId), false);
+	
+	TourValues delta = getDeltaInsertValues(instance);
+	
+	
+	if (instance.isValid( delta )) {
+	    nearestSpots.erase( nearestSpots.begin() + r );
+	    if (ratios) ratios->erase( ratios->begin() + r );		
+	    lastDelta = delta;
+	} else {
+	    newNodes.erase(newNodes.begin() + pos);
+	    
+	    // finished inserting nodes, not much we can do to improve for best step, or is there?
+	    break;
+	}
+    }
+    
+    return lastDelta.satisfaction;
+}
+
 
 bool NodeInserter::skipNode(const TourNodeIndexList& removedNodes, unsigned int spotId, unsigned int methodId)
 {
@@ -199,41 +254,7 @@ double ConsecutiveNodeInserter::findRandomInsertNodes(Instance& instance, const 
     
     NearestSpotList nearestSpots = spotsearch.findNearestSpots(instance, insertAt, maxk, true);
     
-    // add random nodes to tour as long as it is possible
-    TourValues lastDelta;
-    
-    newNodes.clear();
-    
-    while (!nearestSpots.empty()) {
-	
-	unsigned r = rand() % nearestSpots.size();
-	
-	//  pick a random method
-	unsigned nodeId = nearestSpots[r].first;
-	unsigned spotId = nearestSpots[r].second;
-	const Spot& spot = instance.getProblem().getSpot(spotId);
-	
-	unsigned methodId = rand() % spot.getMethods().size();
-	
-	if (skipNode(removedNodes, spotId, methodId)) {
-	    methodId = (methodId + 1) % spot.getMethods().size();
-	}
-	
-	unsigned pos = addNewNode(instance, nodeId, TourNode(spotId, methodId), false);
-	
-	TourValues delta = getDeltaInsertValues(instance);
-	
-	if (instance.isValid( delta )) {
-	    nearestSpots.erase( nearestSpots.begin() + r );
-	    lastDelta = delta;
-	} else {
-	    newNodes.erase(newNodes.begin() + pos);
-	    
-	    return lastDelta.satisfaction;
-	}
-    }
-    
-    return 0;
+    return selectNewNodes(instance, nearestSpots, NULL, removedNodes, false);
 }
 
 double ConsecutiveNodeInserter::findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, bool findBestStep)
@@ -245,9 +266,7 @@ double ConsecutiveNodeInserter::findInsertNodes(Instance& instance, const TourNo
     ratios.reserve(maxk);
     
     double bestSatisfaction = 0;
-    bool foundBest = false;
-    TourNodeIndexList bestNewNodes;
-    
+    TourNodeIndexList localBestNewNodes;
     
     for (int insertAt = -1; insertAt < tourLength; insertAt++) {
 	
@@ -256,50 +275,18 @@ double ConsecutiveNodeInserter::findInsertNodes(Instance& instance, const TourNo
 	// get best method and ratios per nearest spots
 	ratios = getMethodRatios(instance, nearestSpots, removedNodes);
 	
-	// add nodes to tour as long as it is possible
-	TourValues lastDelta;
+	double deltaSatisfaction = selectNewNodes(instance, nearestSpots, &ratios, removedNodes, findBestStep);
 	
-	newNodes.clear();
-	
-	while (!nearestSpots.empty()) {
-	    
-	    unsigned r = findBestNearestNode(ratios);
-	    
-	    //  pick a random method
-	    unsigned nodeId = nearestSpots[r].first;
-	    unsigned spotId = nearestSpots[r].second;
-	    unsigned methodId = ratios[r].first;
-	    
-	    unsigned pos = addNewNode(instance, nodeId, TourNode(spotId, methodId), false);
-	    
-	    TourValues delta = getDeltaInsertValues(instance);
-	    
-	    if (instance.isValid( delta )) {
-		nearestSpots.erase( nearestSpots.begin() + r );
-		ratios.erase( ratios.begin() + r );		
-		lastDelta = delta;
-	    } else {
-		newNodes.erase(newNodes.begin() + pos);
-		
-		// finished inserting nodes
-		if (findBestStep) {
-		    if (!foundBest || lastDelta.satisfaction > bestSatisfaction) {
-			bestNewNodes = newNodes;
-			bestSatisfaction = lastDelta.satisfaction;
-			foundBest = true;
-		    }
-		} else {
-		    if (lastDelta.satisfaction > 0) {
-			return lastDelta.satisfaction;
-		    }
-		}
-		break;
-	    }
+	if (!findBestStep && deltaSatisfaction > 0) {
+	    return deltaSatisfaction;
+	} else if (findBestStep && (insertAt == -1 || deltaSatisfaction > bestSatisfaction)) {
+	    localBestNewNodes = newNodes;
+	    bestSatisfaction = deltaSatisfaction;
 	}
     }
     
-    if (findBestStep && foundBest) {
-	newNodes = bestNewNodes;
+    if (findBestStep) {
+	newNodes = localBestNewNodes;
 	return bestSatisfaction;
     }
     
@@ -315,48 +302,16 @@ RandomNodeInserter::RandomNodeInserter(Environment& env, unsigned int maxk, bool
 
 void RandomNodeInserter::prepareStep(Instance& instance, Config::StepFunction stepFunction)
 {
-    nearestSpots = env.getSpotSearch().findNearestSpots(instance, maxk);
+    // Does not work that way as nodes are removed from the instance, would require
+    // lots of special handling (fix up node indices, handle removed nodes, ..)
+    //nearestSpots = env.getSpotSearch().findNearestSpots(instance, maxk);
 }
 
 double RandomNodeInserter::findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes)
 {
-    NearestSpotList nearest = nearestSpots;
+    NearestSpotList nearestSpots = env.getSpotSearch().findNearestSpots(instance, maxk);
     
-    // add random nodes to tour as long as it is possible
-    TourValues lastDelta;
-    
-    newNodes.clear();
-    
-    while (!nearest.empty()) {
-	
-	unsigned r = rand() % nearest.size();
-	
-	//  pick a random method
-	unsigned nodeId = nearest[r].first;
-	unsigned spotId = nearest[r].second;
-	const Spot& spot = instance.getProblem().getSpot(spotId);
-	
-	unsigned methodId = rand() % spot.getMethods().size();
-	
-	if (skipNode(removedNodes, spotId, methodId)) {
-	    methodId = (methodId + 1) % spot.getMethods().size();
-	}
-	
-	unsigned pos = addNewNode(instance, nodeId, TourNode(spotId, methodId), false);
-	
-	TourValues delta = getDeltaInsertValues(instance);
-	
-	if (instance.isValid( delta )) {
-	    nearest.erase( nearest.begin() + r );
-	    lastDelta = delta;
-	} else {
-	    newNodes.erase(newNodes.begin() + pos);
-	    
-	    return lastDelta.satisfaction;
-	}
-    }
-    
-    return 0;
+    return selectNewNodes(instance, nearestSpots, NULL, removedNodes, false);
 }
 
 double RandomNodeInserter::findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, bool findBestStep)
@@ -371,59 +326,14 @@ double RandomNodeInserter::findInsertNodes(Instance& instance, const TourNodeInd
     bool foundBest = false;
     TourNodeIndexList bestNewNodes;
     
-    NearestSpotList nearest = nearestSpots;
+    NearestSpotList nearest = env.getSpotSearch().findNearestSpots(instance, maxk);
     
     // get best method and ratios per nearest spots
     ratios = getMethodRatios(instance, nearest, removedNodes);
     
-    // add nodes to tour as long as it is possible
-    TourValues lastDelta;
-    
-    newNodes.clear();
-    
-    while (!nearest.empty()) {
-	
-	unsigned r = findBestNearestNode(ratios);
-	
-	//  pick a random method
-	unsigned nodeId = nearest[r].first;
-	unsigned spotId = nearest[r].second;
-	unsigned methodId = ratios[r].first;
-	
-	unsigned pos = addNewNode(instance, nodeId, TourNode(spotId, methodId), false);
-	
-	TourValues delta = getDeltaInsertValues(instance);
-	
-	if (instance.isValid( delta )) {
-	    nearest.erase( nearest.begin() + r );
-	    ratios.erase( ratios.begin() + r );		
-	    lastDelta = delta;
-	} else {
-	    newNodes.erase(newNodes.begin() + pos);
-	    
-	    // finished inserting nodes
-	    if (findBestStep) {
-		if (!foundBest || lastDelta.satisfaction > bestSatisfaction) {
-		    bestNewNodes = newNodes;
-		    bestSatisfaction = lastDelta.satisfaction;
-		    foundBest = true;
-		}
-	    } else {
-		if (lastDelta.satisfaction > 0) {
-		    return lastDelta.satisfaction;
-		}
-	    }
-	    break;
-	}
-    }
-    
-    if (findBestStep && foundBest) {
-	newNodes = bestNewNodes;
-	return bestSatisfaction;
-    }
-    
-    return 0;
+    return selectNewNodes(instance, nearest, &ratios, removedNodes, findBestStep);
 }
+
 
 
 

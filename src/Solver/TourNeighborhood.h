@@ -20,8 +20,7 @@ typedef std::vector< std::pair<unsigned, double> > MethodRatioList;
 
 class NodeInserter {
 public:
-    NodeInserter(Environment& env, unsigned int maxk, bool insertUsed) 
-               : env(env), spotsearch(env.getSpotSearch()), maxk(maxk), insertUsed(insertUsed) {}
+    NodeInserter(Environment& env, unsigned int maxk, bool insertUsed);
     
     /**
      * Initialize search for the next step.
@@ -63,6 +62,7 @@ protected:
     SpotSearch& spotsearch;
     unsigned maxk;
     bool insertUsed;
+    bool skipMethodOnly;
     
     TourNodeIndexList newNodes;
     TourNodeIndexList bestNewNodes;
@@ -81,6 +81,17 @@ protected:
     MethodRatioList getMethodRatios(const Instance& instance, NearestSpotList& nearestSpots, const TourNodeIndexList& removedNodes);
     
     unsigned findBestNearestNode(const MethodRatioList& ratioList);
+
+    /**
+     * @param instance the instance
+     * @param nearestSpots the nearest spots to select from
+     * @param ratios the ratios used to select nodes, or select randomly if NULL
+     * @param removedNodes nodes that were removed from instance
+     * @param findBestStep if true, search all candidates for best improvement
+     * @return the satisfaction improvement
+     */
+    double selectNewNodes(Instance& instance, NearestSpotList& nearestSpots, MethodRatioList *ratios, 
+			      const TourNodeIndexList& removedNodes, bool findBestStep);
     
     // TourNodeIndexList getRatioSortedNearestNodes(const Instance& instance, const NearestSpotList& nearest) const;
   
@@ -139,8 +150,7 @@ public:
     virtual double findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, bool findBestStep);
         
 protected:
-    NearestSpotList nearestSpots;
-    
+
     
 };
 
