@@ -7,6 +7,7 @@
 \usepackage{datatool}
 \usepackage{graphicx}
 
+\usepackage[margin=1in]{geometry}
 
 
 % TODO Add title
@@ -183,6 +184,10 @@ Among all the tested configurations,one of the best approaches is VND, which giv
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%% Local Search %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% TODO just use k=10 for all of them (or some other k)
+% TODO use same header as for Greedy for deterministic local search (two column per variant, Satisf. and Time)
+% TODO use 4 columns per randomized search result (grasp, random step)
+
 \begin{table}[b!]
   \vspace{-6mm}%
   \caption{Computed values using the local search algorithm, using SpotOneOpt}
@@ -190,6 +195,21 @@ Among all the tested configurations,one of the best approaches is VND, which giv
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
+    \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{4}{c}{\bfseries SpotOneOpt} & 
+      \multicolumn{4}{c}{\bfseries EdgeTwoOpt}  \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time  
+
+    \\
+
     \bfseries Problem &
     \bfseries St,Next &
     \bfseries Time &
