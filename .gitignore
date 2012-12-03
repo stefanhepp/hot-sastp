@@ -25,3 +25,4 @@ build
 *.aux
 *.log
 results/Report.pdf
+results/graphs/*.pdf
