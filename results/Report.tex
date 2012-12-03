@@ -126,13 +126,13 @@ We also varied the value of $k$ for selecting the k-nearest spots (Table~\ref{ta
 \medskip
 
 \emph{Local search} was tested using all neighborhoods. Table~\ref{tab:localOne} presents the results obtained using spot exchange neighborhood. 
-In Table~\ref{tab:localEdge} the same algorithm was run with the edge exchange neighborhood. As for the method exchange neighborhood, table \ref{tab:localMethod} presents the results. The best results using this search strategy were obtained with the spot exchange neighborhood. But the difference in stamina compared with the other neighborhoods is not that big. 
+In Table~\ref{tab:localEdge} the same algorithm was run with the edge exchange neighborhood. As for the method exchange neighborhood, Table~\ref{tab:localMethod} presents the results. The best results using this search strategy were obtained with the spot exchange neighborhood. But the difference in stamina compared with the other neighborhoods is not that big. 
 \medskip
 
-\emph{VND} was also tested in different configurations (tables \ref{tab:vndDeterministic} and \ref{tab:vndThree}). As mentioned above the order in which the neighborhoods are searched makes a difference in the runtime of the algorithm. Also which neighborhoods are searched gives some difference in the total satisfaction. If we run vnd with all three methods active, we tend to get the same results, but the time spent in finding the result is bigger.  
+\emph{VND} was also tested in different configurations (Tables~\ref{tab:vndDeterministic} and~\ref{tab:vndThree}). As mentioned above the order in which the neighborhoods are searched makes a difference in the runtime of the algorithm. Also which neighborhoods are searched gives some difference in the total satisfaction. If we run vnd with all three methods active, we tend to get the same results, but the time spent in finding the result is bigger.  
 \medskip
 
-For \emph{grasp} we have tested with both local search and VND as main search engine. The results differ a lot, as printed out in tables \ref{tab:graspLSOne},  \ref{tab:graspLSEdge}, \ref{tab:graspLSMethod} and \ref{tab:graspVNDTwo}. Since grasp is a randomized search heuristic we've done multiple tests using the same configuration, computed the standard deviation and the averege satisfaction for each of the problems. Using this approach the best results where observed while testing the configuration which uses VND as search procedure. Among the local search procedures the best performing, in terms of total satisfaction is the one spot exchange method. The two approaches of VND give similar results, but the one using only the edge exchange and method exchange tends to terminate faster. 
+For \emph{grasp} we have tested with both local search and VND as main search engine. The results differ a lot, as printed out in Tables~\ref{tab:graspLSOneNB},~\ref{tab:graspLSOneNB},~\ref{tab:graspLSEdgeR},~\ref{tab:graspLSEdgeNB},~\ref{tab:graspLSMethod} and~\ref{tab:graspVNDTwo}. Since grasp is a randomized search heuristic we've done multiple tests using the same configuration, computed the standard deviation and the averege satisfaction for each of the problems. Using this approach the best results where observed while testing the configuration which uses VND as search procedure. Among the local search procedures the best performing, in terms of total satisfaction is the one spot exchange method. The two approaches of VND give similar results, but the one using only the edge exchange and method exchange tends to terminate faster. 
 \medskip
 
 Among all the tested configurations,one of the best approaches is VND, which gives the best ratio of satisfaction per time spent in finding the solution. This approach gives also the highest satisfaction we can get for the sastp1000 problem.
@@ -167,10 +167,13 @@ Among all the tested configurations,one of the best approaches is VND, which giv
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrl}
-    \bfseries Problem &
-    \bfseries Stamina &
+   \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries k=5} & 
+      \multicolumn{2}{c}{\bfseries k=10}  \\
+    &
+    \bfseries Satis. &
     \bfseries Time &
-    \bfseries Stam k=10& 
+    \bfseries Satis. & 
    	\bfseries Time 
     \DTLforeach{greedyIN}{\prob=problem,\stam=stamina,\time=time,\stamin=stamina1,\tim=time1}{%
       \DTLiffirstrow{\\\hline}{\\}%
@@ -196,32 +199,21 @@ Among all the tested configurations,one of the best approaches is VND, which giv
   \centering
   \begin{tabular}{lrrrrrrrrrr}
     \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries SpotOneOpt} & 
-      \multicolumn{4}{c}{\bfseries EdgeTwoOpt}  \\
+      \multicolumn{2}{c}{\bfseries Next} &
+      \multicolumn{2}{c}{\bfseries Best} & 
+      \multicolumn{4}{c}{\bfseries Ramdom}  \\
     &
-    \bfseries Max Sat. &
-    \bfseries Avg Sat. &
-    \bfseries Std Dev. &
-    \bfseries Avg Time &
+    \bfseries Sastis. &
+    \bfseries Time. &
+    \bfseries Satis. &
+    \bfseries Time &
     \bfseries Max Sat. &
     \bfseries Avg Sat. &
     \bfseries Std Dev. &
     \bfseries Avg Time  
-
-    \\
-
-    \bfseries Problem &
-    \bfseries St,Next &
-    \bfseries Time &
-    \bfseries St,Best &
-    \bfseries Time &
-    \bfseries Rand,k5 & 
-    \bfseries dev &
-    \bfseries Rand,k10& 
-   	\bfseries dev
-    \DTLforeach{localOne}{\prob=problem,\next=next,\ti=t1,\best=best,\tii=t2,\ki=k5,\devi=dev5,\kii=k10,\devii=dev10}{%
+    \DTLforeach{localOne}{\prob=problem,\next=next,\ti=t1,\best=best,\tii=t2,\ki=k5,\devi=dev5,\kii=k10,\devii=dev10,\maxsat=maxsat,\time=time}{%
       \DTLiffirstrow{\\\hline}{\\}%
-      \prob & \next &\ti & \best & \tii & \ki & \devi & \kii &\devii%
+      \prob & \next &\ti & \best & \tii & \maxsat  & \kii & \devii & \time%
     }
     \\\hline
   \end{tabular}
@@ -236,23 +228,28 @@ Among all the tested configurations,one of the best approaches is VND, which giv
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
-    \bfseries Problem &
-    \bfseries St,Next &
+    \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries Next} &
+      \multicolumn{2}{c}{\bfseries Best} & 
+      \multicolumn{4}{c}{\bfseries Random}  \\
+    &
+    \bfseries Sastis. &
+    \bfseries Time. &
+    \bfseries Satis. &
     \bfseries Time &
-    \bfseries St,Best &
-    \bfseries Time &
-    \bfseries Rand,k5 & 
-    \bfseries dev &
-    \bfseries Rand,k10& 
-   	\bfseries dev
-    \DTLforeach{localEdge}{\prob=problem,\next=next,\ti=t1,\best=best,\tii=t2,\ki=k5,\devi=dev5,\kii=k10,\devii=dev10}{%
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time  
+    \DTLforeach{localEdge}{\prob=problem,\next=next,\ti=t1,\best=best,\tii=t2,\ki=k5,\devi=dev5,\kii=k10,\devii=dev10,\maxsat=maxsat,\time=time}{%
       \DTLiffirstrow{\\\hline}{\\}%
-      \prob & \next &\ti & \best & \tii & \ki & \devi & \kii &\devii%
+      \prob & \next &\ti & \best & \tii & \maxsat & \kii & \devii & \time%
     }
     \\\hline
   \end{tabular}
 
 \end{table}
+
 
 \begin{table}[b!]
   \vspace{-6mm}%
@@ -260,22 +257,26 @@ Among all the tested configurations,one of the best approaches is VND, which giv
   \label{tab:localMethod}
   \setlength{\tabcolsep}{1.4mm}
   \centering
-  \begin{tabular}{lrrrrrrrr}
-    \bfseries Problem &
-    \bfseries St,Next &
-    \bfseries Time &
-    \bfseries Rand,k5 & 
-    \bfseries dev &
-    \bfseries Rand,k10& 
-   	\bfseries dev
-    \DTLforeach{localMethod}{\prob=problem,\next=next,\ti=t1,\ki=k5,\devi=dev5,\kii=k10,\devii=dev10}{%
+  \begin{tabular}{lrrrrrrrrrr}
+    \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries Next} &
+      \multicolumn{4}{c}{\bfseries Random}  \\
+    &
+    \bfseries Sastis. &
+    \bfseries Time. &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time  
+     \DTLforeach{localMethod}{\prob=problem,\next=next,\ti=t1,\ki=k5,\devi=dev5,\kii=k10,\devii=dev10,\maxsat=maxsat,\time=time}{%
       \DTLiffirstrow{\\\hline}{\\}%
-      \prob & \next &\ti & \ki & \devi & \kii &\devii%
+      \prob & \next &\ti & \maxsat & \kii & \devii & \time%
     }
     \\\hline
   \end{tabular}
 
 \end{table}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%% VND %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -286,18 +287,17 @@ Among all the tested configurations,one of the best approaches is VND, which giv
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
-    \bfseries Problem &
-    \bfseries Next &
-    \bfseries K=5 &
-    \bfseries K=15 &
-    \bfseries AvgTime &
-    \bfseries Best & 
-    \bfseries K=5 &
-    \bfseries K=15& 
-   	\bfseries AvgTime
+      \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries Next} & 
+      \multicolumn{2}{c}{\bfseries Best}  \\
+    &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Satis. & 
+   	\bfseries Time 
     \DTLforeach{vndDeterministic}{\prob=problem,\next=next,\nkv=nk5,\nkxv=nk15,\avgti=avgt1,\best=best,\kv=k5,\kxv=k15,\avgtii=avgt2}{%
       \DTLiffirstrow{\\\hline}{\\}%
-      \prob & \next &\nkv & \nkxv & \avgti & \best & \kv & \kxv &\avgtii%
+      \prob & \next &\avgti & \best &\avgtii%
     }
     \\\hline
   \end{tabular}
@@ -311,16 +311,17 @@ Among all the tested configurations,one of the best approaches is VND, which giv
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrr}
-    \bfseries Problem &
-    \bfseries Next &
-    \bfseries NTime &
-    \bfseries Best & 
-    \bfseries Btime &
-    \bfseries Random &
-    \bfseries Rtime 
+    \multirow{2}{*}{\bfseries Problem} &
+    \multicolumn{2}{c}{\bfseries Next} & 
+    \multicolumn{2}{c}{\bfseries Best}  \\
+    &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Satis. & 
+   	\bfseries Time 
     \DTLforeach{vndThree}{\prob=problem,\rand=rand,\rtime=rtime,\next=next,\ntime=ntime,\best=best,\btime=btime}{%
       \DTLiffirstrow{\\\hline}{\\}%
-      \prob & \next &\ntime & \best & \btime & \rand & \rtime%
+      \prob & \next &\ntime & \best & \btime%
     }
     \\\hline
   \end{tabular}
@@ -331,49 +332,109 @@ Among all the tested configurations,one of the best approaches is VND, which giv
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Grasp using the local search, oneOpt, using step function Next and Best and Random }
-  \label{tab:graspLSOne}
+  \caption{Grasp using the local search, oneOpt, using step function Next and Best }
+  \label{tab:graspLSOneNB}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
-    \bfseries Problem &
-    \bfseries Best &
-    \bfseries Dev &
-    \bfseries Next &
-    \bfseries Dev &
-    \bfseries Random & 
-    \bfseries Dev
-    \DTLforeach{graspOne}{\prob=problem,\best=best,\devb=devb,\next=next,\devn=devn,\rand=rand,\devr=devr}{%
+     \multirow{2}{*}{\bfseries Problem} &
+    \multicolumn{4}{c}{\bfseries Next} &
+    \multicolumn{4}{c}{\bfseries Best}  \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time
+    \DTLforeach{graspEdge}{\prob=problem,\best=best,\devb=devb,\next=next,\devn=devn,\rand=rand,\devr=devr,\maxb=maxb,\timeb=timeb,\maxn=maxn,\timen=timen,\maxr=maxr,\timer=timer}{%
       \DTLiffirstrow{\\\hline}{\\}%
-      \prob &\best & \devb & \next & \devn & \rand & \devr%
+      \prob &\maxn & \next & \devn & \timen & \maxb & \best & \devb & \timeb %
     }
     \\\hline
   \end{tabular}
 
 \end{table}
+
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Grasp using the local search, edgeOption, using step function Next and Random }
-  \label{tab:graspLSEdge}
+  \caption{Grasp using the local search, oneOpt, using step function Random}
+  \label{tab:graspLSOneR}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
-    \bfseries Problem &
-    \bfseries Best &
-    \bfseries Dev &
-    \bfseries Next &
-    \bfseries Dev &
-    \bfseries Random & 
-    \bfseries Dev
-    \DTLforeach{graspEdge}{\prob=problem,\best=best,\devb=devb,\next=next,\devn=devn,\rand=rand,\devr=devr}{%
+    \multirow{2}{*}{\bfseries Problem} &
+    \multicolumn{4}{c}{\bfseries Random} \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time 
+     \DTLforeach{graspEdge}{\prob=problem,\best=best,\devb=devb,\next=next,\devn=devn,\rand=rand,\devr=devr,\maxb=maxb,\timeb=timeb,\maxn=maxn,\timen=timen,\maxr=maxr,\timer=timer}{%
       \DTLiffirstrow{\\\hline}{\\}%
-      \prob &\best & \devb & \next & \devn & \rand & \devr%
+      \prob & \maxr & \rand & \devr& \timer%
     }
     \\\hline
   \end{tabular}
 
 \end{table}
+
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Grasp using the local search, edgeOption, using step function Next and Best }
+  \label{tab:graspLSEdgeNB}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \multirow{2}{*}{\bfseries Problem} &
+    \multicolumn{4}{c}{\bfseries Next} &
+    \multicolumn{4}{c}{\bfseries Best}  \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time
+    \DTLforeach{graspEdge}{\prob=problem,\best=best,\devb=devb,\next=next,\devn=devn,\rand=rand,\devr=devr,\maxb=maxb,\timeb=timeb,\maxn=maxn,\timen=timen,\maxr=maxr,\timer=timer}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob &\maxn & \next & \devn & \timen & \maxb & \best & \devb & \timeb %
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Grasp using the local search, edgeOption, using step function Random }
+  \label{tab:graspLSEdgeR}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \multirow{2}{*}{\bfseries Problem} &
+    \multicolumn{4}{c}{\bfseries Random} \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time 
+    \DTLforeach{graspEdge}{\prob=problem,\best=best,\devb=devb,\next=next,\devn=devn,\rand=rand,\devr=devr,\maxb=maxb,\timeb=timeb,\maxn=maxn,\timen=timen,\maxr=maxr,\timer=timer}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \maxr & \rand & \devr& \timer%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
 
 \begin{table}[b!]
   \vspace{-6mm}%
@@ -382,14 +443,21 @@ Among all the tested configurations,one of the best approaches is VND, which giv
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
-    \bfseries Problem &
-    \bfseries Next &
-    \bfseries Dev &
-    \bfseries Random &
-    \bfseries Dev  
-    \DTLforeach{graspMethod}{\prob=problem,\next=next,\dev=dev,\random=random,\devr=devr}{%
+    \multirow{2}{*}{\bfseries Problem} &
+    \multicolumn{4}{c}{\bfseries Next} &
+    \multicolumn{4}{c}{\bfseries Best}  \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time 
+    \DTLforeach{graspMethod}{\prob=problem,\next=next,\dev=dev,\random=random,\devr=devr,\maxn=maxn,\timen=timen,\maxr=maxr,\timer=timer}{%
       \DTLiffirstrow{\\\hline}{\\}%
-      \prob & \next &\dev & \random & \devr %
+      \prob &\maxn & \next &\dev &\timen &\maxr & \random & \devr & \timer %
     }
     \\\hline
   \end{tabular}
@@ -403,23 +471,26 @@ Among all the tested configurations,one of the best approaches is VND, which giv
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrrrrrr}
-    \bfseries Problem &
-    \bfseries Next &
-    \bfseries Dev &
-    \bfseries AvgTime &
-    \bfseries Best & 
-    \bfseries Dev &
-    \bfseries AvgTime
-    \DTLforeach{graspVND}{\prob=problem,\next=next,\dev=dev,\time=time,\best=best,\bdev=bdev,\btime=btime}{%
+      \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{4}{c}{\bfseries Next} &
+      \multicolumn{4}{c}{\bfseries Best}  \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time  
+    \DTLforeach{graspVND}{\prob=problem,\next=next,\dev=dev,\time=time,\best=best,\bdev=bdev,\btime=btime,\maxn=maxb,\maxb=maxc}{%
       \DTLiffirstrow{\\\hline}{\\}%
-      \prob & \next &\dev & \time & \best & \bdev & \btime%
+      \prob & \maxn &\next &\dev & \time & \maxb &\best & \bdev & \btime%
     }
     \\\hline
   \end{tabular}
 
 \end{table}
-
-%TODO add the latest test results for grasp with vnd and all three neighborhoods active -- still running... 
 
 
 % TODO compare various configurations
