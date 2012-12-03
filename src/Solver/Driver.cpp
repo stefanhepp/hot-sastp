@@ -105,8 +105,8 @@ VND* Driver::getVND(Environment& env, const Instance& init)
     
     VND* vnd = new VND(env, init);
     
-    //nb = new SpotOneOPT(env);
-    //vnd->addNeighborhood(*nb);
+    nb = new SpotOneOPT(env);
+    vnd->addNeighborhood(*nb);
     
     nb = new MethodTwoOPT(env);
     vnd->addNeighborhood(*nb);

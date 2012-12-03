@@ -125,6 +125,8 @@ const option::Descriptor usage[] = {
 	" writeDot : false; \n"
 	" maxStepsWithNoChange : 10; \n"
         "\nExample configurations will be added soon! \n"
+        "to reproduce best solution found: \n"
+        "-a 2 -s 1 -c \n"
     },
     { 0, 0, 0, 0, 0, 0 }
 };

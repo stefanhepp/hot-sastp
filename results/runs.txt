@@ -1,0 +1,30 @@
+-a 1 -s 2 -n 0 -c -p //local search oneOpt best
+-a 1 -s 1 -n 0 -c -p //local search oneOpt next
+-a 1 -s 0 -n 0 -c -p //local search oneOpt random 
+
+-a 1 -s 1 -n 1 -c -p //local search edgeOpt next
+-a 1 -s 2 -n 1 -c -p //local search edgeOpt best
+-a 1 -s 0 -n 1 -c -p //local search edgeOpt random
+
+-a 1 -s 1 -n 2 -c -p //local search method opt next
+-a 1 -s 2 -n 2 -c -p //local search method opt best
+-a 1 -s 0 -n 2 -c -p //local search method opt random
+
+-a 2 -s 1 -c -p // vnd next
+-a 2 -s 2 -c -p // vnd best 
+-a 2 -s 0 -c -p // vnd random
+
+-a 3 -s 2 -n 0 -c -p //grasp local search oneOpt best
+-a 3 -s 1 -n 0 -c -p //grasp search oneOpt next
+-a 3 -s 0 -n 0 -c -p //grasp search oneOpt random 
+
+-a 3 -s 1 -n 1 -c -p //grasp search edgeOpt next
+-a 3 -s 2 -n 1 -c -p //grasp search edgeOpt best
+-a 3 -s 0 -n 1 -c -p //grasp search edgeOpt random
+
+-a 3 -s 1 -n 2 -c -p //grasp search method opt next
+-a 3 -s 2 -n 2 -c -p //grasp search method opt best
+-a 3 -s 0 -n 2 -c -p //grasp search method opt random
+
+-a 4 -s 2 -c -p //grasp vnd best
+-a 4 -s 1 -c -p //grasp vnd next
