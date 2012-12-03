@@ -117,14 +117,15 @@ solution for more than a fixed number of iterations or a timeout has been reache
 
 \section{Results and discussion}
 
-We have tested our approach with different configurations for the algorithms. 
+%We have tested our approach with different configurations for the algorithms. 
 
 The \emph{greedy algorithm} has been tested with both the strategies presented above. 
 %In tables \ref{tab:greedyNN} and \ref{tab:GreedyIN} one can observe the results obtained using this algorithm for each of the problems. 
 We also varied the value of $k$ for selecting the k-nearest spots (Table~\ref{tab:greedyNN} and Table~\ref{tab:GreedyIN}).
 \medskip
 
-\emph{Local search} was tested using all three neighborhoods, table \ref{tab:localOne} presents in more details the results obtained using spot exchange neighborhood. In table \ref{tab:localEdge} the same algorithm was run with the edge exchange neighborhood. As for the method exchange neighborhood, table \ref{tab:localMethod} presents the results. The best results using this search strategy were obtained with the spot exchange neighborhood. But the difference in stamina compared with the other neighborhoods is not that big. 
+\emph{Local search} was tested using all neighborhoods. Table~\ref{tab:localOne} presents the results obtained using spot exchange neighborhood. 
+In Table~\ref{tab:localEdge} the same algorithm was run with the edge exchange neighborhood. As for the method exchange neighborhood, table \ref{tab:localMethod} presents the results. The best results using this search strategy were obtained with the spot exchange neighborhood. But the difference in stamina compared with the other neighborhoods is not that big. 
 \medskip
 
 \emph{VND} was also tested in different configurations (tables \ref{tab:vndDeterministic} and \ref{tab:vndThree}). As mentioned above the order in which the neighborhoods are searched makes a difference in the runtime of the algorithm. Also which neighborhoods are searched gives some difference in the total satisfaction. If we run vnd with all three methods active, we tend to get the same results, but the time spent in finding the result is bigger.  
@@ -141,11 +142,14 @@ Among all the tested configurations,one of the best approaches is VND, which giv
   \setlength{\tabcolsep}{1.5mm}
   \centering
   \begin{tabular}{lrrrrl}
-    \bfseries Problem &
-    \bfseries Stamina &
+    \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries k=5} & 
+      \multicolumn{2}{c}{\bfseries k=10}  \\
+    &
+    \bfseries Satis. &
     \bfseries Time &
-    \bfseries Stam k=10& 
-   	\bfseries Time 
+    \bfseries Satis.& 
+    \bfseries Time  
     \DTLforeach{greedyNN}{\prob=problem,\stam=stamina,\time=time,\stamin=stamina1,\tim=time1}{%
       \DTLiffirstrow{\\\hline}{\\}%
       \prob & \stam &\time & \stamin & \tim%
