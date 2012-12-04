@@ -115,8 +115,8 @@ solution for more than a fixed number of iterations or a timeout has been reache
 \DTLloaddb[]{graspEdge}{grasp/edgeOpt/edgeOpt.csv}
 \DTLloaddb[]{graspMethod}{grasp/methodOpt/methodOpt.csv}
 \DTLloaddb[]{graspVND}{grasp/vndS.csv}
-\DTLloaddb[]{vndTBest}{NEWSTAFF/VNDBest.csv}
-\DTLloaddb[]{graspNTN}{NEWSTAFF/graspNTN.csv}
+%\DTLloaddb[]{vndTBest}{NEWSTAFF/VNDBest.csv}
+%\DTLloaddb[]{graspNTN}{NEWSTAFF/graspNTN.csv}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%% Greedy %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -458,7 +458,7 @@ that neighborhood gave good results for a comparatively short runtime.
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Grasp using the local search , methodOpt and step function Next and Best }
+  \caption{Grasp using the local search, methodOpt and step function Next and Best }
   \label{tab:graspLSMethod}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -512,25 +512,35 @@ that neighborhood gave good results for a comparatively short runtime.
 
 \end{table}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Computed values using the VND, nearest tour neighborhood}
-  \label{tab:GreedyIN}
+  \caption{Computed values using the nearest tour neighborhood}
+  \label{tab:NearestTour}
   \setlength{\tabcolsep}{1.4mm}
   \centering
-  \begin{tabular}{lrrrrl}
+  \begin{tabular}{lrrrr}
    \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{2}{c}{\bfseries Next} &
-      \multicolumn{2}{c}{\bfseries Best} \\
+     % \multicolumn{2}{c}{\bfseries Local Search, Next} &
+      \multicolumn{2}{c}{\bfseries VND, Next} &
+      \multicolumn{2}{c}{\bfseries Grasp (VND), Next} \\
     &
+    %\bfseries Satis. &
+    %\bfseries Time &
     \bfseries Satis. &
     \bfseries Time &
     \bfseries Satis. &
     \bfseries Time 
-    \DTLforeach{vndTBest}{\prob=problem,\stam=satisf,\time=time,\next=next,\timen=timen}{%
-      \DTLiffirstrow{\\\hline}{\\}%
-      \prob &\next & \timen & \stam & \time%
-    }
+    \\\hline
+sastp10   & 41.8889 & 0.00 & 43.979 & 0.02 \\
+sastp20   & 72.4877 & 0.00 & 72.4877 & 0.05 \\
+sastp50   & 204.297 & 0.02 & 210.485 & 0.56 \\
+sastp100  & 484.264 & 0.16 & 500.500 & 5.55 \\
+sastp200  & 965.235 & 0.72 & 968.095 & 30.00 \\
+sastp500  & 2603.03 & 14.04 & 2617.05 & 636.45 \\
+sastp1000 & 5445.07 & 190.66 & 5447.38 & 691.147 
     \\\hline
   \end{tabular}
 
