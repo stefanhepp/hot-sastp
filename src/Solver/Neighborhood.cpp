@@ -171,7 +171,7 @@ bool SpotOneOPT::performMaxStep(Instance& instance, bool alwaysApply){
     }
 
     // return false if no spot with an improvement was found
-    if ((!alwaysApply && maxSatisfaction < 0) || maxWhatToInsert == -1 || maxWhatToRemove == -1)
+    if ((!alwaysApply && maxSatisfaction <= 0) || maxWhatToInsert == -1 || maxWhatToRemove == -1)
         return false;
     else {
         //some improvement was found
@@ -223,7 +223,7 @@ bool EdgeTwoOPT::performStep (Instance& instance, Config::StepFunction stepFunct
 	// We only have valid pairs, no need to check again if not necessary
 	double deltaSatisfaction = 1.0;
 	if (alwaysApply || isValidEdgeExchange(instance, firstEdge, secondEdge, deltaSatisfaction)) {
-	    if (deltaSatisfaction >= 0) {
+	    if (deltaSatisfaction > 0) {
 		performEdgeExchange(instance, firstEdge, secondEdge);
 		return true;
 	    }
@@ -244,7 +244,7 @@ bool EdgeTwoOPT::performStep (Instance& instance, Config::StepFunction stepFunct
 		double deltaSatisfaction;
 		if (isValidEdgeExchange(instance, firstEdge, secondEdge, deltaSatisfaction)) {
 		    
-		    if (alwaysApply || deltaSatisfaction >= 0) {
+		    if (alwaysApply || deltaSatisfaction > 0) {
 			
 			performEdgeExchange(instance, firstEdge, secondEdge);
 
@@ -277,7 +277,7 @@ bool EdgeTwoOPT::performStep (Instance& instance, Config::StepFunction stepFunct
 	    }
 	}
 	
-	if (alwaysApply || bestSatisfaction >= 0) {
+	if (alwaysApply || bestSatisfaction > 0) {
 	    
 	    performEdgeExchange(instance, bestFirst, bestSecond);
 	    

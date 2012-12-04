@@ -9,7 +9,7 @@ using namespace std;
 NodeInserter::NodeInserter(Environment& env, unsigned int maxk, bool insertUsed)
 : env(env), spotsearch(env.getSpotSearch()), maxk(maxk), insertUsed(insertUsed)
 {
-    skipMethodOnly = false;
+    skipMethodOnly = true;
 }
 
 
