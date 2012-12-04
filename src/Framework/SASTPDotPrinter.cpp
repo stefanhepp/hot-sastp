@@ -1,4 +1,4 @@
-#include "DotPrinter.h"
+#include "SASTPDotPrinter.h"
 
 #include <iostream>
 #include <fstream>
@@ -9,7 +9,7 @@
  * 
  * @param dense keep the output to a minimum, do not draw arrows or labels
  */
-void DotPrinter::writeDotFile ( const std::string& filename, bool dense ) {
+void SASTPDotPrinter::writeDotFile ( const std::string& filename, bool dense ) {
     
     // Defaults for small graphs
     std::string graphtype = "digraph";
@@ -53,19 +53,4 @@ void DotPrinter::writeDotFile ( const std::string& filename, bool dense ) {
     output<< problem.getStartAsSpot().getName()<<";\n";
     // write out connection from last spot to origin
     output << "}\n";
-}
-
-void DotPrinter::writeTikzFile(const std::string& filename)
-{
-    std::ofstream out(filename);
-    if(!out)throw std::logic_error("no output stream to "+filename);
-    
-    out << " \\begin{tikzpicture}\n";
-    out << "[scale=.5 , auto=left, every node/.style={circle,fill=blue!20}]\n";
-    for (Spot* spot:problem.getSpots()){
-      out <<"\\node  ("<< spot->getName()<<") at ("<< spot->getX()<<","<<spot->getY()<<") {}; \n";
-    }
-    
-    out << " \\end{tikzpicture}\n";
-    
 }

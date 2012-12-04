@@ -407,7 +407,7 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 	
 	instance.deleteNodes(removedNodes);
 	
-	minSatisfaction -= instance.getTotalSatisfaction();
+	minSatisfaction -= instance.getTotalSatisfaction() - 0.005;
 	
 	// find nodes to insert
 	double deltaSatisfaction = nodeInserter.findRandomInsertNodes(instance, removedNodes, minSatisfaction);
@@ -443,7 +443,7 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 		
 		instance.deleteNodes(removedNodes);
 		
-		minSatisfaction -= instance.getTotalSatisfaction();
+		minSatisfaction -= instance.getTotalSatisfaction() - 0.005;
 		
 		// find nodes to insert
 		double deltaSatisfaction = nodeInserter.findInsertNodes(instance, removedNodes, minSatisfaction, stepFunction == Config::SF_BEST);
@@ -522,7 +522,7 @@ bool TwoNodesTourExchange::performStep(Instance& instance, Config::StepFunction 
 	
 	instance.deleteNodes(removedNodes);
 	
-	minSatisfaction -= instance.getTotalSatisfaction();
+	minSatisfaction -= instance.getTotalSatisfaction() - 0.005;
 	
 	// find nodes to insert
 	double deltaSatisfaction = nodeInserter.findRandomInsertNodes(instance, removedNodes, minSatisfaction);
@@ -555,7 +555,7 @@ bool TwoNodesTourExchange::performStep(Instance& instance, Config::StepFunction 
 		
 		instance.deleteNodes(removedNodes);
 		
-		minSatisfaction -= instance.getTotalSatisfaction();
+		minSatisfaction -= instance.getTotalSatisfaction() - 0.005;
 		
 		// find nodes to insert
 		double deltaSatisfaction = nodeInserter.findInsertNodes(instance, removedNodes, minSatisfaction, stepFunction == Config::SF_BEST);

@@ -1,7 +1,7 @@
 
 #include "Framework/SASTProblem.h"
 #include "Framework/SASTPSolution.h"
-#include "Support/DotPrinter.h"
+#include "Framework/SASTPDotPrinter.h"
 
 #include <assert.h>
 #include <iostream>
@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     SASTPSolution solution(problem);
     solution.load(inputsolution);
     
-    DotPrinter printer(problem, solution);
+    SASTPDotPrinter printer(problem, solution);
     
     //printer.writeTikzFile(outputfile);
     printer.writeDotFile(outputfile, problem.getSpots().size() > 20);

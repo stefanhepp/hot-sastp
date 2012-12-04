@@ -1,6 +1,6 @@
 #include "Driver.h"
 
-#include "Support/DotPrinter.h"
+#include "Framework/SASTPDotPrinter.h"
 
 #include "Solver/GreedyTour.h"
 #include "Solver/VND.h"
@@ -274,7 +274,7 @@ void Driver::writeSolution()
 		cout << "Exporting tour to " << dotFilename << endl;
 	    }
 	    
-	    DotPrinter printer(env.getProblem(), *solution);
+	    SASTPDotPrinter printer(env.getProblem(), *solution);
 	    printer.writeDotFile(dotFilename, env.getProblem().getSpots().size() > 10);
 	}
     }
