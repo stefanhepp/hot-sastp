@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -322,10 +323,6 @@ double RandomNodeInserter::findInsertNodes(Instance& instance, const TourNodeInd
     // first: best method-id of spot, second: satisfaction/time
     MethodRatioList ratios;
     ratios.reserve(maxk);
-    
-    double bestSatisfaction = 0;
-    bool foundBest = false;
-    TourNodeIndexList bestNewNodes;
     
     NearestSpotList nearest = env.getSpotSearch().findNearestSpots(instance, maxk);
     

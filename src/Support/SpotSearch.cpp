@@ -167,9 +167,12 @@ NearestSpotList SpotSearch::findNearestSpots(const Instance& tour, unsigned int 
     std::vector<double> dist;
     dist.reserve(k);
     
+    std::set<unsigned> foundSpots;
+    
     // initialize with nearest spots to hotel
     nearest = findNearestSpots(tour, -1, k, skipUsed);
     for (const auto& spot : nearest) {
+	foundSpots.insert(spot.second);
 	dist.push_back(problem.getDistance(problem.getStartAsSpot(), problem.getSpot(spot.second)));
     }
     
@@ -183,6 +186,7 @@ NearestSpotList SpotSearch::findNearestSpots(const Instance& tour, unsigned int 
 
 	for (unsigned spotIndex : *spots) {
 	    if (skipUsed && tour.containsSpot(spotIndex)) continue;
+	    if (!foundSpots.insert(spotIndex).second) continue;
 	    
 	    double spotDist = problem.getDistance(problem.getSpot(node.spot), problem.getSpot(spotIndex));
 	    
