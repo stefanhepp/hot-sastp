@@ -33,7 +33,7 @@ public:
      * @param instance the tour to insert nodes to. Does not contain removed nodes.
      * @param removedSpots the tour nodes that have been removed from the tour.
      */
-    virtual double findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes) =0;
+    virtual double findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction) =0;
     
     /**
      * Find a set of nodes to insert.
@@ -42,7 +42,7 @@ public:
      * @param removedSpots the tour nodes that have been removed from the tour.
      * @param findBestStep if true, search for the best step, otherwise stop at the first candidate that gives an improvement.
      */
-    virtual double findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, bool findBestStep) =0;
+    virtual double findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction, bool findBestStep) =0;
     
     /**
      * Insert the found nodes into the tour.
@@ -108,9 +108,9 @@ public:
 
     virtual void prepareStep(Instance& instance, Config::StepFunction stepFunction);
     
-    virtual double findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes);
+    virtual double findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction);
     
-    virtual double findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, bool findBestStep);
+    virtual double findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction, bool findBestStep);
     
     virtual void insertNodes(Instance& instance, bool insertBestStep) { instance = insertBestStep ? bestNewTour : newTour; }
     
@@ -131,9 +131,9 @@ public:
 
     virtual void prepareStep(Instance& instance, Config::StepFunction stepFunction);
     
-    virtual double findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes);
+    virtual double findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction);
     
-    virtual double findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, bool findBestStep);
+    virtual double findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction, bool findBestStep);
     
 protected:
     
@@ -145,9 +145,9 @@ public:
     
     virtual void prepareStep(Instance& instance, Config::StepFunction stepFunction);
     
-    virtual double findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes);
+    virtual double findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction);
     
-    virtual double findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, bool findBestStep);
+    virtual double findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction, bool findBestStep);
         
 protected:
 

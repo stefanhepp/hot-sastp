@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <set>
 
 #include "SASTProblem.h"
 
@@ -88,11 +89,18 @@ bool SASTPSolution::isValid(bool verbose) const
 		result=false;
 	}
 
+	set<unsigned> spots;
+	
 	//check stamina development
 	double staminatrace=prob.getInitStamina();
 	int i=0;
 	for(const auto& stop:tour)
 	{
+		if (!spots.insert(stop.spot).second) {
+			cout << "Spot " << stop.spot << " appears multiple times in tour" << endl;
+			result = false;
+		}
+		    
 		++i;
 		staminatrace-=prob.getSpot(stop.spot).getMethod(stop.method).getStamina();
 		if(staminatrace<0)

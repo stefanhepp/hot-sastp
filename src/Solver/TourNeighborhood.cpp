@@ -172,7 +172,6 @@ double NodeInserter::selectNewNodes(Instance& instance, NearestSpotList& nearest
 	
 	TourValues delta = getDeltaInsertValues(instance);
 	
-	
 	if (instance.isValid( delta )) {
 	    nearestSpots.erase( nearestSpots.begin() + r );
 	    if (ratios) ratios->erase( ratios->begin() + r );		
@@ -194,7 +193,9 @@ bool NodeInserter::skipNode(const TourNodeIndexList& removedNodes, unsigned int 
     if (insertUsed) return false;
     
     for (auto& p : removedNodes) {
-	if (p.second.spot == spotId) return true;
+	if (p.second.spot == spotId) {
+	    if (!skipMethodOnly || p.second.method == methodId) return true;
+	}
     }
     
     return false;
@@ -211,12 +212,12 @@ void SearchNodeInserter::prepareStep(Instance& instance, Config::StepFunction st
 {
 }
 
-double SearchNodeInserter::findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes)
+double SearchNodeInserter::findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction)
 {
     return runSearch(instance);
 }
 
-double SearchNodeInserter::findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, bool findBestStep)
+double SearchNodeInserter::findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction, bool findBestStep)
 {
     return runSearch(instance);
 }
@@ -247,7 +248,7 @@ void ConsecutiveNodeInserter::prepareStep(Instance& instance, Config::StepFuncti
 {
 }
 
-double ConsecutiveNodeInserter::findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes)
+double ConsecutiveNodeInserter::findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction)
 {
     // pick random insertion point
     unsigned insertAt = rand() % (instance.getTourLength() + 1) - 1;
@@ -257,7 +258,7 @@ double ConsecutiveNodeInserter::findRandomInsertNodes(Instance& instance, const 
     return selectNewNodes(instance, nearestSpots, NULL, removedNodes, false);
 }
 
-double ConsecutiveNodeInserter::findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, bool findBestStep)
+double ConsecutiveNodeInserter::findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction, bool findBestStep)
 {
     int tourLength = instance.getTourLength();
     
@@ -277,7 +278,7 @@ double ConsecutiveNodeInserter::findInsertNodes(Instance& instance, const TourNo
 	
 	double deltaSatisfaction = selectNewNodes(instance, nearestSpots, &ratios, removedNodes, findBestStep);
 	
-	if (!findBestStep && deltaSatisfaction > 0) {
+	if (!findBestStep && deltaSatisfaction > minSatisfaction) {
 	    return deltaSatisfaction;
 	} else if (findBestStep && (insertAt == -1 || deltaSatisfaction > bestSatisfaction)) {
 	    localBestNewNodes = newNodes;
@@ -307,14 +308,14 @@ void RandomNodeInserter::prepareStep(Instance& instance, Config::StepFunction st
     //nearestSpots = env.getSpotSearch().findNearestSpots(instance, maxk);
 }
 
-double RandomNodeInserter::findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes)
+double RandomNodeInserter::findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction)
 {
     NearestSpotList nearestSpots = env.getSpotSearch().findNearestSpots(instance, maxk);
     
     return selectNewNodes(instance, nearestSpots, NULL, removedNodes, false);
 }
 
-double RandomNodeInserter::findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, bool findBestStep)
+double RandomNodeInserter::findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction, bool findBestStep)
 {
     int tourLength = instance.getTourLength();
     
@@ -371,13 +372,17 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 	    removedNodes.push_back(make_pair(i, instance.getNode(i)));
 	}
 	
+	double minSatisfaction = instance.getTotalSatisfaction();
+	
 	instance.deleteNodes(removedNodes);
 	
+	minSatisfaction -= instance.getTotalSatisfaction();
+	
 	// find nodes to insert
-	double deltaSatisfaction = nodeInserter.findRandomInsertNodes(instance, removedNodes);
+	double deltaSatisfaction = nodeInserter.findRandomInsertNodes(instance, removedNodes, minSatisfaction);
 	
 	// update tour if satisfaction increased
-	if (alwaysApply || deltaSatisfaction > 0.0) {
+	if (alwaysApply || deltaSatisfaction > minSatisfaction) {
 	    nodeInserter.insertNodes(instance, false);
 	    return true;
 	} else {
@@ -390,6 +395,7 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 	unsigned maxLength = min(maxRemove,tourLength);
 
 	double bestSatisfaction = 0;
+	double bestMinSatisfaction = 0;
 	double bestLength = 0;
 	double bestFirst = 0;
 	
@@ -402,13 +408,17 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 		    removedNodes.push_back(make_pair(i, instance.getNode(i)));
 		}
 		
+		double minSatisfaction = instance.getTotalSatisfaction();
+		
 		instance.deleteNodes(removedNodes);
 		
+		minSatisfaction -= instance.getTotalSatisfaction();
+		
 		// find nodes to insert
-		double deltaSatisfaction = nodeInserter.findInsertNodes(instance, removedNodes, stepFunction == Config::SF_BEST);
+		double deltaSatisfaction = nodeInserter.findInsertNodes(instance, removedNodes, minSatisfaction, stepFunction == Config::SF_BEST);
 		
 		if (stepFunction == Config::SF_NEXT) {
-		    if (deltaSatisfaction > 0.0) {
+		    if (deltaSatisfaction > minSatisfaction) {
 			nodeInserter.insertNodes(instance, false);
 			return true;
 		    }
@@ -417,6 +427,7 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 			bestFirst = removeFirst;
 			bestLength = removeLength;
 			bestSatisfaction = deltaSatisfaction;
+			bestMinSatisfaction = minSatisfaction;
 			nodeInserter.storeAsBestStep();
 		    }
 		}
@@ -426,7 +437,7 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 	    
 	}
 	
-	if (stepFunction == Config::SF_BEST && (alwaysApply || bestSatisfaction > 0)) {
+	if (stepFunction == Config::SF_BEST && (alwaysApply || bestSatisfaction > bestMinSatisfaction)) {
 	    for (unsigned i = 0; i < bestLength; i++) {
 		instance.deleteNode(bestFirst);
 	    }
@@ -476,13 +487,17 @@ bool TwoNodesTourExchange::performStep(Instance& instance, Config::StepFunction 
 	removedNodes[0] = make_pair(firstNodeId,  instance.getNode(firstNodeId));
 	removedNodes[1] = make_pair(secondNodeId, instance.getNode(secondNodeId));
 	
+	double minSatisfaction = instance.getTotalSatisfaction();
+	
 	instance.deleteNodes(removedNodes);
 	
+	minSatisfaction -= instance.getTotalSatisfaction();
+	
 	// find nodes to insert
-	double deltaSatisfaction = nodeInserter.findRandomInsertNodes(instance, removedNodes);
+	double deltaSatisfaction = nodeInserter.findRandomInsertNodes(instance, removedNodes, minSatisfaction);
 	
 	// update tour if satisfaction increased
-	if (alwaysApply || deltaSatisfaction > 0.0) {
+	if (alwaysApply || deltaSatisfaction > minSatisfaction) {
 	    nodeInserter.insertNodes(instance, false);
 	    return true;
 	} else {
@@ -492,7 +507,8 @@ bool TwoNodesTourExchange::performStep(Instance& instance, Config::StepFunction 
 	
     } else {
 	
-	double bestSatisfaction = 0.0;
+	double bestSatisfaction = 0;
+	double bestMinSatisfaction = 0;
 	unsigned bestFirst = 0;
 	unsigned bestSecond = 0;
 	
@@ -504,13 +520,17 @@ bool TwoNodesTourExchange::performStep(Instance& instance, Config::StepFunction 
 		removedNodes[0] = make_pair(firstNodeId,  instance.getNode(firstNodeId));
 		removedNodes[1] = make_pair(secondNodeId, instance.getNode(secondNodeId));
 		
+		double minSatisfaction = instance.getTotalSatisfaction();
+		
 		instance.deleteNodes(removedNodes);
 		
+		minSatisfaction -= instance.getTotalSatisfaction();
+		
 		// find nodes to insert
-		double deltaSatisfaction = nodeInserter.findInsertNodes(instance, removedNodes, stepFunction == Config::SF_BEST);
+		double deltaSatisfaction = nodeInserter.findInsertNodes(instance, removedNodes, minSatisfaction, stepFunction == Config::SF_BEST);
 		
 		if (stepFunction == Config::SF_NEXT) {
-		    if (deltaSatisfaction > 0.0) {
+		    if (deltaSatisfaction > minSatisfaction) {
 			nodeInserter.insertNodes(instance, false);
 			return true;
 		    }
@@ -519,6 +539,7 @@ bool TwoNodesTourExchange::performStep(Instance& instance, Config::StepFunction 
 			bestFirst = firstNodeId;
 			bestSecond = secondNodeId;
 			bestSatisfaction = deltaSatisfaction;
+			bestMinSatisfaction = minSatisfaction;
 			nodeInserter.storeAsBestStep();
 		    }
 		}
@@ -528,7 +549,7 @@ bool TwoNodesTourExchange::performStep(Instance& instance, Config::StepFunction 
 	    
 	}
 	
-	if (stepFunction == Config::SF_BEST && (alwaysApply || bestSatisfaction > 0)) {
+	if (stepFunction == Config::SF_BEST && (alwaysApply || bestSatisfaction > bestMinSatisfaction)) {
 	    instance.deleteNode(bestSecond);
 	    instance.deleteNode(bestFirst);
 	    nodeInserter.insertNodes(instance, true);

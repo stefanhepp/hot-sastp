@@ -136,6 +136,8 @@ public:
     double getTotalSatisfaction() const { return totalSatisfaction; };
     double getRemainingStamina() const { return remainingStamina; };
 
+    TourValues getTourValues() const { return TourValues(tourTime, totalSatisfaction, -remainingStamina); }
+    
     /**
      * Get the total tour time, including any resting times for filling up stamina.
      */
