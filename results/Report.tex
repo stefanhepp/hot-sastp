@@ -7,7 +7,7 @@
 \usepackage{datatool}
 \usepackage{graphicx}
 
-\usepackage[margin=0.9in]{geometry}
+\usepackage[margin=1in]{geometry}
 
 
 % TODO Add title
@@ -112,6 +112,8 @@ solution for more than a fixed number of iterations or a timeout has been reache
 \DTLloaddb[]{graspEdge}{grasp/edgeOpt/edgeOpt.csv}
 \DTLloaddb[]{graspMethod}{grasp/methodOpt/methodOpt.csv}
 \DTLloaddb[]{graspVND}{grasp/vndS.csv}
+\DTLloaddb[]{vndTBest}{NEWSTAFF/VNDBest.csv}
+\DTLloaddb[]{graspNTN}{NEWSTAFF/graspNTN.csv}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%% Greedy %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -491,6 +493,32 @@ Among all the tested configurations,one of the best approaches is VND, which giv
   \end{tabular}
 
 \end{table}
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Computed values using the VND, nearest tour neighborhood}
+  \label{tab:GreedyIN}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrl}
+   \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries Next} &
+      \multicolumn{2}{c}{\bfseries Best} \\
+    &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Satis. &
+    \bfseries Time 
+    \DTLforeach{vndTBest}{\prob=problem,\stam=satisf,\time=time,\next=next,\timen=timen}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob &\next & \timen & \stam & \time%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
 
 \begin{figure}[htb]
 \centering
