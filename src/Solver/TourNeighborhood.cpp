@@ -340,12 +340,12 @@ void RandomNodeInserter::prepareStep(Instance& instance, Config::StepFunction st
 {
     // Does not work that way as nodes are removed from the instance, would require
     // lots of special handling (fix up node indices, handle removed nodes, ..)
-    //nearestSpots = env.getSpotSearch().findNearestSpots(instance, maxk);
+    //nearestSpots = env.getSpotSearch().findNearestTourSpots(instance, maxk, true);
 }
 
 double RandomNodeInserter::findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction)
 {
-    NearestSpotList nearestSpots = env.getSpotSearch().findNearestSpots(instance, maxk);
+    NearestSpotList nearestSpots = env.getSpotSearch().findNearestTourSpots(instance, maxk, true);
     
     return selectNewNodes(instance, nearestSpots, NULL, removedNodes, false);
 }
@@ -358,7 +358,7 @@ double RandomNodeInserter::findInsertNodes(Instance& instance, const TourNodeInd
     MethodRatioList ratios;
     ratios.reserve(maxk);
     
-    NearestSpotList nearest = env.getSpotSearch().findNearestSpots(instance, maxk);
+    NearestSpotList nearest = env.getSpotSearch().findNearestTourSpots(instance, maxk, true);
     
     // get best method and ratios per nearest spots
     ratios = getMethodRatios(instance, nearest, removedNodes);

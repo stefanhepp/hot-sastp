@@ -114,7 +114,7 @@ GreedyInsertHeuristic::GreedyInsertHeuristic ( Environment& env ) : GreedyTour (
 unsigned int GreedyInsertHeuristic::insertSpot()
 {
     // find k nearest spots to tour nodes
-    NearestSpotList nearest = spotsearch.findNearestSpots(instance, maxk);
+    NearestSpotList nearest = spotsearch.findNearestTourSpots(instance, maxk);
     
     // find best spot and method, add it to the tour
     unsigned insertAt;

@@ -43,7 +43,7 @@ public:
      * @return a pair <tournode,nearest> where tournode is the index of the tour nodes to which the spot is nearest, and the
      *  index of the nearest spot.
      */
-    NearestSpot findNearestSpot(const Instance& tour, bool skipUsed = true);
+    NearestSpot findNearestTourSpot(const Instance& tour, bool skipUsed = true);
     
     /**
      * Find k nearest spots to a given spot.
@@ -57,7 +57,7 @@ public:
      * @return a list of pairs <tournode,nearest> where tournode is the index of the tour nodes to which the spot is nearest, and the
      *  index of the nearest spot.
      */
-    NearestSpotList findNearestSpots(const Instance& tour, unsigned k, bool skipUsed = true);
+    NearestSpotList findNearestTourSpots(const Instance& tour, unsigned k, bool uniqueSpots = false, bool skipUsed = true);
     
     /**
      * Find k nearest non-adjacent tour nodes.

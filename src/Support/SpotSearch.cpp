@@ -103,7 +103,7 @@ NearestSpot SpotSearch::findNearestSpot(const Instance& instance, int tournode, 
     return std::make_pair(tournode,-1);
 }
 
-NearestSpot SpotSearch::findNearestSpot(const Instance& tour, bool skipUsed)
+NearestSpot SpotSearch::findNearestTourSpot(const Instance& tour, bool skipUsed)
 {
     // initialize with nearest spot to hotel
     int tournode = -1;
@@ -159,7 +159,7 @@ NearestSpotList SpotSearch::findNearestSpots(const Instance& tour, int tournode,
     return pairs;
 }
 
-NearestSpotList SpotSearch::findNearestSpots(const Instance& tour, unsigned int k, bool skipUsed)
+NearestSpotList SpotSearch::findNearestTourSpots(const Instance& tour, unsigned int k, bool uniqueSpots, bool skipUsed)
 {
     NearestSpotList nearest;
     nearest.reserve(k);
@@ -172,7 +172,7 @@ NearestSpotList SpotSearch::findNearestSpots(const Instance& tour, unsigned int 
     // initialize with nearest spots to hotel
     nearest = findNearestSpots(tour, -1, k, skipUsed);
     for (const auto& spot : nearest) {
-	foundSpots.insert(spot.second);
+	if (uniqueSpots) foundSpots.insert(spot.second);
 	dist.push_back(problem.getDistance(problem.getStartAsSpot(), problem.getSpot(spot.second)));
     }
     
@@ -186,7 +186,7 @@ NearestSpotList SpotSearch::findNearestSpots(const Instance& tour, unsigned int 
 
 	for (unsigned spotIndex : *spots) {
 	    if (skipUsed && tour.containsSpot(spotIndex)) continue;
-	    if (!foundSpots.insert(spotIndex).second) continue;
+	    if (uniqueSpots && !foundSpots.insert(spotIndex).second) continue;
 	    
 	    double spotDist = problem.getDistance(problem.getSpot(node.spot), problem.getSpot(spotIndex));
 	    
