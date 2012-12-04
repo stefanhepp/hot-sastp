@@ -35,16 +35,21 @@ void VND::run()
 	
 	// Choose best or next x' in N(x), apply if f(x') <= f(x)
 	
-	if ( neighborhoods[i]->performStep(instance, stepFunctions[i], false) ) {
-	    env.printStepResult(instance);
+	double deltaSatisfaction = -instance.getTotalSatisfaction();
 	
+	// we do not trust the return value of performStep, we could get into endless loops here
+	neighborhoods[i]->performStep(instance, stepFunctions[i], false);
+	
+	deltaSatisfaction += instance.getTotalSatisfaction();
+	
+	env.printStepResult(instance);
+	
+	if ( deltaSatisfaction > 0.005 ) {
 	    if ( i != 0 && env.getConfig().isDebug() ) {
 		cout << "VND: Switching back to " << neighborhoods[0]->getName() << endl;
 	    }
 	    i = 0;
 	} else {
-	    env.printStepResult(instance);	
-
 	    i++;
 	    if ( i < neighborhoods.size() && env.getConfig().isDebug() ) {
 		cout << "VND: Switching to " << neighborhoods[i]->getName() << endl;
