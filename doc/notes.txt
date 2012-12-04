@@ -1,0 +1,18 @@
+Improvement Ideas / Suggestions
+- Preprocessing Step: Eliminate impossible (partial) solutions in advance
+- Representation: Store as (linked) list of edges, faster edge exchange and insert/remove, can be sorted
+- Allow intermediate invalid solutions: accept longer inserted tours, then run edge cleanup
+
+TODOs
+- Create subdirectory for first/second report
+- Keep track of timestamp of best found solution
+
+- NodeInserter.addNewNode: avoid crossovers, insert with minimal tour increase
+- NodeInserter: faster/more efficient way for selecting edges to insert? Early exit criteria to improve speed
+- TourNeighborhoods: check runtime?
+- Testing
+    - Try combinations of neighborhoods for VND, GVNS to improve on satisfaction + runtime
+    - Try combinations of arguments for neighborhoods (maxLength, minLength, different inserter, allow insert used spots/methods, early
+      exits, algorithms to insert new nodes?)
+- Statistics about number of improvements per VND neighborhood, runtime of neighborhoods
+
