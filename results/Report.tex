@@ -75,10 +75,13 @@ The $MethodTwoOpt$ neighborhood changes the methods of two spots in the tour to 
 then searches all valid combinations of methods of the spots exhaustively for an improvement.
 % No text on different step functions, should be clear.
 
-
+\medskip
 % TODO NearestTourExchange, TwoNodeExchange
-
-
+We also implemented two neighborhoods that remove a given number of nodes from the tour and insert as many new spots into the tour as
+possible. The \emph{NearestTourExchange} neighborhood removes a path of length 2 to $\ell$ from the tour. The \emph{TwoNodesExchange} neighborhood removes
+any two nodes from the tour. In both cases, two methods of selecting new nodes to insert have been implemented. The first method selects a
+node in the tour where new nodes should be inserted and greedily inserts nodes selected from the $k$-nearest neighbors of the selected node.
+The second method searches for the $k$-nearest neighbors of all nodes in the tour and greedily inserts nodes into any edge of the tour.
 
 \medskip
 
@@ -134,10 +137,25 @@ In Table~\ref{tab:localEdge} the same algorithm was run with the edge exchange n
 \emph{VND} was also tested in different configurations (Tables~\ref{tab:vndDeterministic} and~\ref{tab:vndThree}). As mentioned above the order in which the neighborhoods are searched makes a difference in the runtime of the algorithm. Also which neighborhoods are searched gives some difference in the total satisfaction. If we run vnd with all three methods active, we tend to get the same results, but the time spent in finding the result is bigger.  
 \medskip
 
-For \emph{grasp} we have tested with both local search and VND as main search engine. The results differ a lot, as printed out in Tables~\ref{tab:graspLSOneNB},~\ref{tab:graspLSOneNB},~\ref{tab:graspLSEdgeR},~\ref{tab:graspLSEdgeNB},~\ref{tab:graspLSMethod} and~\ref{tab:graspVNDTwo}. Since grasp is a randomized search heuristic we've done multiple tests using the same configuration, computed the standard deviation and the averege satisfaction for each of the problems. Using this approach the best results where observed while testing the configuration which uses VND as search procedure. Among the local search procedures the best performing, in terms of total satisfaction is the one spot exchange method. The two approaches of VND give similar results, but the one using only the edge exchange and method exchange tends to terminate faster. 
+For \emph{grasp} we have tested with both local search and VND as main search engine. The results differ a lot, as printed out in
+Tables~\ref{tab:graspLSOneNB},~\ref{tab:graspLSOneNB},~\ref{tab:graspLSEdgeR},~\ref{tab:graspLSEdgeNB},~\ref{tab:graspLSMethod}
+and~\ref{tab:graspVNDTwo}. Since grasp is a randomized search heuristic we have done multiple tests using the same configuration, 
+computed the standard deviation and the averege satisfaction for each of the problems. Using this approach the best results where observed while testing the configuration which uses VND as search procedure. Among the local search procedures the best performing, in terms of total satisfaction is the one spot exchange method. The two approaches of VND give similar results, but the one using only the edge exchange and method exchange tends to terminate faster. 
 \medskip
 
 Among all the tested configurations,one of the best approaches is VND, which gives the best ratio of satisfaction per time spent in finding the solution. This approach gives also the highest satisfaction we can get for the sastp1000 problem.
+\medskip
+
+The neighborhoods \emph{SpotOneOpt}, \emph{MethodTwoOpt} and \emph{EdgeTwoOpt} do not change the length of the tour, therefore their search
+space is limited. The \emph{NearestTourExchange} and \emph{TwoNodeExchange} neighborhoods are able to find new tours with different lengths
+and are able to improve the solutions in a far better way. However, their implementation proved to be more complex than anticipated and was
+not completed in time to run all the various configurations of the search algorithms. 
+%We therefore give only some preliminary results in this report.
+
+The \emph{NearestTourExchange} neighborhood proved to be the best tradeoff between quality of the results and the runtime. Using this
+neighborhood the GRASP search was able to find near-optimal results for most of the problems. Also the VND and the local search using only
+that neighborhood gave good results for a comparatively short runtime.
+
 
 \begin{table}[b!]
   \vspace{-6mm}%
