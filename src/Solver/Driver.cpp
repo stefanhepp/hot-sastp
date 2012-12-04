@@ -118,13 +118,13 @@ VND* Driver::getVND(Environment& env, const Instance& init)
     //nb = new TwoNodesTourExchange(env, *ni);
     //vnd->addNeighborhood(*nb);
     
-    ni = new RandomNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
-    nb = new TwoNodesTourExchange(env, *ni);
-    vnd->addNeighborhood(*nb);
-    
-    //ni = new ConsecutiveNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
-    //nb = new NearestTourExchange(env, 2, 4, *ni);
+    //ni = new RandomNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
+    //nb = new TwoNodesTourExchange(env, *ni);
     //vnd->addNeighborhood(*nb);
+    
+    ni = new ConsecutiveNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
+    nb = new NearestTourExchange(env, 2, 4, *ni);
+    vnd->addNeighborhood(*nb);
     
     return vnd;
 }

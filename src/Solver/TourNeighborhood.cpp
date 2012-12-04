@@ -157,32 +157,66 @@ double NodeInserter::selectNewNodes(Instance& instance, NearestSpotList& nearest
 	//  pick a method
 	unsigned nodeId = nearestSpots[r].first;
 	unsigned spotId = nearestSpots[r].second;
+	
 	const Spot& spot = instance.getProblem().getSpot(spotId);
+	unsigned numMethods = spot.getMethods().size();
 	
-	unsigned methodId = ratios ? ratios->at(r).first : rand() % spot.getMethods().size();
+	unsigned firstMethodId = ratios ? ratios->at(r).first : rand() % numMethods;
+
+	if (!skipMethodOnly && !ratios && skipNode(removedNodes, spotId, firstMethodId)) {
+	    nearestSpots.erase( nearestSpots.begin() + r );
+	    if (ratios) ratios->erase( ratios->begin() + r );		
+	    continue;
+	}
 	
-	if (!ratios && skipNode(removedNodes, spotId, methodId)) {
-	    if (skipMethodOnly) {
-		methodId = (methodId + 1) % spot.getMethods().size();
-	    } else {
+	unsigned pos = addNewNode(instance, nodeId, TourNode(spotId, firstMethodId), false);
+	
+	TourValues delta = getDeltaInsertValues(instance);
+	    
+	unsigned methodId = numMethods;
+	
+	// Try to find any method that fits
+	// TODO sort methods by best satisfaction/time first? or iterate over nearest spot+method pairs?
+	for (unsigned i = 0; i < numMethods; i++) {
+	    
+	    unsigned currMethodId = (firstMethodId + i) % numMethods;
+	    
+	    if (skipMethodOnly && skipNode(removedNodes, spotId, currMethodId)) {
 		continue;
+	    }
+	    
+	    const Method& method = spot.getMethod(currMethodId);
+	    
+	    // first iteration already includes method, other iterations have last method removed 
+	    if (i > 0) delta += method;
+	    
+	    if (instance.isValid( delta )) {
+		methodId = currMethodId;
+		break;
+	    } else {
+		delta -= method;
 	    }
 	}
 	
-	unsigned pos = addNewNode(instance, nodeId, TourNode(spotId, methodId), false);
-	
-	TourValues delta = getDeltaInsertValues(instance);
-	
-	if (instance.isValid( delta )) {
-	    nearestSpots.erase( nearestSpots.begin() + r );
-	    if (ratios) ratios->erase( ratios->begin() + r );		
+	// found a valid method?
+	if (methodId != numMethods) {
+	    // update method in newNodes
+	    if (methodId != firstMethodId) {
+		pair<unsigned,TourNode> entry = newNodes[pos];
+		entry.second.method = methodId;
+		newNodes[pos] = entry;
+	    }
 	    lastDelta = delta;
 	} else {
+	    // No valid method found in spot
 	    newNodes.erase(newNodes.begin() + pos);
 	    
-	    // finished inserting nodes, not much we can do to improve for best step, or is there?
-	    break;
+	    // we could abort here to avoid searching the rest of the nodes?
+	    //break;
 	}
+	
+	nearestSpots.erase( nearestSpots.begin() + r );
+	if (ratios) ratios->erase( ratios->begin() + r );		
     }
     
     return lastDelta.satisfaction;
