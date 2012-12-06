@@ -432,7 +432,9 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 	
 	for (unsigned removeLength = 1; removeLength < maxLength; removeLength++) {
 	    
-	    for (unsigned removeFirst = lastFirstNode, i=0; i < tourLength - removeLength + 1; i++, removeFirst = (removeFirst+1)%(tourLength - removeLength + 1)) {
+	    unsigned maxFirst = tourLength - removeLength + 1;
+	    unsigned removeFirst = lastFirstNode % maxFirst;
+	    for (unsigned i=0; i < maxFirst; i++, removeFirst = (removeFirst+1)%(maxFirst) ) {
 		
 		removedNodes.clear();
 		for (int i = removeFirst; i < removeFirst + removeLength; i++) {
@@ -544,7 +546,8 @@ bool TwoNodesTourExchange::performStep(Instance& instance, Config::StepFunction 
 	unsigned bestFirst = 0;
 	unsigned bestSecond = 0;
 	
-	for (unsigned firstNodeId = lastFirstNode, i=0; i < tourLength - 1; i++, firstNodeId = (firstNodeId+1)%(tourLength-1)) {
+	unsigned firstNodeId = lastFirstNode % (tourLength - 1);
+	for (unsigned i=0; i < tourLength - 1; i++, firstNodeId = (firstNodeId+1)%(tourLength-1) ) {
 	 
 	    for (unsigned secondNodeId = firstNodeId+1; secondNodeId < tourLength; secondNodeId++) {
 		

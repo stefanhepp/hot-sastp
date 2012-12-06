@@ -238,7 +238,8 @@ bool EdgeTwoOPT::performStep (Instance& instance, Config::StepFunction stepFunct
 	    
 	    unsigned numEdges = (tourLength % 2 && distance == maxDist) ? (tourLength + 1) / 2 : tourLength + 1;
 	    
-	    for (int firstEdge = lastFirstEdge, i=0; i < tourLength; i++, firstEdge = (firstEdge+1)%tourLength) {
+	    unsigned firstEdge = lastFirstEdge % tourLength;
+	    for (int i=0; i < tourLength; i++, firstEdge = (firstEdge+1)%tourLength) {
 		int secondEdge = (firstEdge + distance) % (tourLength + 1);
 		
 		double deltaSatisfaction;
@@ -366,7 +367,8 @@ bool MethodTwoOPT::performStep(Instance& instance, Config::StepFunction stepFunc
 	int bestSecondMethod = 0;
 	double bestSatisfaction = 0;
 	
-	for (int i=0, firstNodeId = lastFirstNodeId; i < tourLength - 1; i++, firstNodeId = (firstNodeId+1)%(tourLength-1)) {
+	unsigned firstNodeId = lastFirstNodeId % (tourLength - 1);
+	for (int i=0; i < tourLength - 1; i++, firstNodeId = (firstNodeId+1)%(tourLength-1) ) {
 	    
 	    TourNode firstNode = instance.getNode(firstNodeId);
 	    const Spot& firstSpot = instance.getSpot(firstNode);
