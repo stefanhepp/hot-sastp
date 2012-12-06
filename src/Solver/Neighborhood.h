@@ -91,7 +91,7 @@ private:
 class EdgeTwoOPT: public Neighborhood
 {
 public :
-    EdgeTwoOPT (Environment& env):Neighborhood(env){};
+    EdgeTwoOPT (Environment& env):Neighborhood(env), lastFirstEdge(0) {}
     
     virtual std::string getName() const { return "Edge-2-Opt"; }
     
@@ -103,6 +103,7 @@ private:
     
     void performEdgeExchange(Instance& instance, int firstEdge, int secondEdge);
     
+    unsigned lastFirstEdge;
 };
 
 
@@ -115,7 +116,7 @@ private:
 class MethodTwoOPT: public Neighborhood
 {
 public :
-    MethodTwoOPT (Environment& env):Neighborhood(env){};
+    MethodTwoOPT (Environment& env):Neighborhood(env), lastFirstNodeId(0) {}
     
     virtual std::string getName() const { return "Method-2-Opt"; }
     
@@ -127,6 +128,7 @@ private:
 			       const Method& firstOldMethod, const Method& secondOldMethod,
 			       const Method& firstNewMethod, const Method& secondNewMethod, double &deltaSatisfaction);
     
+    unsigned lastFirstNodeId;
 };
 
 

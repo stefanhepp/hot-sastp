@@ -181,6 +181,7 @@ class NearestTourExchange : public NearestNodesNeighborhood
 {
     unsigned minRemove;
     unsigned maxRemove;
+    unsigned lastFirstNode;
     
 public:
     NearestTourExchange(Environment& env, unsigned minRemove, unsigned maxRemove, NodeInserter& nodeInserter);
@@ -204,6 +205,7 @@ public:
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);
 
 private:
+    unsigned lastFirstNode;
     
 };
 

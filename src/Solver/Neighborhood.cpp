@@ -238,7 +238,7 @@ bool EdgeTwoOPT::performStep (Instance& instance, Config::StepFunction stepFunct
 	    
 	    unsigned numEdges = (tourLength % 2 && distance == maxDist) ? (tourLength + 1) / 2 : tourLength + 1;
 	    
-	    for (int firstEdge = 0; firstEdge < tourLength; firstEdge++) {
+	    for (int firstEdge = lastFirstEdge, i=0; i < tourLength; i++, firstEdge = (firstEdge+1)%tourLength) {
 		int secondEdge = (firstEdge + distance) % (tourLength + 1);
 		
 		double deltaSatisfaction;
@@ -247,7 +247,8 @@ bool EdgeTwoOPT::performStep (Instance& instance, Config::StepFunction stepFunct
 		    if (alwaysApply || deltaSatisfaction > 0) {
 			
 			performEdgeExchange(instance, firstEdge, secondEdge);
-
+			lastFirstEdge = firstEdge;
+			
 			return true;
 		    }
 		}
@@ -365,7 +366,8 @@ bool MethodTwoOPT::performStep(Instance& instance, Config::StepFunction stepFunc
 	int bestSecondMethod = 0;
 	double bestSatisfaction = 0;
 	
-	for (int firstNodeId = 0; firstNodeId < tourLength - 1; firstNodeId++) {
+	for (int i=0, firstNodeId = lastFirstNodeId; i < tourLength - 1; i++, firstNodeId = (firstNodeId+1)%(tourLength-1)) {
+	    
 	    TourNode firstNode = instance.getNode(firstNodeId);
 	    const Spot& firstSpot = instance.getSpot(firstNode);
 	    
@@ -393,7 +395,7 @@ bool MethodTwoOPT::performStep(Instance& instance, Config::StepFunction stepFunc
 				if (alwaysApply || deltaSatisfaction > 0) {
 				    instance.updateNode(firstNodeId, firstNode.spot, firstMethodId);
 				    instance.updateNode(secondNodeId, secondNode.spot, secondMethodId);
-				    
+				    lastFirstNodeId = firstNodeId;
 				    return true;
 				}
 				
@@ -424,6 +426,7 @@ bool MethodTwoOPT::performStep(Instance& instance, Config::StepFunction stepFunc
 		return true;
 	    }
 	}
+	
     }
     
     return false;    

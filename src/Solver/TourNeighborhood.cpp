@@ -376,7 +376,7 @@ NearestNodesNeighborhood::NearestNodesNeighborhood(Environment& env, NodeInserte
 
 
 NearestTourExchange::NearestTourExchange(Environment& env, unsigned minRemove, unsigned int maxRemove, NodeInserter& nodeInserter)
-: NearestNodesNeighborhood(env, nodeInserter), minRemove(minRemove), maxRemove(maxRemove)
+: NearestNodesNeighborhood(env, nodeInserter), minRemove(minRemove), maxRemove(maxRemove), lastFirstNode(0)
 {
     removedNodes.reserve(maxRemove);
 }
@@ -432,7 +432,7 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 	
 	for (unsigned removeLength = 1; removeLength < maxLength; removeLength++) {
 	    
-	    for (unsigned removeFirst = 0; removeFirst < tourLength - removeLength + 1; removeFirst++) {
+	    for (unsigned removeFirst = lastFirstNode, i=0; i < tourLength - removeLength + 1; i++, removeFirst = (removeFirst+1)%(tourLength - removeLength + 1)) {
 		
 		removedNodes.clear();
 		for (int i = removeFirst; i < removeFirst + removeLength; i++) {
@@ -451,6 +451,7 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 		if (stepFunction == Config::SF_NEXT) {
 		    if (deltaSatisfaction > minSatisfaction) {
 			nodeInserter.insertNodes(instance, false);
+			lastFirstNode = removeFirst;
 			return true;
 		    }
 		} else {
@@ -484,7 +485,7 @@ bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction s
 
 
 TwoNodesTourExchange::TwoNodesTourExchange(Environment& env, NodeInserter& nodeInserter)
-: NearestNodesNeighborhood(env, nodeInserter)
+: NearestNodesNeighborhood(env, nodeInserter), lastFirstNode(0)
 {
     removedNodes.resize(2);
 }
@@ -543,7 +544,7 @@ bool TwoNodesTourExchange::performStep(Instance& instance, Config::StepFunction 
 	unsigned bestFirst = 0;
 	unsigned bestSecond = 0;
 	
-	for (unsigned firstNodeId = 0; firstNodeId < tourLength - 1; firstNodeId++) {
+	for (unsigned firstNodeId = lastFirstNode, i=0; i < tourLength - 1; i++, firstNodeId = (firstNodeId+1)%(tourLength-1)) {
 	 
 	    for (unsigned secondNodeId = firstNodeId+1; secondNodeId < tourLength; secondNodeId++) {
 		
