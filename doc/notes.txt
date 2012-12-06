@@ -1,4 +1,6 @@
 Improvement Ideas / Suggestions
++ Preprocessing Step: sort methods + spots by ratio
++ Next step: continue at last position instead of at first element
 - Preprocessing Step: Eliminate impossible (partial) solutions in advance
 - Representation: Store as (linked) list of edges, faster edge exchange and insert/remove, can be sorted
 - Allow intermediate invalid solutions: accept longer inserted tours, then run edge cleanup
