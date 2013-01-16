@@ -13,5 +13,5 @@ add_subdirectory(Ants)
 add_executable(sastpsolver sastpsolver.cpp)
 add_executable(sastpvis    sastpvis.cpp)
 
-target_link_libraries(sastpsolver Ants Solver Support Framework)
+target_link_libraries(sastpsolver Solver Ants Support Framework)
 target_link_libraries(sastpvis Support Framework)

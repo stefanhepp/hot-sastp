@@ -1,16 +1,20 @@
 #include "ACO.h"
 
 #include "Ants/Ant.h"
+#include "Framework/SASTProblem.h"
 
 #include <algorithm>
 
 using namespace std;
 
 ACO::ACO(Environment& env, AbstractSearch &localSearch)
-: AbstractSearch(env, env.getConfig().getNumberOfSteps()), env(env),
+: AbstractSearch(env, env.getConfig().getNumberOfSteps()),
   instance(env.getProblem()), PM(env), 
   localSearch(localSearch)
 {
+    // TODO get from config
+    improveForFitnessOnly = false;
+    
     initAnts(env.getConfig().getNumberOfAnts());
 }
 

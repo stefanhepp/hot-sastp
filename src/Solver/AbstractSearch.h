@@ -10,6 +10,8 @@ class AbstractSearch
 public:
     AbstractSearch(Environment& env, int stepsToStop);
 
+    virtual ~AbstractSearch() {}
+    
     virtual Instance& getInstance() =0;
     
     virtual void reset(const Instance& init) =0;
