@@ -87,5 +87,10 @@ void ACO::initAnts(int numAnts)
 
 void ACO::updatePheromones(DoubleList &satisfaction)
 {
-
+    // TODO sort ants by satisfaction, use first m ants to update pheromones
+    
+    
+    // TODO evaporate pheromones
+    
+    
 }

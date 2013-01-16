@@ -90,8 +90,34 @@ public:
      * @return the number of ants in the population 
      */
     unsigned getNumberOfAnts() const { return _numberOfAnts; }
+    
+    /**
+     * @return the number of best ants that update the pheromone matrix
+     */
+    unsigned getNumUpdateBestAnts() const {} 
      
-     /**
+    /**
+     * @return the persistence factor (1-rho), (0..1], default: 0.95
+     */
+    double getPersistence() const {}
+    
+    /**
+     * @return get minimum tau value (default: 0.0)
+     */
+    double getTauMin() const {}
+     
+    /**
+     * @return get maximum tau value (default: INFINITY)
+     */ 
+    double getTauMax() const {}
+    
+    /**
+     * @return use the global best result to update pheromones every k iteration 
+     * (instead of iteration best), default: 0.
+     */
+    unsigned useGlobalBestUpdate() const {}
+    
+    /**
      * @return the maximum number of nearest spots that should be searched for.
      */
     unsigned getMaxKNearestSpots() const { return _maxKNearestSpots; }
