@@ -29,6 +29,12 @@ Config::Config()
     _printSolution = false;
     _alphaRCL = 1;
     _maxRuntime = 1800;
+    //the following options have to be decided upon -- this are just some initials 
+    _numberOfAnts = 20; 
+    _initialTau = 1; 
+    _alpha = 0; 
+    _beta = 0;
+    _stepsToFinish = 10;
 }
 
 
@@ -72,7 +78,7 @@ struct Arg: public option::Arg {
 };
 
 enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DEBUG, DOT, PRINT_CSV, PRINT_ALL_STEPS, 
-                  TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA};
+                  TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA, ANTALPHA, ANTBETA, ANTTAU, ANTSTEPS, ANTNUMBEROFTHEM};
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -113,7 +119,18 @@ const option::Descriptor usage[] = {
 	MAXSTEPS, 0, "m", "maxSteps", Arg::Numeric, "  -m <arg>, \t--maxSteps=<arg> \tMaximal number of steps with no improvement.\n"
     },
     { TIMEOUT, 0, "t", "timeout", Arg::Numeric, "  -t <secs>, \t--timeout=<secs> \tTimeout for search in seconds.\n" },
-    { ALPHA , 0, "", "alpha", Arg::NonEmpty, "   \t--alpha=<arg> \tAlpha for the construction of Restricted Candidates List. values in [0..1]\n"},
+    
+    { ANTALPHA, 0, "A", "antAlpha", Arg::Numeric, "  -A <double>, \t--antAlpha=<double> \tAlfa used for limiting the internal ratio.\n" },
+    
+    { ANTBETA, 0, "B", "antBeta", Arg::Numeric, "  -B <double>, \t--antBeta=<double> \tBeta used for limiting the internal ratio.\n" },
+    
+    { ANTTAU, 0, "T", "antTau", Arg::Numeric, "  -T <double>, \t--antTau=<double> \tInitial tau used in the ACO.\n" },
+    
+    { ANTNUMBEROFTHEM, 0, "", "ants", Arg::Numeric, "  \t--ants=<integer> \tNumber of ants in the population.\n" },
+   
+    { ANTSTEPS, 0, "S", "Steps", Arg::Numeric, " -S <integer> \t--Steps=<integer> \tHow many times we send the ants for solutions.\n" },
+   
+     { ALPHA , 0, "", "alpha", Arg::NonEmpty, "   \t--alpha=<arg> \tAlpha for the construction of Restricted Candidates List. values in [0..1]\n"},
     {
         UNKNOWN, 0, "", "", Arg::None,
         "Default values for the options are: \n"
@@ -299,6 +316,33 @@ int Config::parseArguments (int argc, char* argv[])
                 _alphaRCL = atof(opt.arg);
                 assert(_alphaRCL >= 0 && _alphaRCL <= 1 );
                 break;
+            case ANTALPHA:
+                assert(opt.arg);
+                _alpha = atof(opt.arg);
+                assert(_alpha >= 0 );
+                //still have to check how big/small can alpah get 
+                break;
+            case ANTBETA:
+                assert(opt.arg);
+                _beta = atof(opt.arg);
+                assert(_beta >= 0 );
+                break;
+            case ANTTAU:
+                assert(opt.arg);
+                _initialTau = atof(opt.arg);
+                assert(_initialTau);
+                break;
+            case ANTNUMBEROFTHEM: 
+                assert(opt.arg);
+                _numberOfAnts = (unsigned)atoi(opt.arg);
+                assert( _numberOfAnts >= 1 );
+                break;          
+            case ANTSTEPS:
+                assert(opt.arg);
+                _stepsToFinish = (unsigned)atoi(opt.arg);
+                assert( _stepsToFinish >= 1 );
+                break;
+                
             case UNKNOWN:
                 // not possible because Arg::Unknown returns ARG_ILLEGAL
                 // which aborts the parse with an error

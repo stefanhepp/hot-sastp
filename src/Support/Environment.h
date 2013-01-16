@@ -65,6 +65,33 @@ public:
     bool useGreedyInsertHeuristic() const { return _greedyInsertHeuristic; }
   
     /**
+     * @return  initial tau set by the user
+     */
+    double getInitialTau() const { return _initialTau; }
+  
+    /**
+     * @return the control parameter alpha ( used in for computing the ratio
+     * between the pehromones and local information )
+     */
+    double getAntAlpha() const { return _alpha; }
+  
+    /**
+     * @return the control parameter beta ( used in for computing the ratio
+     * between the pehromones and local information )
+     */
+    double getAntBeta() const { return _beta; }
+  
+    /**
+     * @return for how many steps we have to send the ants for solutions 
+     */
+    unsigned getNumberOfSteps() const { return _stepsToFinish; }
+    
+    /**
+     * @return the number of ants in the population 
+     */
+    unsigned getNumberOfAnts() const { return _numberOfAnts; }
+     
+     /**
      * @return the maximum number of nearest spots that should be searched for.
      */
     unsigned getMaxKNearestSpots() const { return _maxKNearestSpots; }
@@ -103,9 +130,34 @@ private:
     
     unsigned _maxKNearestSpots;
     unsigned _maxStepsWithNoChange;
-    
+       
     unsigned _maxRuntime;
     double   _alphaRCL;
+    
+     /**
+     * The following parameters are used in order to control the ant 
+     * colony optimization 
+     */
+    
+    double _initialTau;
+    /**
+     * Parameters _alpha and _beta control the ratio between pheromones and 
+     * local information ( _beta = 0 => fast convergence to a (random) path 
+     * _alpha = 0 : classical greedy approach (nearest neighbor heuristic) 
+     */
+    double _alpha;
+    double _beta; 
+    
+    /**
+     * _stepsToFinish -- how many times do we send the ants to create paths 
+     * this is involved in the termination criteria
+     */
+    unsigned _stepsToFinish; 
+    
+    /**
+     * _numberOfAnts -- size of the population
+     */
+    unsigned _numberOfAnts;
     
     bool _verbose;
     bool _debug;
