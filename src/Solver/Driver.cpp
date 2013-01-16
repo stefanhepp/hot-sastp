@@ -9,6 +9,9 @@
 #include "Solver/Neighborhood.h"
 #include "Solver/TourNeighborhood.h"
 
+#include "Ants/ACO.h"
+#include "Ants/PheromoneMatrix.h"
+
 #include <iostream>
 
 using namespace std;
@@ -231,6 +234,26 @@ void Driver::solve()
 	gvns.run();
         
         solution = gvns.getInstance().createSolution();
+        break;
+    }
+    case Config::AT_ANT:
+    {
+        break;
+    }
+    case Config::AT_ANT_LS:
+    {
+        break;
+    }
+    case Config::AT_ANT_VND:
+    {
+        VND* vnd = getVND(env, env.getEmptyInstance());
+        
+        ACO ants(env, *vnd);
+        
+        if (verbose) cout << "Running ACO with VND as local search .." << endl;
+        
+        ants.run();
+        
         break;
     }
   }  

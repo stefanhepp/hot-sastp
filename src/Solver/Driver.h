@@ -9,6 +9,8 @@
 #include "Solver/LocalSearch.h"
 #include "Solver/Neighborhood.h"
 
+#include "Ants/ACO.h"
+
 class Driver
 {
 public:

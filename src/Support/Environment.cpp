@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include "optionparser.h"
 
+#define MAXDOUBLE 100000.0
 using namespace std;
 
 Config::Config()
@@ -35,6 +36,10 @@ Config::Config()
     _alpha = 0; 
     _beta = 0;
     _stepsToFinish = 10;
+    _antHeuristic = AH_INSERT;
+    _minTau = 0.0;
+    _maxTau = MAXDOUBLE;
+    _persistFactor = 0.95;
 }
 
 
@@ -78,7 +83,8 @@ struct Arg: public option::Arg {
 };
 
 enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DEBUG, DOT, PRINT_CSV, PRINT_ALL_STEPS, 
-                  TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA, ANTALPHA, ANTBETA, ANTTAU, ANTSTEPS, ANTNUMBEROFTHEM};
+                  TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA, ANTALPHA, ANTBETA, ANTTAU, ANTSTEPS, ANTNUMBEROFTHEM, 
+                  ANTMAXTAU, ANTMINTAU,ANTHEURISTICTAG, ANTPERSITENCE, ANTUPDATEBEST };
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -126,11 +132,23 @@ const option::Descriptor usage[] = {
     
     { ANTTAU, 0, "T", "antTau", Arg::Numeric, "  -T <double>, \t--antTau=<double> \tInitial tau used in the ACO.\n" },
     
+    { ANTMAXTAU, 0, "", "maxTau", Arg::Numeric, "   \t--maxTau=<double> \tMax tau used in the ACO.\n" },
+    
+    { ANTMINTAU, 0, "", "minTau", Arg::Numeric, "  \t--minTau=<double> \tMin tau used in the ACO.\n" },
+    
+    { ANTPERSITENCE, 0, "p", "persi", Arg::Numeric,   " -p=<double> \t--persi=<double> \tPersistence factor used in the ACO.\n" },
+    
     { ANTNUMBEROFTHEM, 0, "", "ants", Arg::Numeric, "  \t--ants=<integer> \tNumber of ants in the population.\n" },
    
     { ANTSTEPS, 0, "S", "Steps", Arg::Numeric, " -S <integer> \t--Steps=<integer> \tHow many times we send the ants for solutions.\n" },
    
+    { ANTUPDATEBEST, 0, "", "updBest", Arg::Numeric, "  \t--updBest=<unsigned> \tNumber of best ants used to influence the pheromone matrix.\n" },
+    
+    { ANTHEURISTICTAG, 0, "T", "heuTag", Arg::Numeric, "  \t--heuTag=<unsigned> \tNeareast Neighbor = 0 , Insert Method =1 .\n" },
+    
      { ALPHA , 0, "", "alpha", Arg::NonEmpty, "   \t--alpha=<arg> \tAlpha for the construction of Restricted Candidates List. values in [0..1]\n"},
+     
+      
     {
         UNKNOWN, 0, "", "", Arg::None,
         "Default values for the options are: \n"
@@ -200,6 +218,15 @@ int Config::parseArguments (int argc, char* argv[])
                             break;
                         case AT_VND:
                             _algorithm = AT_VND;
+                            break;
+                        case AlgorithmTag::AT_ANT: 
+                            _algorithm= AT_ANT;
+                            break;
+                        case AlgorithmTag::AT_ANT_LS:
+                            _algorithm = AT_ANT_LS;
+                            break;
+                        case AlgorithmTag::AT_ANT_VND:
+                            _algorithm = AT_ANT_VND;
                             break;
                         default:
                             printHelp();
@@ -341,6 +368,41 @@ int Config::parseArguments (int argc, char* argv[])
                 assert(opt.arg);
                 _stepsToFinish = (unsigned)atoi(opt.arg);
                 assert( _stepsToFinish >= 1 );
+                break;
+            case ANTMAXTAU: 
+                assert(opt.arg);
+                _maxTau = (double) atof(opt.arg);
+                assert(_maxTau>= 0.0 );
+                break;
+            case ANTMINTAU:
+                assert(opt.arg);
+                _minTau = (double) atof(opt.arg);
+                assert(_minTau >= 0.0 );
+                break;
+            case ANTPERSITENCE: 
+                assert(opt.arg);
+                _persistFactor = (double) atof(opt.arg);
+                assert( _persistFactor <= 1 && _persistFactor > 0 );
+                break;
+            case ANTUPDATEBEST:
+                assert(opt.arg);
+                _numUpdateBestAnts = (unsigned) atoi(opt.arg);
+                assert(_numUpdateBestAnts >= 1);
+                break;                
+            case ANTHEURISTICTAG:
+                assert(opt.arg);
+                switch(atoi(opt.arg))
+                {
+                    case AntHeuristicTag::AH_INSERT: 
+                        _antHeuristic = AH_INSERT;
+                        break; 
+                    case AntHeuristicTag::AH_NEAREST:
+                        _antHeuristic = AH_NEAREST;
+                        break;
+                    default: 
+                        break;
+                }
+                
                 break;
                 
             case UNKNOWN:

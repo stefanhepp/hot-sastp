@@ -22,8 +22,9 @@ public:
 	AT_GRASP_LS = 3,
         AT_GRASP_VND = 4,
 	AT_GVNS = 5,
-	AT_ANT_LS = 6,
-	AT_ANT_VND = 7
+        AT_ANT = 6, //dummy local search
+	AT_ANT_LS = 7, //local search 
+	AT_ANT_VND = 8 //VND search
     };
     
     enum NodeInsertMode {
@@ -101,27 +102,27 @@ public:
     /**
      * @return the number of best ants that update the pheromone matrix
      */
-    unsigned getNumUpdateBestAnts() const {} 
+    unsigned getNumUpdateBestAnts() const {return _numUpdateBestAnts; } 
      
     /**
      * @return the persistence factor (1-rho), (0..1], default: 0.95
      */
-    double getPersistFactor() const {}
+    double getPersistFactor() const { return _persistFactor; }
     
     /**
      * @return get minimum tau value (default: 0.0)
      */
-    double getTauMin() const {}
+    double getTauMin() const { return _minTau; }
      
     /**
      * @return get maximum tau value (default: INFINITY)
      */ 
-    double getTauMax() const {}
+    double getTauMax() const { return _minTau; }
     
     /**
      * @return Heuristic to be used by ants
      */
-    AntHeuristicTag getAntHeuristics() {}
+    AntHeuristicTag getAntHeuristics() { return _antHeuristic; }
     
     /**
      * @return the maximum number of nearest spots that should be searched for.
@@ -172,6 +173,8 @@ private:
      */
     
     double _initialTau;
+    double _maxTau; 
+    double _minTau;
     /**
      * Parameters _alpha and _beta control the ratio between pheromones and 
      * local information ( _beta = 0 => fast convergence to a (random) path 
@@ -190,6 +193,10 @@ private:
      * _numberOfAnts -- size of the population
      */
     unsigned _numberOfAnts;
+    unsigned _numUpdateBestAnts;
+    
+    double _persistFactor;
+    AntHeuristicTag _antHeuristic;
     
     bool _verbose;
     bool _debug;
