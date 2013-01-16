@@ -3,19 +3,17 @@
 #include "Ants/Ant.h"
 
 ACO::ACO(Environment& env, AbstractSearch &localSearch)
-// TODO get stepsToStop from config, set initial tau value to something meaningful
-: AbstractSearch(env, 100), instance(env.getProblem()), PM(env.getProblem(), 0), 
+: AbstractSearch(env, env.getConfig().getNumberOfSteps()), env(env),
+  instance(env.getProblem()), PM(env), 
   localSearch(localSearch)
 {
-    // TODO get numAnts from config
-    initAnts(10);
+    initAnts(env.getConfig().getNumberOfAnts());
 }
 
 void ACO::reset(const Instance& init)
 {
-    // Does not do much though, not used to initialize pheromones or anything.
     instance = init;
-    PM.reset(0);
+    PM.reset(env.getConfig().getInitialTau());
 }
 
 void ACO::run()
@@ -80,8 +78,15 @@ void ACO::run()
 void ACO::initAnts(int numAnts)
 {
     for (int i = 0; i < numAnts; i++) {
-	// TODO create ants depending on configuration (different heuristics and PM update method)
-	ants.push_back( new Ant(env, i) );
+	Ant *ant;
+	
+	if (env.getConfig().getAntHeuristics() == Config::AH_NEAREST) {
+	    ant = new AntNearest(env, i);
+	} else {
+	    ant = new AntInsert(env, i);
+	}
+	
+	ants.push_back( ant );
     }
 }
 

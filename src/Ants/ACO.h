@@ -16,6 +16,8 @@ class ACO : public AbstractSearch
     typedef std::vector<Ant*> AntList;
     typedef std::vector<double> DoubleList;
     
+    Environment &env;
+    
     // This is (a copy of) the best instance of the last iteration
     Instance instance;
 

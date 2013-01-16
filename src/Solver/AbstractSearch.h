@@ -28,4 +28,17 @@ protected:
     bool shouldStop(double improvement);
 };
 
+// Search implementation that does not modify the instance.
+class DummySearch : public AbstractSearch {
+    Instance instance;
+public:
+    DummySearch(Environment &env) : AbstractSearch(env, 0), instance(env.getProblem()) {}
+    
+    virtual Instance& getInstance() { return instance; }
+    
+    virtual void reset(const Instance& init) { instance = init; }
+    
+    virtual void run() {}    
+};
+
 #endif // ABSTRACTSEARCH_H

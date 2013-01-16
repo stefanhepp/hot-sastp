@@ -41,7 +41,7 @@ class AntNearest: public Ant {
 public: 
     AntNearest(Environment& env, int k):Ant(env,k){}
     
-    void findTour(const Instance& inst);
+    void findTour(PheromoneMatrix &pm);
     
     void addPheromones(PheromoneMatrix& pm, double factor);
 private: 
@@ -54,7 +54,7 @@ class AntInsert: public Ant {
 public: 
     AntInsert(Environment& env, int k):Ant(env,k){}
     
-    void findTour(const Instance& inst);
+    void findTour(PheromoneMatrix &pm);
     
     void addPheromones(PheromoneMatrix& pm, double factor);
 private: 

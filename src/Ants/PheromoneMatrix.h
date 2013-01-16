@@ -10,13 +10,22 @@ class PheromoneMatrix
     SASTProblem &problem;
     
     // Value used for uninitialized data
-    float defaultTau;
+    double defaultTau;
+    
+    double persistFactor;
+    double minTau;
+    double maxTau;
     
 public:
-    PheromoneMatrix(SASTProblem &problem, float initTau)
-     : problem(problem), defaultTau(initTau) 
+    PheromoneMatrix(Environment &env)
+     : problem(env.getProblem()) 
     {
-	reset(initTau); 
+	defaultTau = env.getConfig().getInitialTau();
+	persistFactor = env.getConfig().getPersistFactor();
+	minTau = env.getConfig().getTauMin();
+	maxTau = env.getConfig().getTauMax();
+	
+	reset(defaultTau); 
     }
     
     ~PheromoneMatrix() { destroy(); }
