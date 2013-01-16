@@ -16,17 +16,49 @@ class Ant
     SASTProblem &problem;
     
 public:
-    Ant(Environment &env, int k);
+    Ant(Environment &env, int k) ;
     
     Instance &getInstance() { return instance; }
     
     void setInstance(const Instance& inst) { instance = inst; }
     
     // construct a tour based on the pheromeone matrix and the neighborhood heuristics
-    void findTour(PheromoneMatrix &pm);
+    virtual void findTour(PheromoneMatrix &pm)=0;
     
     // Update pheromeones at the end of a full step for the next iteration
-    void addPheromones(PheromoneMatrix &pm, double factor);
+
+    virtual void addPheromones(PheromoneMatrix &pm, double factor)=0;
+
+protected: 
+    
+    unsigned _antNumber;
+    double _alpha, _beta;
+
 };
 
+
+class AntNearest: public Ant {
+public: 
+    AntNearest(Environment& env, int k):Ant(env,k){}
+    
+    void findTour(const Instance& inst);
+    
+    void addPheromones(PheromoneMatrix& pm, double factor);
+private: 
+    
+};
+
+class AntInsert: public Ant {
+    std::vector<TourNode> insertionOrder;
+    
+public: 
+    AntInsert(Environment& env, int k):Ant(env,k){}
+    
+    void findTour(const Instance& inst);
+    
+    void addPheromones(PheromoneMatrix& pm, double factor);
+private: 
+
+    
+};
 #endif // ANT_H

@@ -6,6 +6,9 @@
 Ant::Ant(Environment &env, int k)
 : instance(env.getProblem()), problem(env.getProblem())
 {
+    _antNumber = k; 
+    _alpha = env.getConfig().getAntAlpha();
+    _beta = env.getConfig().getAntBeta();
     // TODO insert neighborhood structures, if required
 }
 
