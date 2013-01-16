@@ -26,7 +26,7 @@ public:
     void findTour(PheromoneMatrix &pm);
     
     // Update pheromeones at the end of a full step for the next iteration
-    void updatePheromones(PheromoneMatrix &pm);
+    void addPheromones(PheromoneMatrix &pm, double factor);
 };
 
 #endif // ANT_H

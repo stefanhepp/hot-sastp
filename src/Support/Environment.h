@@ -21,7 +21,9 @@ public:
 	AT_VND = 2,
 	AT_GRASP_LS = 3,
         AT_GRASP_VND = 4,
-	AT_GVNS = 5
+	AT_GVNS = 5,
+	AT_ANT_LS = 6,
+	AT_ANT_VND = 7
     };
     
     enum NodeInsertMode {
@@ -48,6 +50,11 @@ public:
       NT_NEAREST_TOUR_OPT = 3,
       NT_TWO_NODE_OPT = 4,
       NT_GREEDY_TOUR_OPT = 5
+    };
+    
+    enum AntHeuristicTag {
+      AH_NEAREST = 0,
+      AH_INSERT = 1
     };
     
     /**
@@ -99,7 +106,7 @@ public:
     /**
      * @return the persistence factor (1-rho), (0..1], default: 0.95
      */
-    double getPersistence() const {}
+    double getPersistFactor() const {}
     
     /**
      * @return get minimum tau value (default: 0.0)
@@ -112,10 +119,9 @@ public:
     double getTauMax() const {}
     
     /**
-     * @return use the global best result to update pheromones every k iteration 
-     * (instead of iteration best), default: 0.
+     * @return Heuristic to be used by ants
      */
-    unsigned useGlobalBestUpdate() const {}
+    AntHeuristicTag getAntHeuristics() {}
     
     /**
      * @return the maximum number of nearest spots that should be searched for.
