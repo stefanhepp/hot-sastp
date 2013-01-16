@@ -238,10 +238,25 @@ void Driver::solve()
     }
     case Config::AT_ANT:
     {
+        DummySearch* dummy = new DummySearch(env);
+        
+        ACO ants(env, *dummy);
+        
+        if (verbose) cout << "Running ACO with DummySearch .. " << endl;
+        
+        ants.run();
+        
         break;
     }
     case Config::AT_ANT_LS:
     {
+        LocalSearch *ls = getLocalSearch(env, env.getEmptyInstance());
+        
+        ACO ants(env, *ls);
+        
+        if(verbose) cout << " Running ACO with Local Search .. " << endl;
+        
+        ants.run();
         break;
     }
     case Config::AT_ANT_VND:
