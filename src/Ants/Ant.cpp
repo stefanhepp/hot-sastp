@@ -12,7 +12,8 @@ Ant::Ant(Environment &env, int k)
     // TODO insert neighborhood structures, if required
 }
 
-void Ant::findTour(PheromoneMatrix &pm)
+
+void AntNearest::findTour(PheromoneMatrix &pm)
 {
     instance.clear();
     
@@ -25,3 +26,18 @@ void Ant::findTour(PheromoneMatrix &pm)
     
 }
 
+
+void AntNearest::addPheromones(PheromoneMatrix& pm, double factor)
+{
+
+}
+
+void AntInsert::findTour(PheromoneMatrix& pm)
+{
+
+}
+
+void AntInsert::addPheromones(PheromoneMatrix& pm, double factor)
+{
+
+}

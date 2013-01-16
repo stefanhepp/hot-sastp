@@ -2,6 +2,10 @@
 
 #include "Ants/Ant.h"
 
+#include <algorithm>
+
+using namespace std;
+
 ACO::ACO(Environment& env, AbstractSearch &localSearch)
 : AbstractSearch(env, env.getConfig().getNumberOfSteps()), env(env),
   instance(env.getProblem()), PM(env), 
@@ -22,7 +26,8 @@ void ACO::run()
 
     double deltaSatisfaction = 0;
     
-    DoubleList satisfaction;
+    SatisfactionList satisfaction;
+    satisfaction.reserve(ants.size());
     
     do {
 	
@@ -33,8 +38,8 @@ void ACO::run()
 	double bestSatisfaction = instance.getTotalSatisfaction();
 	
 	// perform steps and daemon actions with all ants
-	for (size_t i = 0; i < ants.size(); i++) {
-	    Ant* ant = ants[i];
+	for (size_t k = 0; k < ants.size(); k++) {
+	    Ant* ant = ants[k];
 	    
 	    // perform ant step
 	    ant->findTour(PM);
@@ -45,16 +50,17 @@ void ACO::run()
 
 	    Instance& localInstance = localSearch.getInstance();
 	    
-	    satisfaction[i] = localInstance.getTotalSatisfaction();
+	    double localSatisfaction = localInstance.getTotalSatisfaction();
+	    satisfaction[k] = std::make_pair(k, localSatisfaction);
 	   
 	    // update the best instance
-	    if (satisfaction[i] > bestSatisfaction) {
+	    if (localSatisfaction > bestSatisfaction) {
 		instance = localInstance;
-		bestSatisfaction = satisfaction[i];
+		bestSatisfaction = localSatisfaction;
 	    }
 	    
 	    if (!localInstance.isValid()) {
-		satisfaction[i] = -1;
+		satisfaction[k].second = -1;
 	    } else if (!improveForFitnessOnly) {
 		ant->setInstance(localInstance);
 	    }
@@ -90,12 +96,19 @@ void ACO::initAnts(int numAnts)
     }
 }
 
-void ACO::updatePheromones(DoubleList &satisfaction)
+void ACO::updatePheromones(SatisfactionList &satisfaction)
 {
-    // TODO sort ants by satisfaction, use first m ants to update pheromones
+    // sort ants by satisfaction, use first m ants to update pheromones
+    sort(satisfaction.begin(), satisfaction.end(), 
+	  [](pair<size_t,double> a, pair<size_t,double> b) {
+	      return a.second > b.second;
+	  });
     
+    int w = std::min(ants.size(), (size_t)env.getConfig().getNumUpdateBestAnts());
     
-    // TODO evaporate pheromones
+    for (int i = 0; i < w; i++) {
+    }
     
-    
+    // evaporate pheromones
+    PM.evaporate();
 }

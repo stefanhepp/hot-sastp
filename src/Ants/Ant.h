@@ -11,6 +11,7 @@
 // An ant creates a tour based on some heuristics and a parametrized neighborhood.
 class Ant
 {
+protected:
     Instance instance;
     
     SASTProblem &problem;
@@ -29,6 +30,8 @@ public:
 
     virtual void addPheromones(PheromoneMatrix &pm, double factor)=0;
 
+    virtual Ant* clone() = 0;
+    
 protected: 
     
     unsigned _antNumber;
@@ -41,9 +44,12 @@ class AntNearest: public Ant {
 public: 
     AntNearest(Environment& env, int k):Ant(env,k){}
     
-    void findTour(PheromoneMatrix &pm);
+    virtual void findTour(PheromoneMatrix &pm);
     
-    void addPheromones(PheromoneMatrix& pm, double factor);
+    virtual void addPheromones(PheromoneMatrix& pm, double factor);
+    
+    virtual Ant* clone() { return new AntNearest(*this); }
+    
 private: 
     
 };
@@ -54,9 +60,12 @@ class AntInsert: public Ant {
 public: 
     AntInsert(Environment& env, int k):Ant(env,k){}
     
-    void findTour(PheromoneMatrix &pm);
+    virtual void findTour(PheromoneMatrix &pm);
     
-    void addPheromones(PheromoneMatrix& pm, double factor);
+    virtual void addPheromones(PheromoneMatrix& pm, double factor);
+    
+    virtual Ant* clone() { return new AntInsert(*this); }
+    
 private: 
 
     

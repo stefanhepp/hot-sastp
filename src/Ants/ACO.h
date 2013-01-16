@@ -14,7 +14,7 @@
 class ACO : public AbstractSearch
 {
     typedef std::vector<Ant*> AntList;
-    typedef std::vector<double> DoubleList;
+    typedef std::vector<std::pair<size_t, double> > SatisfactionList;
     
     Environment &env;
     
@@ -44,7 +44,7 @@ public:
 private:
     void initAnts(int numAnts);
     
-    void updatePheromones(DoubleList &satisfaction);
+    void updatePheromones(SatisfactionList &satisfaction);
     
     
 };
