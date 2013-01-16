@@ -4,7 +4,7 @@
 #include "Solver/TourNeighborhood.h"
 
 Ant::Ant(Environment &env, int k)
-: instance(env), problem(env.getProblem())
+: instance(env.getProblem()), problem(env.getProblem())
 {
     // TODO insert neighborhood structures, if required
 }

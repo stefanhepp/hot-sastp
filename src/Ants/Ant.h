@@ -16,9 +16,11 @@ class Ant
     SASTProblem &problem;
     
 public:
-    Ant(Environment &env, PheromoneMatrix &pm, int k);
+    Ant(Environment &env, int k);
     
     Instance &getInstance() { return instance; }
+    
+    void setInstance(const Instance& inst) { instance = inst; }
     
     // construct a tour based on the pheromeone matrix and the neighborhood heuristics
     void findTour(PheromoneMatrix &pm);

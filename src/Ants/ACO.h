@@ -14,6 +14,7 @@
 class ACO : public AbstractSearch
 {
     typedef std::vector<Ant*> AntList;
+    typedef std::vector<double> DoubleList;
     
     // This is (a copy of) the best instance of the last iteration
     Instance instance;
@@ -39,9 +40,9 @@ public:
     virtual void run();
     
 private:
-    void initAnts();
+    void initAnts(int numAnts);
     
-    void updatePheromones();
+    void updatePheromones(DoubleList &satisfaction);
     
     
 };

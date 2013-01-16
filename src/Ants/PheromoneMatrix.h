@@ -13,15 +13,18 @@ class PheromoneMatrix
     
 public:
     PheromoneMatrix(SASTProblem &problem, float initTau)
-     : problem(problem), defaultTau(initTau) {}
+     : problem(problem), defaultTau(initTau) 
+    {
+	reset(initTau); 
+    }
     
     ~PheromoneMatrix() { destroy(); }
     
     void reset(float initTau);
     
-    float getTau(TourNode start, TourNode end);
+    float getTau(const TourNode start, const TourNode end) const;
     
-    void setTau(TourNode start, TourNode end);
+    void setTau(const TourNode start, const TourNode end);
     
 private:
     // destroy all used memory
