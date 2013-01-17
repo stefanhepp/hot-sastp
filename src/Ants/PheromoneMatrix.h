@@ -17,18 +17,9 @@ class PheromoneMatrix
     double maxTau;
     
 public:
-    PheromoneMatrix(Environment &env)
-     : problem(env.getProblem()) 
-    {
-	defaultTau = env.getConfig().getInitialTau();
-	persistFactor = env.getConfig().getPersistFactor();
-	minTau = env.getConfig().getTauMin();
-	maxTau = env.getConfig().getTauMax();
-	
-	reset(defaultTau); 
-    }
+   PheromoneMatrix(Environment& env);
     
-    ~PheromoneMatrix() { destroy(); }
+    ~PheromoneMatrix();
     
     void reset(float initTau);
     

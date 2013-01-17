@@ -36,8 +36,9 @@ public:
   
     ACO(Environment& env, AbstractSearch &localSearch);
     
+
     virtual Instance& getInstance() { return instance; }
-    
+
     virtual void reset(const Instance& init);
     
     virtual void run();

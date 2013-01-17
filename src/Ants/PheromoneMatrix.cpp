@@ -1,5 +1,20 @@
 #include "PheromoneMatrix.h"
 
+PheromoneMatrix::PheromoneMatrix (Environment &env)
+     : problem(env.getProblem()) 
+    {
+        defaultTau = env.getConfig().getInitialTau();
+        persistFactor = env.getConfig().getPersistFactor();
+        minTau = env.getConfig().getTauMin();
+        maxTau = env.getConfig().getTauMax();
+        
+        reset(defaultTau); 
+    }
+
+PheromoneMatrix::~PheromoneMatrix()
+{
+    destroy();
+}
 
 void PheromoneMatrix::reset(float initTau)
 {
@@ -44,3 +59,4 @@ void PheromoneMatrix::destroy()
 {
 
 }
+
