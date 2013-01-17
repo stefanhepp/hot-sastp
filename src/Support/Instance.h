@@ -156,7 +156,9 @@ public:
     TourNode getNode(int index) const { return (index == -1 || index == tour.size()) ? getHotelNode() : tour.at(index); }
     
     TourNode getHotelNode() const { return TourNode(-1, 0); }
-	
+
+    TourNode getLastNode() const { return tour.empty() ? getHotelNode() : tour.back(); }
+    
     /**
      * Get the number of spots in the tour (excluding the hotel).
      */

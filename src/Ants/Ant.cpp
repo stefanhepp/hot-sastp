@@ -82,7 +82,7 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
         unsigned spotId = ps.second;
         
         const Spot& nearestspot = problem.getSpot(spotId);
-        TourNode lastNode = instance.getTour().back();
+        TourNode lastNode = instance.getLastNode();
 	
         unsigned bestInsert;
         
@@ -99,7 +99,7 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
 		// TODO What happens if the new node causes the tour to get invalid? Several approches:
 		// - continue; (but this does not allow us to create tours that are larger than the maximum!)
 		// - or set tauEta to something low so that it gets unlikely (but not impossible) that it will be picked
-		continue;
+		tauEta *= 0.01;
 	    }
             
 	    sumP += tauEta;

@@ -246,6 +246,7 @@ void Driver::solve()
         
         ants.run();
         
+	solution = ants.getInstance().createSolution();
         break;
     }
     case Config::AT_ANT_LS:
@@ -257,6 +258,8 @@ void Driver::solve()
         if(verbose) cout << " Running ACO with Local Search .. " << endl;
         
         ants.run();
+	
+	solution = ants.getInstance().createSolution();
         break;
     }
     case Config::AT_ANT_VND:
@@ -269,6 +272,7 @@ void Driver::solve()
         
         ants.run();
         
+	solution = ants.getInstance().createSolution();
         break;
     }
   }  
