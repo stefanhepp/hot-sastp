@@ -95,7 +95,6 @@ private:
         
     SpotSearch& spotsearch;
     ProblemHelper helper;
-    unsigned _maxk;
     
     Config::NodeInsertMode _insertMode;
     
@@ -106,7 +105,8 @@ class AntInsert: public Ant {
     
 public: 
     AntInsert(Environment& env, PheromoneMatrix &pm, int k):
-       Ant(env,pm,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch())
+       Ant(env,pm,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch()), 
+       _insertMode(env.getConfig().getNodeInsertMode())
        {}
     
     virtual void setInstance(const Instance& inst);
@@ -126,7 +126,7 @@ private:
     
     SpotSearch& spotsearch;
     ProblemHelper helper;
-    unsigned _maxk;
-    
+
+    Config::NodeInsertMode _insertMode;
 };
 #endif // ANT_H

@@ -149,15 +149,21 @@ void AntInsert::setInstance(const Instance& inst)
 
 int AntInsert::insertSpot()
 {
-    // TODO interpret construction graph not as tour but as decision tree which 
-    // nodes to insert -> t_ij means: insert node j after node i has been inserted into tour
-    // But where to insert? use shortest distance!
- 
-    return -1;
+    NearestSpotList nearest = spotsearch.findNearestTourSpots(instance, _antNumber+1, true); 
+    
+    // find best spot and method, add it to the tour
+    unsigned insertAt;
+    TourNode best = selectBestTourNode(nearest, insertAt, _insertMode);
+    
+    return instance.insertNode(insertAt, best);
 }
 
 TourNode AntInsert::selectBestTourNode(NearestSpotList nearest, unsigned int& insertAt, Config::NodeInsertMode insertMethod)
 {
+    // TODO interpret construction graph not as tour but as decision tree which 
+    // nodes to insert -> t_ij means: insert node j after node i has been inserted into tour
+    // But where to insert? use shortest distance!
+
 
     return TourNode(0,0);
 }
