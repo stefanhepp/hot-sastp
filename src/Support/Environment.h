@@ -122,7 +122,19 @@ public:
     /**
      * @return Heuristic to be used by ants
      */
-    AntHeuristicTag getAntHeuristics() { return _antHeuristic; }
+    AntHeuristicTag getAntHeuristics() const { return _antHeuristic; }
+    
+    /**
+     * @return true if we do not use the improved tour to update the pheromones (default: false).
+     * TODO add option
+     */
+    bool doImproveForFitnessOnly() const { return false; }
+    
+    /**
+     * @return 0 to update only with iteration best ants, or k > 0 to update every kth round with the global best ant.
+     * (default: 0)
+     */
+    unsigned getUpdateWithGlobalBest() const { return 0; }
     
     /**
      * @return the maximum number of nearest spots that should be searched for.

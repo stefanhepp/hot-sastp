@@ -12,9 +12,8 @@ ACO::ACO(Environment& env, AbstractSearch &localSearch)
   instance(env.getProblem()), bestAnt(0), PM(env), 
   localSearch(localSearch)
 {
-    // TODO get from config
-    improveForFitnessOnly = false;
-    updateWithGlobalBest = 0;
+    improveForFitnessOnly = env.getConfig().doImproveForFitnessOnly();
+    updateWithGlobalBest = env.getConfig().getUpdateWithGlobalBest();
     
     initAnts(env.getConfig().getNumberOfAnts());
 }
