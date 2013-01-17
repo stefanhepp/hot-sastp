@@ -24,7 +24,7 @@ public:
     
     Instance &getInstance() { return instance; }
     
-    void setInstance(const Instance& inst) { instance = inst; }
+    virtual void setInstance(const Instance& inst) { instance = inst; }
     
     // construct a tour based on the pheromeone matrix and the neighborhood heuristics
     virtual void findTour(PheromoneMatrix &pm)=0;
@@ -89,6 +89,8 @@ public:
     AntInsert(Environment& env, int k):
        Ant(env,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch())
        {}
+    
+    virtual void setInstance(const Instance& inst);
     
     virtual void findTour(PheromoneMatrix &pm);
     

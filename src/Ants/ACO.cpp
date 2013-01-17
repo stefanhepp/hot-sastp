@@ -12,7 +12,7 @@ ACO::ACO(Environment& env, AbstractSearch &localSearch)
   instance(env.getProblem()), bestAnt(0), PM(env), 
   localSearch(localSearch)
 {
-    improveForFitnessOnly = env.getConfig().doImproveForFitnessOnly();
+    improveAntSolution = env.getConfig().doImproveAntSolution();
     updateWithGlobalBest = env.getConfig().getUpdateWithGlobalBest();
     
     initAnts(env.getConfig().getNumberOfAnts());
@@ -34,6 +34,9 @@ void ACO::run()
     satisfaction.reserve(ants.size());
     
     unsigned round = 0;
+    
+    // just to be on the safe side, initialize best ant with empty tour
+    setBestAnt(ants[0]);
     
     do {
 	
@@ -70,7 +73,7 @@ void ACO::run()
 	    
 	    if (!localInstance.isValid()) {
 		satisfaction[k].second = -1;
-	    } else if (!improveForFitnessOnly) {
+	    } else if (improveAntSolution) {
 		ant->setInstance(localInstance);
 	    }
 	    

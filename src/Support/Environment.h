@@ -62,6 +62,7 @@ public:
      * @return the index of the first unhandled argument.
      */
     int parseArguments(int argc, char* argv[]);
+    
     AlgorithmTag getAlgorithm() const {return _algorithm;}
   
     NeighborhoodTag getNeighborhood() const { return _neighborhood; }
@@ -125,16 +126,15 @@ public:
     AntHeuristicTag getAntHeuristics() const { return _antHeuristic; }
     
     /**
-     * @return true if we do not use the improved tour to update the pheromones (default: false).
-     * TODO add option
+     * @return true if we should use the improved tour to update the pheromones (default: false).
      */
-    bool doImproveForFitnessOnly() const { return false; }
+    bool doImproveAntSolution() const { return _improveAntSolution; }
     
     /**
      * @return 0 to update only with iteration best ants, or k > 0 to update every kth round with the global best ant.
      * (default: 0)
      */
-    unsigned getUpdateWithGlobalBest() const { return 0; }
+    unsigned getUpdateWithGlobalBest() const { return _updateWithGlobalBest; }
     
     /**
      * @return the maximum number of nearest spots that should be searched for.
@@ -207,8 +207,11 @@ private:
     unsigned _numberOfAnts;
     unsigned _numUpdateBestAnts;
     
-    double _persistFactor;
+    double   _persistFactor;
     AntHeuristicTag _antHeuristic;
+    
+    bool     _improveAntSolution;
+    unsigned _updateWithGlobalBest;
     
     bool _verbose;
     bool _debug;

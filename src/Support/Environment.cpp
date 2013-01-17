@@ -40,6 +40,8 @@ Config::Config()
     _minTau = 0.0;
     _maxTau = MAXDOUBLE;
     _persistFactor = 0.95;
+    _improveAntSolution = false;
+    _updateWithGlobalBest = 0;
 }
 
 
@@ -84,7 +86,7 @@ struct Arg: public option::Arg {
 
 enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DEBUG, DOT, PRINT_CSV, PRINT_ALL_STEPS, 
                   TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA, ANTALPHA, ANTBETA, ANTTAU, ANTSTEPS, ANTNUMBEROFTHEM, 
-                  ANTMAXTAU, ANTMINTAU,ANTHEURISTICTAG, ANTPERSITENCE, ANTUPDATEBEST };
+                  ANTMAXTAU, ANTMINTAU,ANTHEURISTICTAG, ANTPERSITENCE, ANTUPDATEBEST, UPDATEGLOBAL, IMPROVEANTS };
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -136,18 +138,21 @@ const option::Descriptor usage[] = {
     
     { ANTMINTAU, 0, "", "minTau", Arg::Numeric, "  \t--minTau=<double> \tMin tau used in the ACO.\n" },
     
-    { ANTPERSITENCE, 0, "p", "persi", Arg::Numeric,   " -p=<double> \t--persi=<double> \tPersistence factor used in the ACO.\n" },
+    { ANTPERSITENCE, 0, "p", "persist", Arg::Numeric,   " -p <double> \t--persist=<double> \tPersistence factor used in the ACO.\n" },
     
     { ANTNUMBEROFTHEM, 0, "", "ants", Arg::Numeric, "  \t--ants=<integer> \tNumber of ants in the population.\n" },
    
     { ANTSTEPS, 0, "S", "Steps", Arg::Numeric, " -S <integer> \t--Steps=<integer> \tHow many times we send the ants for solutions.\n" },
    
-    { ANTUPDATEBEST, 0, "", "updBest", Arg::Numeric, "  \t--updBest=<unsigned> \tNumber of best ants used to influence the pheromone matrix.\n" },
+    { ANTUPDATEBEST, 0, "w", "updBest", Arg::Numeric, "  -w <unsigned> \t--updBest=<unsigned> \tNumber of best ants used to influence the pheromone matrix.\n" },
     
     { ANTHEURISTICTAG, 0, "T", "heuTag", Arg::Numeric, "  \t--heuTag=<unsigned> \tNeareast Neighbor = 0 , Insert Method =1 .\n" },
     
-     { ALPHA , 0, "", "alpha", Arg::NonEmpty, "   \t--alpha=<arg> \tAlpha for the construction of Restricted Candidates List. values in [0..1]\n"},
-     
+    { ALPHA , 0, "", "alpha", Arg::NonEmpty, "   \t--alpha=<arg> \tAlpha for the construction of Restricted Candidates List. values in [0..1]\n"},
+    
+    { UPDATEGLOBAL, 0, "u", "updGlobal", Arg::Numeric, "  -u <unsigned> \t--updGlobal=<unsigned> \tUpdate with global best solution every n'th step.\n" },
+    
+    { IMPROVEANTS, 0, "", "improveAnts", Arg::None, "  \t--improveAnts \tUse improved solutions to update pheromones.\n" },
       
     {
         UNKNOWN, 0, "", "", Arg::None,
@@ -404,7 +409,15 @@ int Config::parseArguments (int argc, char* argv[])
                 }
                 
                 break;
-                
+	    case IMPROVEANTS:
+		assert(!opt.arg);
+		_improveAntSolution = true;
+		break;
+	    case UPDATEGLOBAL:
+		assert(opt.arg);
+		_updateWithGlobalBest = (unsigned) atoi(opt.arg);
+		assert(_updateWithGlobalBest >= 0);
+		break;
             case UNKNOWN:
                 // not possible because Arg::Unknown returns ARG_ILLEGAL
                 // which aborts the parse with an error

@@ -106,11 +106,21 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest, unsigned insert
     
     return best;
 }
+
 void AntNearest::addPheromones(PheromoneMatrix& pm, double factor)
 {
 
 }
 
+void AntInsert::setInstance(const Instance& inst)
+{
+    // TODO we should update the insertionOrder: 
+    // - remove all nodes in insertionOrder where the spot is no longer in the tour
+    // - update tournodes in insertionOrder with new method-id if spot is still in the tour
+    // - add nodes in the tour that are new to the insertionOrder at the end
+    
+    Ant::setInstance(inst);
+}
 
 double AntNearest::getDistancePerSatisfaction(Spot begin, Spot end, const Method& m )
 {
