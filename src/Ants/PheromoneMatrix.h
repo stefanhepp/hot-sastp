@@ -6,7 +6,7 @@
 #include "Support/Environment.h"
 
 class PheromoneMatrix
-{
+{   
     SASTProblem &problem;
     
     // Value used for uninitialized data
@@ -15,6 +15,9 @@ class PheromoneMatrix
     double persistFactor;
     double minTau;
     double maxTau;
+ 
+    // Spot_i->Method_i->Spot_j->Method_j->Tau_ij
+    double ****matrix;
     
 public:
    PheromoneMatrix(Environment& env);
