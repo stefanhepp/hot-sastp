@@ -14,8 +14,31 @@ Ant::Ant(Environment &env, PheromoneMatrix& pm, int k)
     // TODO insert neighborhood structures, if required
 }
 
+double Ant::getTauEta(TourNode lastNode, TourNode newNode, TourValues deltaValues)
+{
+    // get tau_ij
+    double tau = _pm.getTau(lastNode, newNode);
+    // calculate t_ij^alpha * n_ij^beta
+    return pow(tau, _alpha) * getDistancePerSatisfaction(deltaValues);
+}
 
-void AntNearest::findTour()
+double Ant::getDistancePerSatisfaction(TourValues deltaValues)
+{
+    double result;
+    //compute time per satisfaction ( = 1 / fitness )
+    result = 1 / instance.getSatisfactionPerTotalTimeRatio( deltaValues );
+    //make it to power of Beta
+    result = pow(result, _beta); 
+    //return the value to be used in the computation of p_ij^k
+    return result;
+}
+
+double Ant::getTourDeltaTau() const
+{
+    return instance.getTotalTime() / instance.getTotalSatisfaction();
+}
+
+void Ant::findTour()
 {
     instance.clear();
     
@@ -27,47 +50,41 @@ void AntNearest::findTour()
         unsigned newSpot = insertSpot();
         
         // If inserting the new spot makes the tour too long, do not add it to the tour and stop
+	
+	// TODO allow the tour to be up to maxTime * some factor and hope that the localSearch will make it valid later
+	//      (get 'some factor' from config)
         if (!instance.isValid()) {
             instance.deleteNode(newSpot);
             break;
         }
     }
-    
-    
-    // TODO use neigborhood and heuristics as well as pheromones to construct a valid tour
-    
-    // Add nodes at end of tour until tour is complete
-    // Better way to do it: interpret construction graph not as tour but as decision tree which 
-    // nodes to insert -> t_ij means: insert node j after node i has been inserted into tour
-    // TODO but where to insert? use shortest distance?
-    
 }
+
+
 
 int AntNearest::insertSpot()
 {
-    NearestSpotList nearest = spotsearch.findNearestSpots(instance, instance.getTourLength() - 1, _maxk); 
+    NearestSpotList nearest = spotsearch.findNearestSpots(instance, instance.getTourLength() - 1, _antNumber); 
     
     // find best spot and method, add it to the tour
-    unsigned tmp;
-    TourNode best = selectBestTourNode(nearest, tmp);
+    TourNode best = selectBestTourNode(nearest);
     
     return instance.addNode(best);
 }
 
-TourNode AntNearest::selectBestTourNode(NearestSpotList nearest, unsigned insertAt )
+TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
 {
-     TourNode best(-1, 0);
-    // start off with something really bad so that we are sure to select the first node
-    double bestRatio = -1.0f;
-        
+    // list contains pairs of valid candidates, and their tauEta value
+    std::vector<std::pair<TourNode,double>> candidates;   
+    double sumP = 0;
+    
     for(const auto& ps : nearest) {
         int tournode = ps.first;
         unsigned spotId = ps.second;
         
         const Spot& nearestspot = problem.getSpot(spotId);
-        //how can we get the last spot inserted in the tour
-        const Spot& lastSpot = problem.getSpot(instance.getTour().back().spot);
-        
+        TourNode lastNode = instance.getTour().back();
+	
         unsigned bestInsert;
         
        // helper.getInsertDeltaTourLength(instance, tournode, nearestspot, _insertMode, bestInsert);
@@ -76,42 +93,43 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest, unsigned insert
         unsigned methodId = 0;
         for (const auto& m : nearestspot.getMethods()) {
             
-            double deltaTour = getDistancePerSatisfaction(lastSpot ,nearestspot, *m);
-            _pm.getTau(instance.getTour().back(), (TourNode(spotId, methodId)));
-                
-            double deltaTime;
-            double ratio = helper.calcInsertSatisfactionTimeRatio(instance.getRemainingStamina(), *m, deltaTour, deltaTime);
+	    TourNode newNode(spotId, methodId);
+	    TourValues insertValues = instance.getInsertDeltaValues(instance.getTourLength(), newNode);
+	    
+            double tauEta = getTauEta(lastNode, newNode, insertValues);
             
-            // check if we have a new best value, but check for time constraints ..
-            if (instance.getTotalTime() + deltaTime <= problem.getMaxTime() && 
-                ratio > bestRatio) 
-            {
-                // found a new best candidate
-                best.spot = spotId;
-                best.method = methodId;
-                bestRatio = ratio;
-                insertAt = bestInsert;
-            }
-            
+	    sumP += tauEta;
+	    candidates.push_back(std::make_pair(newNode,tauEta));
+
+	    // TODO What happens if the new node causes the tour to get invalid? Several approches:
+	    //  - getTauEta shoud assign it a low value, so it is unlikely to get picked, but will still be picked if all other methods
+	    //    make it invalid as well or are just bad choices. We assume the localSearch will make the tour valid afterwards.
+	    //  - Skip that method, use instance.isValid(insertValues) to check if tour is still valid.
+	                
             methodId++;
         }
-        
     }
     
-    // Too bad, we did not find a node that still fits, just return the first nearest one..
-    if (best.spot == -1) {
-        insertAt = nearest.front().first + 1;
-        best.spot = nearest.front().second;
-        best.method = 0;
-    }
+    // TODO r = rand(0..1); p = 0; 
+    // for ( entry : tauEtaList )
+    //     if p + entry.second/sumP > r then return entry.first else p += entry.second/sumP endif
     
-    return best;
+
+    // we should only reach that point if our tauEtaList is empty (i.e. we found no usable methods), 
+    // we return just some best guess here
+    return TourNode(nearest.front().second, 0);
 }
+
 void AntNearest::addPheromones(double factor)
-
 {
-
+    double deltaTau = getTourDeltaTau();
+    
+    // TODO for i in 0..tourLength-1 do _pm.addTau(instance.getNode(i - 1), instance.getNode(i), deltaTau * factor);
+    // Note: first edge has start-index -1 (the hotel)
+    
 }
+
+
 
 void AntInsert::setInstance(const Instance& inst)
 {
@@ -123,23 +141,26 @@ void AntInsert::setInstance(const Instance& inst)
     Ant::setInstance(inst);
 }
 
-double AntNearest::getDistancePerSatisfaction(Spot begin, Spot end, const Method& m )
+
+int AntInsert::insertSpot()
 {
-    double result;
-    //compute distance per satisfaction 
-    result = problem.getDistance(begin, end) / m.getSatisfaction();
-    //make it to power of Beta
-    result = pow(result, _beta); 
-    //return the value to be used in the computation of p_ij^k
-    return result;
+    // TODO interpret construction graph not as tour but as decision tree which 
+    // nodes to insert -> t_ij means: insert node j after node i has been inserted into tour
+    // But where to insert? use shortest distance!
+ 
+    return -1;
 }
 
-void AntInsert::findTour()
+TourNode AntInsert::selectBestTourNode(NearestSpotList nearest, unsigned int& insertAt, Config::NodeInsertMode insertMethod)
 {
 
+    return TourNode(0,0);
 }
 
 void AntInsert::addPheromones(double factor)
 {
-
+    double deltaTau = getTourDeltaTau();
+    
+    
 }
+

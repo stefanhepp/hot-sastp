@@ -27,16 +27,45 @@ public:
     virtual void setInstance(const Instance& inst) { instance = inst; }
     
     // construct a tour based on the pheromeone matrix and the neighborhood heuristics
-    virtual void findTour()=0;
+    virtual void findTour();
     
     // Update pheromeones at the end of a full step for the next iteration
 
-    virtual void addPheromones( double factor)=0;
+    virtual void addPheromones(double factor)=0;
 
     virtual Ant* clone() = 0;
     
 protected: 
+    /**
+     * Insert a new node into the tour and return its index.
+     */
+    virtual int insertSpot() = 0;
     
+    /**
+     * This computes the tau_ij^alpha * eta_ij^beta.
+     *
+     * @param insertIndex - the index where to insert the new node (will be inserted before that index)
+     * @param newNode - the spot and method to insert
+     * 
+     * Computes the ratio of distance per satisfaction and then to the power of beta
+     */
+    double getTauEta(TourNode lastNode, TourNode newNode, TourValues insertValues);
+    
+    /**
+     * This is a helping function in order for us to compute the p_ij^k
+     * Get the distance per satisfaction to power of beta ( part of the computation of :visibility n:)
+     * 
+     * @param insertValues - the delta values for inserting the new node
+     * 
+     * Computes the ratio of distance per satisfaction and then to the power of beta
+     */
+    double getDistancePerSatisfaction(TourValues insertValues);
+    
+    /**
+     * Calculate 1/length(T^k)
+     */
+    double getTourDeltaTau() const;
+
     
     PheromoneMatrix& _pm;
     unsigned _antNumber;
@@ -47,35 +76,23 @@ protected:
 
 class AntNearest: public Ant {
 public: 
-    AntNearest(Environment& env, PheromoneMatrix &pm ,int k):
+    AntNearest(Environment& env, PheromoneMatrix &pm, int k):
         Ant(env,pm,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch())
         {
             _maxk = env.getConfig().getMaxKNearestSpots();
             _insertMode = env.getConfig().getNodeInsertMode();
         }
     
-    virtual void findTour();
-    
     virtual void addPheromones(double factor);
     
     virtual Ant* clone() { return new AntNearest(*this); }
     
-private: 
-    int insertSpot();
+protected:
+    virtual int insertSpot();
     
-    TourNode selectBestTourNode(NearestSpotList nearest, unsigned insertAt);
-    
-    /**
-     * This is a helping function in order for us to compute the p_ij^k
-     * Get the distance per satisfaction to power of beta ( part of the computation of :visibility n:)
-     * @param begin - the node from which you start (i) 
-     * @param end - the node you pick 
-     * @param m - the method choose for node end
-     * 
-     * Computes the ratio of distance per satisfaction and then to the power of beta
-     */
-    double getDistancePerSatisfaction(Spot begin, Spot end, const Method& m);
-    
+private:     
+    TourNode selectBestTourNode(NearestSpotList nearest);
+        
     SpotSearch& spotsearch;
     ProblemHelper helper;
     unsigned _maxk;
@@ -88,22 +105,24 @@ class AntInsert: public Ant {
     std::vector<TourNode> insertionOrder;
     
 public: 
-    AntInsert(Environment& env, PheromoneMatrix &pm ,int k):
+    AntInsert(Environment& env, PheromoneMatrix &pm, int k):
        Ant(env,pm,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch())
        {}
     
-    virtual void findTour();
     virtual void setInstance(const Instance& inst);
-
     
     virtual void addPheromones(double factor);
     
     virtual Ant* clone() { return new AntInsert(*this); }
     
-private: 
+protected:
+    virtual int insertSpot();
     
-    int insertSpot() {};
-    TourNode selectBestTourNode(NearestSpotList nearest, unsigned insertAt, Config::NodeInsertMode insertMethod);
+private:     
+    /**
+     * @param insertAt - out parameter, returns index where to insert the selected node
+     */
+    TourNode selectBestTourNode(NearestSpotList nearest, unsigned &insertAt, Config::NodeInsertMode insertMethod);
     
     SpotSearch& spotsearch;
     ProblemHelper helper;
