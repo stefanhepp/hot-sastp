@@ -18,6 +18,8 @@ protected:
     
 public:
     Ant(Environment &env, int k) ;
+
+    virtual ~Ant() {}
     
     Instance &getInstance() { return instance; }
     

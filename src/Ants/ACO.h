@@ -10,14 +10,16 @@
 #include <vector>
 
 
-
 class ACO : public AbstractSearch
 {
     typedef std::vector<Ant*> AntList;
     typedef std::vector<std::pair<size_t, double> > SatisfactionList;
     
-    // This is (a copy of) the best instance of the last iteration
+    // This is (a copy of) the best instance of the last iteration, after localSearch
     Instance instance;
+
+    // Copy of our globally best ant, for updates
+    Ant* bestAnt;
 
     PheromoneMatrix PM;
     
@@ -27,8 +29,9 @@ class ACO : public AbstractSearch
     // If true, improve results only for evaluation, not for pheromone update
     bool improveForFitnessOnly;
     
-    AntList ants;
+    unsigned updateWithGlobalBest;
     
+    AntList ants;
 public:
   
     ACO(Environment& env, AbstractSearch &localSearch);
@@ -42,8 +45,9 @@ public:
 private:
     void initAnts(int numAnts);
     
-    void updatePheromones(SatisfactionList &satisfaction);
+    void setBestAnt(Ant* ant);
     
+    void updatePheromones(SatisfactionList &satisfaction, unsigned round);
     
 };
 

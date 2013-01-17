@@ -9,11 +9,12 @@ using namespace std;
 
 ACO::ACO(Environment& env, AbstractSearch &localSearch)
 : AbstractSearch(env, env.getConfig().getNumberOfSteps()),
-  instance(env.getProblem()), PM(env), 
+  instance(env.getProblem()), bestAnt(0), PM(env), 
   localSearch(localSearch)
 {
     // TODO get from config
     improveForFitnessOnly = false;
+    updateWithGlobalBest = 0;
     
     initAnts(env.getConfig().getNumberOfAnts());
 }
@@ -33,6 +34,8 @@ void ACO::run()
     SatisfactionList satisfaction;
     satisfaction.reserve(ants.size());
     
+    unsigned round = 0;
+    
     do {
 	
 	bool printStep = env.setPrintSteps(false);
@@ -40,6 +43,8 @@ void ACO::run()
 	deltaSatisfaction = -instance.getTotalSatisfaction();
 	
 	double bestSatisfaction = instance.getTotalSatisfaction();
+	
+	int bestAntIdx = -1;
 	
 	// perform steps and daemon actions with all ants
 	for (size_t k = 0; k < ants.size(); k++) {
@@ -61,6 +66,7 @@ void ACO::run()
 	    if (localSatisfaction > bestSatisfaction) {
 		instance = localInstance;
 		bestSatisfaction = localSatisfaction;
+		bestAntIdx = k;
 	    }
 	    
 	    if (!localInstance.isValid()) {
@@ -72,15 +78,21 @@ void ACO::run()
 	    // TODO track satisfaction per ant over steps
 	}
 	
+	if (bestAntIdx >= 0) {
+	    setBestAnt(ants[bestAntIdx]);
+	}
+	
 	// update pheromone matrix
-	updatePheromones(satisfaction);
+	updatePheromones(satisfaction, round);
 	
 	// calculate deltaSatisfaction, print solution
 	deltaSatisfaction += instance.getTotalSatisfaction();
 	
 	env.setPrintSteps(printStep);
 	env.printStepResult(instance);
-		
+	
+	round++;
+	
     } while (!shouldStop(deltaSatisfaction));
 
 }
@@ -100,7 +112,13 @@ void ACO::initAnts(int numAnts)
     }
 }
 
-void ACO::updatePheromones(SatisfactionList &satisfaction)
+void ACO::setBestAnt(Ant* ant)
+{
+    if (bestAnt) delete bestAnt;
+    bestAnt = ant->clone();
+}
+
+void ACO::updatePheromones(SatisfactionList &satisfaction, unsigned round)
 {
     // sort ants by satisfaction, use first m ants to update pheromones
     sort(satisfaction.begin(), satisfaction.end(), 
@@ -108,9 +126,21 @@ void ACO::updatePheromones(SatisfactionList &satisfaction)
 	      return a.second > b.second;
 	  });
     
+    // For Rank-based AS use:
+    // - updatewithGlobalBest = 1, w > 1
+    // For Min-Max use:
+    // - updateWithGlobalBest = 0, w = 1
+    
     int w = std::min(ants.size(), (size_t)env.getConfig().getNumUpdateBestAnts());
     
+    if (updateWithGlobalBest && (round % updateWithGlobalBest) == 0 && bestAnt) {
+	bestAnt->addPheromones(PM, w);
+	w--;
+    }
+    
     for (int i = 0; i < w; i++) {
+	int k = satisfaction[i].first;
+	ants[k]->addPheromones(PM, w - i);
     }
     
     // evaporate pheromones
