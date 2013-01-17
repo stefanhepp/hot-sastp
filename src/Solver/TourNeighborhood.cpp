@@ -356,13 +356,13 @@ std::string NearestTourExchange::getName() const
 bool NearestTourExchange::performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)
 {
     unsigned tourLength = instance.getTourLength();
-    if (tourLength < 2) return false;
+    if (tourLength <= minRemove) return false;
 
     nodeInserter.prepareStep(instance, stepFunction);
     
     if (stepFunction == Config::SF_RANDOM) {
-	unsigned removeLength = rand() % min(maxRemove - minRemove + 1,tourLength) + minRemove;
-	unsigned removeFirst = rand() % (tourLength - removeLength + 1);
+	unsigned removeLength = rand() % min(maxRemove - minRemove + 1, tourLength - minRemove) + minRemove;
+	unsigned removeFirst = rand() % max(tourLength - removeLength + 1, 1u);
 	
 	removedNodes.clear();
 	for (int i = removeFirst; i < removeFirst + removeLength; i++) {
