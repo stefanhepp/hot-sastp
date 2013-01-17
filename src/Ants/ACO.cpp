@@ -50,7 +50,7 @@ void ACO::run()
 	    Ant* ant = ants[k];
 	    
 	    // perform ant step
-	    ant->findTour(PM);
+	    ant->findTour();
 	    
 	    // perform daemon action
 	    localSearch.reset(ant->getInstance());
@@ -102,9 +102,9 @@ void ACO::initAnts(int numAnts)
 	Ant *ant;
 	
 	if (env.getConfig().getAntHeuristics() == Config::AH_NEAREST) {
-	    ant = new AntNearest(env, i);
+	    ant = new AntNearest(env,PM, i);
 	} else {
-	    ant = new AntInsert(env, i);
+	    ant = new AntInsert(env,PM, i);
 	}
 	
 	ants.push_back( ant );
@@ -133,13 +133,13 @@ void ACO::updatePheromones(SatisfactionList &satisfaction, unsigned round)
     int w = std::min(ants.size(), (size_t)env.getConfig().getNumUpdateBestAnts());
     
     if (updateWithGlobalBest && (round % updateWithGlobalBest) == 0 && bestAnt) {
-	bestAnt->addPheromones(PM, w);
+	bestAnt->addPheromones( w);
 	w--;
     }
     
     for (int i = 0; i < w; i++) {
 	int k = satisfaction[i].first;
-	ants[k]->addPheromones(PM, w - i);
+	ants[k]->addPheromones(w - i);
     }
     
     // evaporate pheromones

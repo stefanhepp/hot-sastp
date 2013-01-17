@@ -5,8 +5,8 @@
 #include "Framework/SASTProblem.h"
 #include "Solver/TourNeighborhood.h"
 
-Ant::Ant(Environment &env, int k)
-: instance(env.getProblem()), problem(env.getProblem())
+Ant::Ant(Environment &env, PheromoneMatrix& pm, int k)
+: instance(env.getProblem()),_pm(pm), problem(env.getProblem())
 {
     _antNumber = k; 
     _alpha = env.getConfig().getAntAlpha();
@@ -15,7 +15,7 @@ Ant::Ant(Environment &env, int k)
 }
 
 
-void AntNearest::findTour(PheromoneMatrix &pm)
+void AntNearest::findTour()
 {
     instance.clear();
     
@@ -66,18 +66,19 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest, unsigned insert
         
         const Spot& nearestspot = problem.getSpot(spotId);
         //how can we get the last spot inserted in the tour
-        const Spot& lastSpot = problem.getSpot(tournode) ;
+        const Spot& lastSpot = problem.getSpot(instance.getTour().back().spot);
         
         unsigned bestInsert;
         
-        helper.getInsertDeltaTourLength(instance, tournode, nearestspot, _insertMode, bestInsert);
+       // helper.getInsertDeltaTourLength(instance, tournode, nearestspot, _insertMode, bestInsert);
        
         // check all methods of this spot
         unsigned methodId = 0;
         for (const auto& m : nearestspot.getMethods()) {
             
             double deltaTour = getDistancePerSatisfaction(lastSpot ,nearestspot, *m);
-
+            _pm.getTau(instance.getTour().back(), (TourNode(spotId, methodId)));
+                
             double deltaTime;
             double ratio = helper.calcInsertSatisfactionTimeRatio(instance.getRemainingStamina(), *m, deltaTour, deltaTime);
             
@@ -106,7 +107,7 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest, unsigned insert
     
     return best;
 }
-void AntNearest::addPheromones(PheromoneMatrix& pm, double factor)
+void AntNearest::addPheromones(double factor)
 {
 
 }
@@ -123,12 +124,12 @@ double AntNearest::getDistancePerSatisfaction(Spot begin, Spot end, const Method
     return result;
 }
 
-void AntInsert::findTour(PheromoneMatrix& pm)
+void AntInsert::findTour()
 {
 
 }
 
-void AntInsert::addPheromones(PheromoneMatrix& pm, double factor)
+void AntInsert::addPheromones(double factor)
 {
 
 }

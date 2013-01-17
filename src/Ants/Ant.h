@@ -18,7 +18,7 @@ protected:
     SASTProblem &problem;
     
 public:
-    Ant(Environment &env, int k) ;
+    Ant(Environment &env, PheromoneMatrix& pm, int k) ;
 
     virtual ~Ant() {}
     
@@ -27,16 +27,18 @@ public:
     void setInstance(const Instance& inst) { instance = inst; }
     
     // construct a tour based on the pheromeone matrix and the neighborhood heuristics
-    virtual void findTour(PheromoneMatrix &pm)=0;
+    virtual void findTour()=0;
     
     // Update pheromeones at the end of a full step for the next iteration
 
-    virtual void addPheromones(PheromoneMatrix &pm, double factor)=0;
+    virtual void addPheromones( double factor)=0;
 
     virtual Ant* clone() = 0;
     
 protected: 
     
+    
+    PheromoneMatrix& _pm;
     unsigned _antNumber;
     double _alpha, _beta;
 
@@ -45,16 +47,16 @@ protected:
 
 class AntNearest: public Ant {
 public: 
-    AntNearest(Environment& env, int k):
-        Ant(env,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch())
+    AntNearest(Environment& env, PheromoneMatrix &pm ,int k):
+        Ant(env,pm,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch())
         {
             _maxk = env.getConfig().getMaxKNearestSpots();
             _insertMode = env.getConfig().getNodeInsertMode();
         }
     
-    virtual void findTour(PheromoneMatrix &pm);
+    virtual void findTour();
     
-    virtual void addPheromones(PheromoneMatrix& pm, double factor);
+    virtual void addPheromones(double factor);
     
     virtual Ant* clone() { return new AntNearest(*this); }
     
@@ -73,7 +75,7 @@ private:
      * Computes the ratio of distance per satisfaction and then to the power of beta
      */
     double getDistancePerSatisfaction(Spot begin, Spot end, const Method& m);
-        
+    
     SpotSearch& spotsearch;
     ProblemHelper helper;
     unsigned _maxk;
@@ -86,13 +88,13 @@ class AntInsert: public Ant {
     std::vector<TourNode> insertionOrder;
     
 public: 
-    AntInsert(Environment& env, int k):
-       Ant(env,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch())
+    AntInsert(Environment& env, PheromoneMatrix &pm ,int k):
+       Ant(env,pm,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch())
        {}
     
-    virtual void findTour(PheromoneMatrix &pm);
+    virtual void findTour();
     
-    virtual void addPheromones(PheromoneMatrix& pm, double factor);
+    virtual void addPheromones(double factor);
     
     virtual Ant* clone() { return new AntInsert(*this); }
     
