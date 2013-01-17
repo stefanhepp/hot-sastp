@@ -97,8 +97,9 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
             
 	    if (!instance.isValid(insertValues)) {
 		// TODO What happens if the new node causes the tour to get invalid? Several approches:
-		// - continue;
+		// - continue; (but this does not allow us to create tours that are larger than the maximum!)
 		// - or set tauEta to something low so that it gets unlikely (but not impossible) that it will be picked
+		continue;
 	    }
             
 	    sumP += tauEta;
