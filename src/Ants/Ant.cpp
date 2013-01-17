@@ -64,7 +64,7 @@ void Ant::findTour()
 
 int AntNearest::insertSpot()
 {
-    NearestSpotList nearest = spotsearch.findNearestSpots(instance, instance.getTourLength() - 1, _antNumber); 
+    NearestSpotList nearest = spotsearch.findNearestSpots(instance, instance.getTourLength() - 1, _antNumber+1); 
     
     // find best spot and method, add it to the tour
     TourNode best = selectBestTourNode(nearest);
@@ -95,7 +95,7 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
             
 	    TourNode newNode(spotId, methodId);
 	    TourValues insertValues = instance.getInsertDeltaValues(instance.getTourLength(), newNode);
-	    
+	    //if(instance.isValid(insertValues)){
             double tauEta = getTauEta(lastNode, newNode, insertValues);
             
 	    sumP += tauEta;
@@ -105,11 +105,20 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
 	    //  - getTauEta shoud assign it a low value, so it is unlikely to get picked, but will still be picked if all other methods
 	    //    make it invalid as well or are just bad choices. We assume the localSearch will make the tour valid afterwards.
 	    //  - Skip that method, use instance.isValid(insertValues) to check if tour is still valid.
-	                
+            //}
             methodId++;
         }
     }
     
+    double r = ((double) rand() / (RAND_MAX));
+    double p = 0.0;
+    
+    for(auto& entry : candidates) 
+        if (p + entry.second/sumP > r)
+            return entry.first;
+        else 
+            p += entry.second/sumP;
+        
     // TODO r = rand(0..1); p = 0; 
     // for ( entry : tauEtaList )
     //     if p + entry.second/sumP > r then return entry.first else p += entry.second/sumP endif
@@ -122,9 +131,10 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
 
 void AntNearest::addPheromones(double factor)
 {
-    double deltaTau = getTourDeltaTau();
+    double deltaTau = factor*getTourDeltaTau();
     
-    // TODO for i in 0..tourLength-1 do _pm.addTau(instance.getNode(i - 1), instance.getNode(i), deltaTau * factor);
+    for(unsigned i =0; i <= instance.getTourLength()-1; i++)
+        _pm.addTau(instance.getNode(i - 1), instance.getNode(i), deltaTau);
     // Note: first edge has start-index -1 (the hotel)
     
 }
