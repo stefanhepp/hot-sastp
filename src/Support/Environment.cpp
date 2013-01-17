@@ -32,14 +32,15 @@ Config::Config()
     _maxRuntime = 1800;
     //the following options have to be decided upon -- this are just some initials 
     _numberOfAnts = 20; 
+    _numUpdateBestAnts = 5;
     _initialTau = 1; 
-    _alpha = 0; 
-    _beta = 0;
+    _alpha = 1; 
+    _beta = 2;
     _stepsToFinish = 10;
-    _antHeuristic = AH_INSERT;
+    _antHeuristic = AH_NEAREST;
     _minTau = 0.0;
     _maxTau = MAXDOUBLE;
-    _persistFactor = 0.95;
+    _persistFactor = 0.5;
     _improveAntSolution = false;
     _updateWithGlobalBest = 0;
 }
@@ -95,12 +96,13 @@ const option::Descriptor usage[] = {
     { HELP, 0, "h", "help", Arg::None, "  \t--help  \tPrint usage and exit." },
     {
         ALGORITHM , 0, "a", "algorithm", Arg::Numeric, "  -a <arg>, \t--algorithm=<arg>"
-        "  \tTakes an integer argument.\n \tOptions:\n \tAT_GREEDY = 0,\n \tAT_LOCALSEARCH = 1"
-        ",\n \tAT_VND = 2, \n \tAT_GRASP_LS = 3, \n \tAT_GRASP_VND = 4,\n \tAT_GVNS = 5. \n"
+        "  \tTakes an integer argument.\n \tOptions:\n \tAT_GREEDY = 0,\n \tAT_LOCALSEARCH = 1,"
+        "\n \tAT_VND = 2, \n \tAT_GRASP_LS = 3, \n \tAT_GRASP_VND = 4,\n \tAT_GVNS = 5,"
+	"\n \tAT_ANT = 6,\n \tAT_ANT_LS = 7,\n \tAT_ANT_VND = 8"
     },
     { NEIGHBORHOOD, 0, "n", "neighborhood", Arg::Numeric, "  -n <arg>, \t--neighborhood=<arg>"
         " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0,\n \tNT_EDGE_TWO_OPT = 1,\n \tNT_METHOD_TWO_OPT = 2"
-	",\n \tNT_NEAREST_TOUR_OPT = 3,\n \tNT_TWO_NODES_OPT = 4 \n"
+	",\n \tNT_NEAREST_TOUR_OPT = 3,\n \tNT_TWO_NODES_OPT = 4"
     },
     { GREEDY_NN, 0, "g", "greedy-nearest", Arg::None, "  -g, \t--greedy-nearest \tUse nearest neighbor instead of insert heuristic for greedy. " },
     {
@@ -124,39 +126,39 @@ const option::Descriptor usage[] = {
         "\tSF_RANDOM = 0,\n\tSF_NEXT = 1,\n \tSF_BEST = 2."
     },
     {
-	MAXSTEPS, 0, "m", "maxSteps", Arg::Numeric, "  -m <arg>, \t--maxSteps=<arg> \tMaximal number of steps with no improvement.\n"
+	MAXSTEPS, 0, "m", "maxSteps", Arg::Numeric, "  -m <arg>, \t--maxSteps=<arg> \tMaximal number of steps with no improvement."
     },
-    { TIMEOUT, 0, "t", "timeout", Arg::Numeric, "  -t <secs>, \t--timeout=<secs> \tTimeout for search in seconds.\n" },
+    { TIMEOUT, 0, "t", "timeout", Arg::Numeric, "  -t <secs>, \t--timeout=<secs> \tTimeout for search in seconds." },
     
-    { ANTALPHA, 0, "A", "antAlpha", Arg::Numeric, "  -A <double>, \t--antAlpha=<double> \tAlfa used for limiting the internal ratio.\n" },
+    { ANTALPHA, 0, "A", "antAlpha", Arg::Numeric, "  -A <double>, \t--antAlpha=<double> \tAlfa used for limiting the internal ratio." },
     
-    { ANTBETA, 0, "B", "antBeta", Arg::Numeric, "  -B <double>, \t--antBeta=<double> \tBeta used for limiting the internal ratio.\n" },
+    { ANTBETA, 0, "B", "antBeta", Arg::Numeric, "  -B <double>, \t--antBeta=<double> \tBeta used for limiting the internal ratio." },
     
-    { ANTTAU, 0, "T", "antTau", Arg::Numeric, "  -T <double>, \t--antTau=<double> \tInitial tau used in the ACO.\n" },
+    { ANTTAU, 0, "T", "antTau", Arg::Numeric, "  -T <double>, \t--antTau=<double> \tInitial tau used in the ACO." },
     
-    { ANTMAXTAU, 0, "", "maxTau", Arg::Numeric, "   \t--maxTau=<double> \tMax tau used in the ACO.\n" },
+    { ANTMAXTAU, 0, "", "maxTau", Arg::Numeric, "   \t--maxTau=<double> \tMax tau used in the ACO." },
     
-    { ANTMINTAU, 0, "", "minTau", Arg::Numeric, "  \t--minTau=<double> \tMin tau used in the ACO.\n" },
+    { ANTMINTAU, 0, "", "minTau", Arg::Numeric, "  \t--minTau=<double> \tMin tau used in the ACO." },
     
-    { ANTPERSITENCE, 0, "p", "persist", Arg::Numeric,   " -p <double> \t--persist=<double> \tPersistence factor used in the ACO.\n" },
+    { ANTPERSITENCE, 0, "p", "persist", Arg::Numeric,   "  -p <double> \t--persist=<double> \tPersistence factor used in the ACO." },
     
-    { ANTNUMBEROFTHEM, 0, "", "ants", Arg::Numeric, "  \t--ants=<integer> \tNumber of ants in the population.\n" },
+    { ANTNUMBEROFTHEM, 0, "", "ants", Arg::Numeric, "  \t--ants=<integer> \tNumber of ants in the population." },
    
-    { ANTSTEPS, 0, "S", "Steps", Arg::Numeric, " -S <integer> \t--Steps=<integer> \tHow many times we send the ants for solutions.\n" },
+    { ANTSTEPS, 0, "S", "Steps", Arg::Numeric, "  -S <integer> \t--Steps=<integer> \tHow many times we send the ants for solutions." },
    
-    { ANTUPDATEBEST, 0, "w", "updBest", Arg::Numeric, "  -w <unsigned> \t--updBest=<unsigned> \tNumber of best ants used to influence the pheromone matrix.\n" },
+    { ANTUPDATEBEST, 0, "w", "updBest", Arg::Numeric, "  -w <unsigned> \t--updBest=<unsigned> \tNumber of best ants used to influence the pheromone matrix." },
     
-    { ANTHEURISTICTAG, 0, "T", "heuTag", Arg::Numeric, "  \t--heuTag=<unsigned> \tNeareast Neighbor = 0 , Insert Method =1 .\n" },
+    { ANTHEURISTICTAG, 0, "T", "heuTag", Arg::Numeric, "  \t--heuTag=<unsigned> \tNeareast Neighbor = 0 , Insert Method =1" },
     
-    { ALPHA , 0, "", "alpha", Arg::NonEmpty, "   \t--alpha=<arg> \tAlpha for the construction of Restricted Candidates List. values in [0..1]\n"},
+    { ALPHA , 0, "", "alpha", Arg::NonEmpty, "   \t--alpha=<arg> \tAlpha for the construction of Restricted Candidates List. Values in [0..1]"},
     
-    { UPDATEGLOBAL, 0, "u", "updGlobal", Arg::Numeric, "  -u <unsigned> \t--updGlobal=<unsigned> \tUpdate with global best solution every n'th step.\n" },
+    { UPDATEGLOBAL, 0, "u", "updGlobal", Arg::Numeric, "  -u <unsigned> \t--updGlobal=<unsigned> \tUpdate with global best solution every n'th step." },
     
-    { IMPROVEANTS, 0, "", "improveAnts", Arg::None, "  \t--improveAnts \tUse improved solutions to update pheromones.\n" },
+    { IMPROVEANTS, 0, "", "improveAnts", Arg::None, "  \t--improveAnts \tUse improved solutions to update pheromones." },
       
     {
         UNKNOWN, 0, "", "", Arg::None,
-        "Default values for the options are: \n"
+        "\nDefault values for the options are: \n"
 	" algorithm : AT_GREEDY; \n"
 	" maxKNearestSpots : 10;\n"
 	" nodeInsertMode : NIM_SHORTEST_PATH;\n"
@@ -173,7 +175,7 @@ const option::Descriptor usage[] = {
 
 void Config::printHelp()
 {
-    int columns = getenv ("COLUMNS") ? atoi (getenv ("COLUMNS")) : 80;
+    int columns = getenv ("COLUMNS") ? atoi (getenv ("COLUMNS")) : 100;
     option::printUsage (fwrite, stdout, usage, columns);
 }
 
