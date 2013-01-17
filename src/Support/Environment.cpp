@@ -31,12 +31,12 @@ Config::Config()
     _alphaRCL = 1;
     _maxRuntime = 1800;
     //the following options have to be decided upon -- this are just some initials 
+    _stepsToFinish = 10000;
     _numberOfAnts = 20; 
     _numUpdateBestAnts = 5;
     _initialTau = 1; 
     _alpha = 1; 
     _beta = 2;
-    _stepsToFinish = 10;
     _antHeuristic = AH_NEAREST;
     _minTau = 0.0;
     _maxTau = MAXDOUBLE;

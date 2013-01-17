@@ -244,6 +244,7 @@ void Driver::solve()
         
         if (verbose) cout << "Running ACO with DummySearch .. " << endl;
         
+	env.setPrintSteps(true);
         ants.run();
         
 	solution = ants.getInstance().createSolution();
@@ -257,6 +258,7 @@ void Driver::solve()
         
         if(verbose) cout << " Running ACO with Local Search .. " << endl;
         
+	env.setPrintSteps(true);
         ants.run();
 	
 	solution = ants.getInstance().createSolution();
@@ -270,6 +272,7 @@ void Driver::solve()
         
         if (verbose) cout << "Running ACO with VND as local search .." << endl;
         
+	env.setPrintSteps(true);
         ants.run();
         
 	solution = ants.getInstance().createSolution();

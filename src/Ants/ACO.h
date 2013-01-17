@@ -26,6 +26,8 @@ class ACO : public AbstractSearch
     // The local search to use to improve the results
     AbstractSearch &localSearch;
     
+    unsigned maxSteps;
+    
     // If true, improve results only for evaluation, not for pheromone update
     bool improveAntSolution;
     

@@ -18,16 +18,25 @@ public:
     
     virtual void run() =0;
     
+    int getCurrentStep() const { return _currStep; }
+    
+    int getLastImprovementStep() const { return _lastImprovementStep; }
+    
 protected:
     int _noImprovement;
     int _maxSteps;
+    int _currStep;
+    int _lastImprovementStep;
     
     Environment& env;
     SASTProblem& problem;
     
     Config::StepFunction stepFunction;
-    void start() { _noImprovement =0; }
+    
+    void start() { _noImprovement =0; _lastImprovementStep = 0; _currStep = 0; }
+    
     bool shouldStop(double improvement);
+    
 };
 
 // Search implementation that does not modify the instance.

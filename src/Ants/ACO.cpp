@@ -8,9 +8,9 @@
 using namespace std;
 
 ACO::ACO(Environment& env, AbstractSearch &localSearch)
-: AbstractSearch(env, env.getConfig().getNumberOfSteps()),
+: AbstractSearch(env, env.getConfig().getMaxStepsNoChange()),
   instance(env.getProblem()), bestAnt(0), PM(env), 
-  localSearch(localSearch)
+  localSearch(localSearch), maxSteps(env.getConfig().getNumberOfSteps())
 {
     improveAntSolution = env.getConfig().doImproveAntSolution();
     updateWithGlobalBest = env.getConfig().getUpdateWithGlobalBest();
@@ -32,8 +32,6 @@ void ACO::run()
     
     SatisfactionList satisfaction;
     satisfaction.reserve(ants.size());
-    
-    unsigned round = 0;
     
     // just to be on the safe side, initialize best ant with empty tour
     setBestAnt(ants[0]);
@@ -85,7 +83,7 @@ void ACO::run()
 	}
 	
 	// update pheromone matrix
-	updatePheromones(satisfaction, round);
+	updatePheromones(satisfaction, getCurrentStep());
 	
 	// calculate deltaSatisfaction, print solution
 	deltaSatisfaction += instance.getTotalSatisfaction();
@@ -93,9 +91,7 @@ void ACO::run()
 	env.setPrintSteps(printStep);
 	env.printStepResult(instance);
 	
-	round++;
-	
-    } while (!shouldStop(deltaSatisfaction));
+    } while (!shouldStop(deltaSatisfaction) && getCurrentStep() <= maxSteps);
 
 }
 
