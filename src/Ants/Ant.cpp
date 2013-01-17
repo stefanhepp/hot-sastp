@@ -1,6 +1,8 @@
 #include "Ant.h"
 
 #include <math.h>
+#include <map>
+#include <algorithm>
 
 #include "Framework/SASTProblem.h"
 #include "Solver/TourNeighborhood.h"
@@ -135,13 +137,45 @@ void AntNearest::addPheromones(double factor)
 }
 
 
+void AntInsert::findTour()
+{
+    insertionOrder.clear();
+    
+    Ant::findTour();
+}
 
 void AntInsert::setInstance(const Instance& inst)
 {
-    // TODO we should update the insertionOrder: 
+    // we update the insertionOrder: 
     // - remove all nodes in insertionOrder where the spot is no longer in the tour
     // - update tournodes in insertionOrder with new method-id if spot is still in the tour
     // - add nodes in the tour that are new to the insertionOrder at the end
+    
+    // Keep track of nodes that are in the new tour
+    // spotid->methodid
+    std::map<unsigned, unsigned> knownSpots; 
+    
+    for (TourNode node : inst.getTour()) {
+	knownSpots[node.spot] = node.method;
+    }
+    
+    for (int i = 0; i < insertionOrder.size(); i++) {
+	auto it = knownSpots.find(insertionOrder[i].spot);
+	if (it == knownSpots.end()) {
+	    // node has been removed, remove it from insertionOrder
+	    insertionOrder.erase(insertionOrder.begin()+i);
+	    i--;
+	} else {
+	    // node still exists, update method
+	    insertionOrder[i].method = it->second;
+	    knownSpots.erase(it);
+	}
+    }
+    
+    // add left over nodes to tour
+    for (auto node : knownSpots) {
+	insertionOrder.push_back(TourNode(node.first, node.second));
+    }
     
     Ant::setInstance(inst);
 }

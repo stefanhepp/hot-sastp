@@ -79,7 +79,6 @@ public:
     AntNearest(Environment& env, PheromoneMatrix &pm, int k):
         Ant(env,pm,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch())
         {
-            _maxk = env.getConfig().getMaxKNearestSpots();
             _insertMode = env.getConfig().getNodeInsertMode();
         }
     
@@ -108,6 +107,8 @@ public:
        Ant(env,pm,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch()), 
        _insertMode(env.getConfig().getNodeInsertMode())
        {}
+       
+    virtual void findTour();
     
     virtual void setInstance(const Instance& inst);
     
