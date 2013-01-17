@@ -24,7 +24,7 @@ public:
     
     Instance &getInstance() { return instance; }
     
-    void setInstance(const Instance& inst) { instance = inst; }
+    virtual void setInstance(const Instance& inst) { instance = inst; }
     
     // construct a tour based on the pheromeone matrix and the neighborhood heuristics
     virtual void findTour()=0;
@@ -93,6 +93,8 @@ public:
        {}
     
     virtual void findTour();
+    virtual void setInstance(const Instance& inst);
+
     
     virtual void addPheromones(double factor);
     

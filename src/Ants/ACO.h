@@ -27,7 +27,7 @@ class ACO : public AbstractSearch
     AbstractSearch &localSearch;
     
     // If true, improve results only for evaluation, not for pheromone update
-    bool improveForFitnessOnly;
+    bool improveAntSolution;
     
     unsigned updateWithGlobalBest;
     
