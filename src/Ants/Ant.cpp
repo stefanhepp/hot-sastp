@@ -11,7 +11,6 @@ Ant::Ant(Environment &env, PheromoneMatrix& pm, int k)
     _antNumber = k; 
     _alpha = env.getConfig().getAntAlpha();
     _beta = env.getConfig().getAntBeta();
-    // TODO insert neighborhood structures, if required
 }
 
 double Ant::getTauEta(TourNode lastNode, TourNode newNode, TourValues deltaValues)
@@ -87,25 +86,24 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
 	
         unsigned bestInsert;
         
-       // helper.getInsertDeltaTourLength(instance, tournode, nearestspot, _insertMode, bestInsert);
-       
         // check all methods of this spot
         unsigned methodId = 0;
         for (const auto& m : nearestspot.getMethods()) {
             
 	    TourNode newNode(spotId, methodId);
 	    TourValues insertValues = instance.getInsertDeltaValues(instance.getTourLength(), newNode);
-	    //if(instance.isValid(insertValues)){
-            double tauEta = getTauEta(lastNode, newNode, insertValues);
+	    
+	    double tauEta = getTauEta(lastNode, newNode, insertValues);
+            
+	    if (!instance.isValid(insertValues)) {
+		// TODO What happens if the new node causes the tour to get invalid? Several approches:
+		// - continue;
+		// - or set tauEta to something low so that it gets unlikely (but not impossible) that it will be picked
+	    }
             
 	    sumP += tauEta;
 	    candidates.push_back(std::make_pair(newNode,tauEta));
 
-	    // TODO What happens if the new node causes the tour to get invalid? Several approches:
-	    //  - getTauEta shoud assign it a low value, so it is unlikely to get picked, but will still be picked if all other methods
-	    //    make it invalid as well or are just bad choices. We assume the localSearch will make the tour valid afterwards.
-	    //  - Skip that method, use instance.isValid(insertValues) to check if tour is still valid.
-            //}
             methodId++;
         }
     }
@@ -113,17 +111,13 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
     double r = ((double) rand() / (RAND_MAX));
     double p = 0.0;
     
-    for(auto& entry : candidates) 
+    for(auto& entry : candidates) {
         if (p + entry.second/sumP > r)
             return entry.first;
         else 
             p += entry.second/sumP;
-        
-    // TODO r = rand(0..1); p = 0; 
-    // for ( entry : tauEtaList )
-    //     if p + entry.second/sumP > r then return entry.first else p += entry.second/sumP endif
+    }
     
-
     // we should only reach that point if our tauEtaList is empty (i.e. we found no usable methods), 
     // we return just some best guess here
     return TourNode(nearest.front().second, 0);
@@ -131,12 +125,12 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
 
 void AntNearest::addPheromones(double factor)
 {
-    double deltaTau = factor*getTourDeltaTau();
+    double deltaTau = factor * getTourDeltaTau();
     
-    for(unsigned i =0; i <= instance.getTourLength()-1; i++)
-        _pm.addTau(instance.getNode(i - 1), instance.getNode(i), deltaTau);
     // Note: first edge has start-index -1 (the hotel)
-    
+    for(unsigned i =0; i <= instance.getTourLength()-1; i++) {
+        _pm.addTau(instance.getNode(i - 1), instance.getNode(i), deltaTau);
+    }
 }
 
 
