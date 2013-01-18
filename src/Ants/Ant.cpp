@@ -7,8 +7,20 @@
 #include "Framework/SASTProblem.h"
 #include "Solver/TourNeighborhood.h"
 
-Ant::Ant(Environment &env, PheromoneMatrix& pm, int k)
-: instance(env.getProblem()),_pm(pm), problem(env.getProblem())
+
+
+AntNeighborhood::AntNeighborhood(Environment& env, unsigned int k)
+: _antNumber(k)
+{
+    // TODO get min/max from config
+    _maxK = (k+1)*2;
+}
+
+
+
+Ant::Ant(Environment &env, PheromoneMatrix &pm, AntNeighborhood &nb, int k)
+: instance(env.getProblem()),_pm(pm), problem(env.getProblem()), helper(env.getProblem(), env.getSpotSearch()), 
+  spotsearch(env.getSpotSearch()), neighborhood(nb)
 {
     _antNumber = k; 
     _alpha = env.getConfig().getAntAlpha();
@@ -59,11 +71,13 @@ void Ant::findTour()
     }
 }
 
-TourNode Ant::selectBestTourNode(NearestSpotList nearest, unsigned int& insertAt, Config::NodeInsertMode insertMethod)
+TourNode Ant::selectBestTourNode(NearestSpotList nearest, unsigned int& insertAt, Config::NodeInsertMode insertMode)
 {
     // list contains pairs of valid candidates, and their tauEta value
     std::vector<std::pair<TourNode,double>> candidates;   
     double sumP = 0;
+    
+    std::vector<unsigned> insertPos;
     
     for(const auto& ps : nearest) {
         int tournode = ps.first;
@@ -71,6 +85,9 @@ TourNode Ant::selectBestTourNode(NearestSpotList nearest, unsigned int& insertAt
         
         const Spot& nearestspot = problem.getSpot(spotId);
         TourNode lastNode = getLastNode();
+	
+	unsigned bestInsert = helper.findInsertPosition(instance, tournode, nearestspot, insertMode);
+	//double deltaTour = helper.getInsertDeltaTourLength(instance, tournode, nearestspot, insertMode, bestInsert);
 	
         // check all methods of this spot
         unsigned methodId = 0;
@@ -91,6 +108,7 @@ TourNode Ant::selectBestTourNode(NearestSpotList nearest, unsigned int& insertAt
             
 	    sumP += tauEta;
 	    candidates.push_back(std::make_pair(newNode,tauEta));
+	    insertPos.push_back(bestInsert);
 
             methodId++;
         }
@@ -99,11 +117,15 @@ TourNode Ant::selectBestTourNode(NearestSpotList nearest, unsigned int& insertAt
     double r = ((double) rand() / (RAND_MAX));
     double p = 0.0;
     
+    int i = 0;
     for (auto& entry : candidates) {
-        if (p + entry.second/sumP > r)
+        if (p + entry.second/sumP > r) {
+	    insertAt = insertPos[i];
             return entry.first;
-        else 
+	} else {
             p += entry.second/sumP;
+	}
+	i++;
     }
 
     // we should only reach that point if our tauEtaList is empty (i.e. we found no usable methods), 
@@ -115,11 +137,11 @@ TourNode Ant::selectBestTourNode(NearestSpotList nearest, unsigned int& insertAt
 
 int AntNearest::insertSpot()
 {
-    NearestSpotList nearest = spotsearch.findNearestSpots(instance, instance.getTourLength() - 1, (_antNumber+1)*2); 
+    NearestSpotList nearest = spotsearch.findNearestSpots(instance, instance.getTourLength() - 1, neighborhood.getMaxNearestK()); 
     
     // find best spot and method, add it to the tour
     unsigned insertAt;
-    TourNode best = selectBestTourNode(nearest, insertAt, Config::NIM_ALWAYS_BEFORE);
+    TourNode best = selectBestTourNode(nearest, insertAt, Config::NIM_ALWAYS_AFTER);
     
     return instance.addNode(best);
 }
@@ -188,11 +210,11 @@ void AntInsert::setInstance(const Instance& inst)
 
 int AntInsert::insertSpot()
 {
-    // TODO interpret construction graph not as tour but as decision tree which 
+    // Interpret construction graph not as tour but as decision tree which 
     // nodes to insert -> t_ij means: insert node j after node i has been inserted into tour
     // But where to insert? use shortest distance!
 
-    NearestSpotList nearest = spotsearch.findNearestTourSpots(instance, (_antNumber+1)*2, true); 
+    NearestSpotList nearest = spotsearch.findNearestTourSpots(instance, neighborhood.getMaxNearestK(), true); 
     
     // find best spot and method, add it to the tour
     unsigned insertAt;

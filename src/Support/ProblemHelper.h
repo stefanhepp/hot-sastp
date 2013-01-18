@@ -29,6 +29,8 @@ public:
     double getInsertDeltaTourLength(const Instance& tour, unsigned index, const Spot& newspot, 
 				     Config::NodeInsertMode insertMode, unsigned &bestInsert);
     
+    unsigned findInsertPosition(const Instance& tour, unsigned index, const Spot& newspot, Config::NodeInsertMode insertMode);
+    
     /**
      * Calculate the ratio of delta satisfaction to delta time for inserting a new method into the tour 
      * with additional travel distance deltaTime.
