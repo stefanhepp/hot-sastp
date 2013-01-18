@@ -115,7 +115,7 @@ TourNode Ant::selectBestTourNode(NearestSpotList nearest, unsigned int& insertAt
 
 int AntNearest::insertSpot()
 {
-    NearestSpotList nearest = spotsearch.findNearestSpots(instance, instance.getTourLength() - 1, _antNumber+1); 
+    NearestSpotList nearest = spotsearch.findNearestSpots(instance, instance.getTourLength() - 1, (_antNumber+1)*2); 
     
     // find best spot and method, add it to the tour
     unsigned insertAt;
@@ -192,7 +192,7 @@ int AntInsert::insertSpot()
     // nodes to insert -> t_ij means: insert node j after node i has been inserted into tour
     // But where to insert? use shortest distance!
 
-    NearestSpotList nearest = spotsearch.findNearestTourSpots(instance, _antNumber+1, true); 
+    NearestSpotList nearest = spotsearch.findNearestTourSpots(instance, (_antNumber+1)*2, true); 
     
     // find best spot and method, add it to the tour
     unsigned insertAt;

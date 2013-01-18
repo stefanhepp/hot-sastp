@@ -119,6 +119,9 @@ void ACO::setBestAnt(Ant* ant)
 
 void ACO::updatePheromones(SatisfactionList &satisfaction, unsigned round)
 {
+    // evaporate pheromones
+    PM.evaporate();
+
     // sort ants by satisfaction, use first m ants to update pheromones
     sort(satisfaction.begin(), satisfaction.end(), 
 	  [](pair<size_t,double> a, pair<size_t,double> b) {
@@ -146,8 +149,5 @@ void ACO::updatePheromones(SatisfactionList &satisfaction, unsigned round)
     for (int i = 0; i < w; i++) {
 	int k = satisfaction[i].first;
 	ants[k]->addPheromones(w - i);
-    }
-    
-    // evaporate pheromones
-    PM.evaporate();
+    }    
 }

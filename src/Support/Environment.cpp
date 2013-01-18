@@ -154,7 +154,7 @@ const option::Descriptor usage[] = {
     
     { ANTMINTAU, 0, "D", "minTau", Arg::Double, "  -D <double>, \t--minTau=<double> \tMin tau used in the ACO." },
     
-    { ANTPERSITENCE, 0, "P", "persist", Arg::Numeric,   "  -P <double>, \t--persist=<double> \tPersistence factor used in the ACO." },
+    { ANTPERSITENCE, 0, "P", "persist", Arg::Double,   "  -P <double>, \t--persist=<double> \tPersistence factor used in the ACO." },
     
     { ANTNUMBEROFTHEM, 0, "N", "ants", Arg::Numeric, "  -N <integer>, \t--ants=<integer> \tNumber of ants in the population." },
    
