@@ -161,7 +161,7 @@ const option::Descriptor usage[] = {
    
     { ANTUPDATEBEST, 0, "W", "updBest", Arg::Numeric, "  -W <unsigned> \t--updBest=<unsigned> \tNumber of best ants used to influence the pheromone matrix." },
     
-    { ANTHEURISTICTAG, 0, "T", "heuTag", Arg::Numeric, "  \t--heuTag=<unsigned> \tNeareast Neighbor = 0 , Insert Method =1" },
+    { ANTHEURISTICTAG, 0, "H", "heuTag", Arg::Numeric, "  -H, \t--heuTag=<unsigned> \tNeareast Neighbor = 0 , Insert Method =1" },
     
     { UPDATEGLOBAL, 0, "U", "updGlobal", Arg::Numeric, "  -U <unsigned> \t--updGlobal=<unsigned> \tUpdate with global best solution every n'th step." },
     
