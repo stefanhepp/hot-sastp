@@ -10,6 +10,22 @@
 
 #include <vector>
 
+class AntNeighborhood {
+protected:
+    unsigned _antNumber;
+    unsigned _maxK;
+    
+public:
+    AntNeighborhood(Environment &env, unsigned k);
+            
+    unsigned getMaxNearestK() { return _maxK; }
+    
+    
+};
+
+
+
+
 // This class implements the behaviour of ant k. 
 // An ant creates a tour based on some heuristics and a parametrized neighborhood.
 class Ant
@@ -19,8 +35,14 @@ protected:
     
     SASTProblem &problem;
     
+    ProblemHelper helper;
+    
+    SpotSearch& spotsearch;    
+    
+    AntNeighborhood &neighborhood;
+    
 public:
-    Ant(Environment &env, PheromoneMatrix& pm, int k) ;
+    Ant(Environment &env, PheromoneMatrix &pm, AntNeighborhood &nb, int k);
 
     virtual ~Ant() {}
     
@@ -87,11 +109,9 @@ protected:
 
 class AntNearest: public Ant {
 public: 
-    AntNearest(Environment& env, PheromoneMatrix &pm, int k):
-        Ant(env,pm,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch())
-        {
-            _insertMode = env.getConfig().getNodeInsertMode();
-        }
+    AntNearest(Environment& env, PheromoneMatrix &pm, AntNeighborhood &nb, int k)
+     : Ant(env,pm,nb,k)
+    { }
     
     virtual void addPheromones(double factor);
     
@@ -105,10 +125,6 @@ protected:
     virtual TourValues getInsertValues(int tournode, TourNode newNode, unsigned &insertAt);
     
 private:        
-    SpotSearch& spotsearch;
-    ProblemHelper helper;
-    
-    Config::NodeInsertMode _insertMode;
     
 };
 
@@ -116,8 +132,8 @@ class AntInsert: public Ant {
     std::vector<TourNode> insertionOrder;
     
 public: 
-    AntInsert(Environment& env, PheromoneMatrix &pm, int k):
-       Ant(env,pm,k), spotsearch(env.getSpotSearch()), helper(env.getProblem(), env.getSpotSearch()), 
+    AntInsert(Environment& env, PheromoneMatrix &pm, AntNeighborhood &nb, int k):
+       Ant(env,pm,nb,k), 
        _insertMode(env.getConfig().getNodeInsertMode())
        {}
        
@@ -137,9 +153,6 @@ protected:
     virtual TourValues getInsertValues(int tournode, TourNode newNode, unsigned &insertAt);
 private:     
     
-    SpotSearch& spotsearch;
-    ProblemHelper helper;
-
     Config::NodeInsertMode _insertMode;
 };
 #endif // ANT_H

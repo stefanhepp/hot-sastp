@@ -98,13 +98,15 @@ void ACO::run()
 
 void ACO::initAnts(int numAnts)
 {
-    for (int i = 0; i < numAnts; i++) {
+    for (int k = 0; k < numAnts; k++) {
 	Ant *ant;
 	
+	AntNeighborhood *nb = new AntNeighborhood(env, k);
+	
 	if (env.getConfig().getAntHeuristics() == Config::AH_NEAREST) {
-	    ant = new AntNearest(env,PM, i);
+	    ant = new AntNearest(env,PM, *nb, k);
 	} else {
-	    ant = new AntInsert(env,PM, i);
+	    ant = new AntInsert(env,PM, *nb, k);
 	}
 	
 	ants.push_back( ant );
