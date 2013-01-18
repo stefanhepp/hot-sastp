@@ -16,6 +16,8 @@ class PheromoneMatrix
     double minTau;
     double maxTau;
  
+    bool debug;
+    
     // Spot_i->Method_i->Spot_j->Method_j->Tau_ij
     double ****matrix;
     

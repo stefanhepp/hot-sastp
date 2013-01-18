@@ -223,6 +223,6 @@ void AntInsert::addPheromones(double factor)
     for(unsigned i = 0; i < insertionOrder.size(); i++) {
         _pm.addTau(lastNode, insertionOrder[i], deltaTau);
 	lastNode = insertionOrder[i];
-    }    
+    }
 }
 
