@@ -154,15 +154,15 @@ const option::Descriptor usage[] = {
     
     { ANTMINTAU, 0, "D", "minTau", Arg::Double, "  -D <double>, \t--minTau=<double> \tMin tau used in the ACO." },
     
-    { ANTPERSITENCE, 0, "P", "persist", Arg::Numeric,   "  -P <double> \t--persist=<double> \tPersistence factor used in the ACO." },
+    { ANTPERSITENCE, 0, "P", "persist", Arg::Numeric,   "  -P <double>, \t--persist=<double> \tPersistence factor used in the ACO." },
     
     { ANTNUMBEROFTHEM, 0, "N", "ants", Arg::Numeric, "  -N <integer>, \t--ants=<integer> \tNumber of ants in the population." },
    
-    { ANTSTEPS, 0, "S", "Steps", Arg::Numeric, "  -S <integer> \t--Steps=<integer> \tHow many times we send the ants for solutions." },
+    { ANTSTEPS, 0, "S", "Steps", Arg::Numeric, "  -S <integer>, \t--Steps=<integer> \tHow many times we send the ants for solutions." },
    
     { ANTUPDATEBEST, 0, "W", "updBest", Arg::Numeric, "  -W <unsigned> \t--updBest=<unsigned> \tNumber of best ants used to influence the pheromone matrix." },
     
-    { ANTHEURISTICTAG, 0, "T", "heuTag", Arg::Numeric, "  \t--heuTag=<unsigned> \tNeareast Neighbor = 0 , Insert Method =1" },
+    { ANTHEURISTICTAG, 0, "H", "heuTag", Arg::Numeric, "  -H <unsigned> \t--heuTag=<unsigned> \tNeareast Neighbor = 0 , Insert Method =1" },
     
     { UPDATEGLOBAL, 0, "U", "updGlobal", Arg::Numeric, "  -U <unsigned> \t--updGlobal=<unsigned> \tUpdate with global best solution every n'th step." },
     
