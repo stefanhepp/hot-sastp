@@ -94,6 +94,7 @@ struct Arg: public option::Arg {
         if (msg) printError ("Option '", option, "' requires a floating point argument\n");
         return option::ARG_ILLEGAL;	
     }
+
 };
 
 enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DEBUG, DOT, PRINT_CSV, PRINT_ALL_STEPS, 
