@@ -1,0 +1,476 @@
+\documentclass{article}
+
+\usepackage{algorithm}
+\usepackage[noend]{algorithmic}
+
+\usepackage{multirow}
+\usepackage{datatool}
+\usepackage{graphicx}
+
+\usepackage[margin=1in]{geometry}
+
+
+% TODO Add title
+% VU Heuristic Optimization
+%  SASTP, Exercise 2
+%  Ioan Dragan, 
+%  Stefan Hepp, 0026640
+
+\title{SASTP Exercise 2\\
+{VU Heuristic Optimization Techniques} }
+\author{Stefan Hepp, 0026640 \\
+Ioan Dragan, 0856561 }
+
+\begin{document}
+\maketitle
+\section{General description of the framework and algorithms}
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%% Here we load the files containing the results  %%%%%%%
+
+\DTLloaddb[]{greedyNN}{greedy/AT_GREEDY_NN/greedy_AT_GREEDY_NN.csv}
+\DTLloaddb[]{greedyIN}{greedy/AT_GREEDY_IN/greedy_AT_GREEDY_IN.csv}
+\DTLloaddb[]{localOne}{localSearch/OneOptRepo.csv }
+\DTLloaddb[]{localEdge}{localSearch/EdgeOptReport.csv}
+\DTLloaddb[]{localMethod}{localSearch/MethodOptReport.csv}
+\DTLloaddb[]{vndDeterministic}{VND/VNDResD.csv}
+\DTLloaddb[]{vndThree}{VND/threeN/report.csv}
+\DTLloaddb[]{graspOne}{grasp/oneOpt/oneOpt.csv}
+\DTLloaddb[]{graspEdge}{grasp/edgeOpt/edgeOpt.csv}
+\DTLloaddb[]{graspMethod}{grasp/methodOpt/methodOpt.csv}
+\DTLloaddb[]{graspVND}{grasp/vndS.csv}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% Greedy %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Results and discussion}
+
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Computed values using the greedy algorithm, nearest neighbor strategy}
+  \setlength{\tabcolsep}{1.5mm}
+  \centering
+  \begin{tabular}{lrrrrl}
+    \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries k=5} & 
+      \multicolumn{2}{c}{\bfseries k=10}  \\
+    &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Satis.& 
+    \bfseries Time  
+    \DTLforeach{greedyNN}{\prob=problem,\stam=stamina,\time=time,\stamin=stamina1,\tim=time1}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \stam &\time & \stamin & \tim%
+    }
+    \\\hline
+  \end{tabular}
+\label{tab:greedyNN}
+\end{table}
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Computed values using the greedy algorithm, insertion neighbor strategy}
+  \label{tab:GreedyIN}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrl}
+   \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries k=5} & 
+      \multicolumn{2}{c}{\bfseries k=10}  \\
+    &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Satis. & 
+   	\bfseries Time 
+    \DTLforeach{greedyIN}{\prob=problem,\stam=stamina,\time=time,\stamin=stamina1,\tim=time1}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \stam &\time & \stamin & \tim%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%% Local Search %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% TODO just use k=10 for all of them (or some other k)
+% TODO use same header as for Greedy for deterministic local search (two column per variant, Satisf. and Time)
+% TODO use 4 columns per randomized search result (grasp, random step)
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Computed values using the local search algorithm, using SpotOneOpt}
+  \label{tab:localOne}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries Next} &
+      \multicolumn{2}{c}{\bfseries Best} & 
+      \multicolumn{4}{c}{\bfseries Ramdom}  \\
+    &
+    \bfseries Sastis. &
+    \bfseries Time. &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time  
+    \DTLforeach{localOne}{\prob=problem,\next=next,\ti=t1,\best=best,\tii=t2,\ki=k5,\devi=dev5,\kii=k10,\devii=dev10,\maxsat=maxsat,\time=time}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \next &\ti & \best & \tii & \maxsat  & \kii & \devii & \time%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Computed values using the local search algorithm, using Edge Two Opt}
+  \label{tab:localEdge}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries Next} &
+      \multicolumn{2}{c}{\bfseries Best} & 
+      \multicolumn{4}{c}{\bfseries Random}  \\
+    &
+    \bfseries Sastis. &
+    \bfseries Time. &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time  
+    \DTLforeach{localEdge}{\prob=problem,\next=next,\ti=t1,\best=best,\tii=t2,\ki=k5,\devi=dev5,\kii=k10,\devii=dev10,\maxsat=maxsat,\time=time}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \next &\ti & \best & \tii & \maxsat & \kii & \devii & \time%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Computed values using the local search algorithm, using Method Two Opt}
+  \label{tab:localMethod}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries Next} &
+      \multicolumn{4}{c}{\bfseries Random}  \\
+    &
+    \bfseries Sastis. &
+    \bfseries Time. &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time  
+     \DTLforeach{localMethod}{\prob=problem,\next=next,\ti=t1,\ki=k5,\devi=dev5,\kii=k10,\devii=dev10,\maxsat=maxsat,\time=time}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \next &\ti & \maxsat & \kii & \devii & \time%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% VND %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Computed values using the VND, using step function Next and Best, with only edge and method neighborhoods active }
+  \label{tab:vndDeterministic}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+      \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries Next} & 
+      \multicolumn{2}{c}{\bfseries Best}  \\
+    &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Satis. & 
+   	\bfseries Time 
+    \DTLforeach{vndDeterministic}{\prob=problem,\next=next,\nkv=nk5,\nkxv=nk15,\avgti=avgt1,\best=best,\kv=k5,\kxv=k15,\avgtii=avgt2}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \next &\avgti & \best &\avgtii%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Computed values using the VND, using step function Next and Best with all three neighborhoods active }
+  \label{tab:vndThree}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrr}
+    \multirow{2}{*}{\bfseries Problem} &
+    \multicolumn{2}{c}{\bfseries Next} & 
+    \multicolumn{2}{c}{\bfseries Best}  \\
+    &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Satis. & 
+   	\bfseries Time 
+    \DTLforeach{vndThree}{\prob=problem,\rand=rand,\rtime=rtime,\next=next,\ntime=ntime,\best=best,\btime=btime}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \next &\ntime & \best & \btime%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% GRASP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Grasp using the local search, oneOpt, using step function Next and Best }
+  \label{tab:graspLSOneNB}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+     \multirow{2}{*}{\bfseries Problem} &
+    \multicolumn{4}{c}{\bfseries Next} &
+    \multicolumn{4}{c}{\bfseries Best}  \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time
+    \DTLforeach{graspEdge}{\prob=problem,\best=best,\devb=devb,\next=next,\devn=devn,\rand=rand,\devr=devr,\maxb=maxb,\timeb=timeb,\maxn=maxn,\timen=timen,\maxr=maxr,\timer=timer}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob &\maxn & \next & \devn & \timen & \maxb & \best & \devb & \timeb %
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Grasp using the local search, oneOpt, using step function Random}
+  \label{tab:graspLSOneR}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \multirow{2}{*}{\bfseries Problem} &
+    \multicolumn{4}{c}{\bfseries Random} \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time 
+     \DTLforeach{graspEdge}{\prob=problem,\best=best,\devb=devb,\next=next,\devn=devn,\rand=rand,\devr=devr,\maxb=maxb,\timeb=timeb,\maxn=maxn,\timen=timen,\maxr=maxr,\timer=timer}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \maxr & \rand & \devr& \timer%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Grasp using the local search, edgeOption, using step function Next and Best }
+  \label{tab:graspLSEdgeNB}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \multirow{2}{*}{\bfseries Problem} &
+    \multicolumn{4}{c}{\bfseries Next} &
+    \multicolumn{4}{c}{\bfseries Best}  \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time
+    \DTLforeach{graspEdge}{\prob=problem,\best=best,\devb=devb,\next=next,\devn=devn,\rand=rand,\devr=devr,\maxb=maxb,\timeb=timeb,\maxn=maxn,\timen=timen,\maxr=maxr,\timer=timer}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob &\maxn & \next & \devn & \timen & \maxb & \best & \devb & \timeb %
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Grasp using the local search, edgeOption, using step function Random }
+  \label{tab:graspLSEdgeR}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \multirow{2}{*}{\bfseries Problem} &
+    \multicolumn{4}{c}{\bfseries Random} \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time 
+    \DTLforeach{graspEdge}{\prob=problem,\best=best,\devb=devb,\next=next,\devn=devn,\rand=rand,\devr=devr,\maxb=maxb,\timeb=timeb,\maxn=maxn,\timen=timen,\maxr=maxr,\timer=timer}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \maxr & \rand & \devr& \timer%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Grasp using the local search, methodOpt and step function Next and Best }
+  \label{tab:graspLSMethod}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+    \multirow{2}{*}{\bfseries Problem} &
+    \multicolumn{4}{c}{\bfseries Next} &
+    \multicolumn{4}{c}{\bfseries Best}  \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time 
+    \DTLforeach{graspMethod}{\prob=problem,\next=next,\dev=dev,\random=random,\devr=devr,\maxn=maxn,\timen=timen,\maxr=maxr,\timer=timer}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob &\maxn & \next &\dev &\timen &\maxr & \random & \devr & \timer %
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Grasp using the VND with step function Next and Best, only EdgeOpt and MethodOpt active as neighborhoods }
+  \label{tab:graspVNDTwo}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrrrrrr}
+      \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{4}{c}{\bfseries Next} &
+      \multicolumn{4}{c}{\bfseries Best}  \\
+    &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time &
+    \bfseries Max Sat. &
+    \bfseries Avg Sat. &
+    \bfseries Std Dev. &
+    \bfseries Avg Time  
+    \DTLforeach{graspVND}{\prob=problem,\next=next,\dev=dev,\time=time,\best=best,\bdev=bdev,\btime=btime,\maxn=maxb,\maxb=maxc}{%
+      \DTLiffirstrow{\\\hline}{\\}%
+      \prob & \maxn &\next &\dev & \time & \maxb &\best & \bdev & \btime%
+    }
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Computed values using the nearest tour neighborhood}
+  \label{tab:NearestTour}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+   \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries Local Search, Next} &
+      \multicolumn{2}{c}{\bfseries VND, Next} &
+      \multicolumn{2}{c}{\bfseries Grasp (VND), Next} \\
+    &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Satis. &
+    \bfseries Time 
+    \\\hline
+sastp10   & 43.2979 & 0.00 & 43.2979 & 0.00 & 43.2979 & 0.02 \\
+sastp20   & 67.2554 & 0.00 & 69.9204 & 0.00 & 72.4877 & 0.14 \\
+sastp50   & 195.385 & 0.04 & 208.364 & 0.07 & 210.068 & 1.43 \\
+sastp100  & 465.156 & 0.43 & 492.373 & 0.52 & 499.048 & 21.44 \\
+sastp200  & 904.097 & 1.82 & 960.046 & 3.01 & 968.095 & 180.44 \\
+sastp500  & 2265.16 & 3.82 & 2608.02 & 80.29 & 2612.06 & 657.99 \\
+sastp1000 & 4474.67 & 1.38 & 5451.09 & 667.66 & 5449.17 & 1141.64 
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+
+\begin{figure}[htb]
+\centering
+\includegraphics{graphs/greedy.pdf}
+\caption{Greedy algorithm}
+\label{fig:greedy}
+\end{figure}
+
+\begin{figure}[htb]
+\centering
+\includegraphics{graphs/local.pdf}
+\caption{Local Search with different neighborhood configurations}
+\label{fig:localSearch}
+\end{figure}
+
+\begin{figure}[htb]
+\centering
+\includegraphics{graphs/vnd.pdf}
+\caption{VND with different step functions}
+\label{fig:vnd}
+\end{figure}
+
+\begin{figure}[htb]
+\centering
+\includegraphics{graphs/grasp.pdf}
+\caption{Grasp in different configurations}
+\label{fig:grasp}
+\end{figure}
+
+
+
+\end{document}

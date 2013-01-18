@@ -1,9 +1,10 @@
 #include "PheromoneMatrix.h"
 
 #include <cstring>
+#include <iostream>
 
 PheromoneMatrix::PheromoneMatrix (Environment &env)
-    : problem(env.getProblem())
+    : problem(env.getProblem()), debug(env.getConfig().isDebug())
 {
     defaultTau = env.getConfig().getInitialTau();
     persistFactor = env.getConfig().getPersistFactor();
@@ -83,6 +84,10 @@ void PheromoneMatrix::setTau(const TourNode start, const TourNode end, double ta
 
 void PheromoneMatrix::addTau(const TourNode start, const TourNode end, double deltaTau)
 {
+    if (debug) {
+	std::cerr << "Add Tau (" << (int)start.spot << "," << start.method << ") -> (" << end.spot << "," << end.method << ") += " << deltaTau << "\n";
+    }
+    
     setTau(start, end, getTau(start, end) + deltaTau);
 }
 

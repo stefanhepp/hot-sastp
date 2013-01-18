@@ -1,4 +1,4 @@
-all: Report.pdf
+all: Report_ex1.pdf Report_ex2.pdf
 
 CSVFILES=$(shell find . -iname "*.csv")
 
@@ -12,5 +12,11 @@ GRAPHS=$(shell find graphs -iname "*.gnu" | sed "s/.gnu$$/.pdf/")
 .PHONY: graphs
 graphs: $(GRAPHS)
 
-Report.pdf: Report.tex $(CSVFILES) $(GRAPHS) 
-	rubber -fd Report.tex
+Report_ex1.pdf: Report_ex1.tex $(CSVFILES) $(GRAPHS) 
+	rubber -fd Report_ex1.tex
+
+Report_ex2.pdf: Report_ex2.tex $(CSVFILES) $(GRAPHS) 
+	rubber -fd Report_ex2.tex
+
+clean:
+	rm -rf *.log *.pdf *.aux
