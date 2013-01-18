@@ -16,10 +16,11 @@ Config::Config()
 {
     // Set some default values
     _algorithm = AT_ANT_LS;
-    _neighborhood = NT_ONE_OPT;
+    _neighborhood = NT_EDGE_TWO_OPT;
     _maxKNearestSpots = 10;
     _nodeInsertMode = NIM_SHORTEST_PATH;
-    _stepFunction = SF_RANDOM;
+    _stepFunction = SF_NEXT;
+    _vndMode = 0;
     _greedyInsertHeuristic = true;
     _verbose = false;
     _debug = false;
@@ -33,8 +34,8 @@ Config::Config()
     //the following options have to be decided upon -- this are just some initials 
     _stepsToFinish = 10000;
     _numberOfAnts = 20; 
-    _numUpdateBestAnts = 5;
-    _initialTau = 1; 
+    _numUpdateBestAnts = 1;
+    _initialTau = 1;
     _alpha = 1; 
     _beta = 2;
 
@@ -46,7 +47,7 @@ Config::Config()
     _maxAntK = _numberOfAnts+1;
     
     _allowedTimeFactor = 1.0;
-    _persistFactor = 0.5;
+    _persistFactor = 0.8;
     _improveAntSolution = false;
     _updateWithGlobalBest = 0;
 }
@@ -102,7 +103,7 @@ struct Arg: public option::Arg {
 
 };
 
-enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DEBUG, DOT, PRINT_CSV, PRINT_ALL_STEPS, 
+enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DEBUG, DOT, PRINT_CSV, PRINT_ALL_STEPS, VNDMODE,
                   TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA, ANTALPHA, ANTBETA, ANTTAU, ANTSTEPS, ANTNUMBEROFTHEM, 
                   ANTMAXTAU, ANTMINTAU,ANTHEURISTICTAG, ANTPERSITENCE, ANTUPDATEBEST, UPDATEGLOBAL, IMPROVEANTS, PRINTBESTANTS,
 		  ANTMINK, ANTMAXK, ALLOWEDTIMEFACTOR  
@@ -123,6 +124,8 @@ const option::Descriptor usage[] = {
         " \tSelect the neighborhood.\n \tOptions:\n \tNT_ONE_OPT = 0,\n \tNT_EDGE_TWO_OPT = 1,\n \tNT_METHOD_TWO_OPT = 2"
 	",\n \tNT_NEAREST_TOUR_OPT = 3,\n \tNT_TWO_NODES_OPT = 4"
     },
+    { VNDMODE, 0, "z", "vndmode", Arg::Numeric, "  -z <unsigned> \t--vndmode=<unsigned> \tUse the given configuration for the VND neighborhoods." },
+    
     { GREEDY_NN, 0, "g", "greedy-nearest", Arg::None, "  -g, \t--greedy-nearest \tUse nearest neighbor instead of insert heuristic for greedy. " },
     {
         KNEAREST, 0, "k", "knear", Arg::Numeric, "  -k <arg>, \t--knear=<arg> \tMust have as an"

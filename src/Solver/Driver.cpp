@@ -108,15 +108,49 @@ VND* Driver::getVND(Environment& env, const Instance& init)
     
     VND* vnd = new VND(env, init);
     
+    switch (env.getConfig().getVNDMode()) {
+	case 0:
+	    // default setting
+	    nb = new EdgeTwoOPT(env);
+	    vnd->addNeighborhood(*nb);
+	case 1:
+	    nb = new MethodTwoOPT(env);
+	    vnd->addNeighborhood(*nb);
+	case 2:
+	    ni = new ConsecutiveNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
+	    nb = new NearestTourExchange(env, 2, 4, *ni);
+	    vnd->addNeighborhood(*nb);
+	    break;
+	    
+	case 3:
+	    // slightly optimized setting
+	    nb = new EdgeTwoOPT(env);
+	    vnd->addNeighborhood(*nb);
+
+	    ni = new ConsecutiveNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
+	    nb = new NearestTourExchange(env, 2, 3, *ni);
+	    vnd->addNeighborhood(*nb);
+	    
+	    break;
+	case 4:
+	    // Setting with just edge and method two-opt
+	    nb = new EdgeTwoOPT(env);
+	    vnd->addNeighborhood(*nb);
+	    
+	    nb = new MethodTwoOPT(env);
+	    vnd->addNeighborhood(*nb);
+	    
+	    break;
+	default:
+	    cerr << "Invalid setting '" << env.getConfig().getVNDMode() << "' for VND mode!\n"; 
+	    exit(1);
+    }
+
+    // Currently unused neighborhoods:
+    
     //nb = new SpotOneOPT(env);
     //vnd->addNeighborhood(*nb);
     
-    nb = new EdgeTwoOPT(env);
-    vnd->addNeighborhood(*nb);
-    
-    nb = new MethodTwoOPT(env);
-    vnd->addNeighborhood(*nb);
-
     //ni = new SearchNodeInserter(env, *as);
     //nb = new TwoNodesTourExchange(env, *ni);
     //vnd->addNeighborhood(*nb);
@@ -124,10 +158,6 @@ VND* Driver::getVND(Environment& env, const Instance& init)
     //ni = new RandomNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
     //nb = new TwoNodesTourExchange(env, *ni);
     //vnd->addNeighborhood(*nb);
-    
-    ni = new ConsecutiveNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
-    nb = new NearestTourExchange(env, 2, 4, *ni);
-    vnd->addNeighborhood(*nb);
     
     return vnd;
 }

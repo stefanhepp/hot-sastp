@@ -73,6 +73,8 @@ public:
   
     bool useGreedyInsertHeuristic() const { return _greedyInsertHeuristic; }
   
+    unsigned getVNDMode() const { return _vndMode; }
+  
     /**
      * @return  initial tau set by the user
      */
@@ -180,6 +182,7 @@ private:
     NodeInsertMode   _nodeInsertMode;
     StepFunction     _stepFunction;
     bool             _greedyInsertHeuristic;
+    unsigned         _vndMode;
     
     unsigned _maxKNearestSpots;
     unsigned _maxStepsWithNoChange;
