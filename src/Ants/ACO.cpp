@@ -48,9 +48,11 @@ void ACO::run()
 	double bestSatisfaction = instance.getTotalSatisfaction();
 	
 	int bestAntIdx = -1;
+	int numAnts = ants.size();
 	
 	// perform steps and daemon actions with all ants
-	for (size_t k = 0; k < ants.size(); k++) {
+	#pragma omp parallel for
+	for (size_t k = 0; k < numAnts; k++) {
 	    Ant* ant = ants[k];
 	
 	    if (debug) cerr << "ACO: finding tour of ant " << k << " in step " << getCurrentStep() << endl;
