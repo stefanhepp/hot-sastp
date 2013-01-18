@@ -136,6 +136,8 @@ public:
      */
     unsigned getUpdateWithGlobalBest() const { return _updateWithGlobalBest; }
     
+    bool doPrintBestAnts() const { return _printBestAnts; }
+    
     /**
      * @return the maximum number of nearest spots that should be searched for.
      */
@@ -219,6 +221,7 @@ private:
     bool _printSolution;
     bool _printCSVOutput;
     bool _printAllSteps;
+    bool _printBestAnts;
 };
 
 /**

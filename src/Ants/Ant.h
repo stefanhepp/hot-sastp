@@ -70,7 +70,7 @@ protected:
      * 
      * Computes the ratio of distance per satisfaction and then to the power of beta
      */
-    double getDistancePerSatisfaction(TourValues insertValues);
+    double getEta(TourValues insertValues);
     
     /**
      * Calculate 1/length(T^k)

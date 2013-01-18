@@ -4,6 +4,7 @@
 #include "Framework/SASTProblem.h"
 
 #include <algorithm>
+#include <iostream>
 
 using namespace std;
 
@@ -31,7 +32,7 @@ void ACO::run()
     double deltaSatisfaction = 0;
     
     SatisfactionList satisfaction;
-    satisfaction.reserve(ants.size());
+    satisfaction.resize(ants.size());
     
     // just to be on the safe side, initialize best ant with empty tour
     setBestAnt(ants[0]);
@@ -131,8 +132,14 @@ void ACO::updatePheromones(SatisfactionList &satisfaction, unsigned round)
     
     int w = std::min(ants.size(), (size_t)env.getConfig().getNumUpdateBestAnts());
     
-    if (updateWithGlobalBest && (round % updateWithGlobalBest) == 0 && bestAnt) {
-	bestAnt->addPheromones( w);
+    bool updateBestAnt = updateWithGlobalBest && (round % updateWithGlobalBest) == 0 && bestAnt;
+    
+    bool debug = env.getConfig().doPrintBestAnts();
+    
+    
+    
+    if (updateBestAnt) {
+	bestAnt->addPheromones(w);
 	w--;
     }
     

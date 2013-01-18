@@ -17,26 +17,24 @@ Ant::Ant(Environment &env, PheromoneMatrix& pm, int k)
 
 double Ant::getTauEta(TourNode lastNode, TourNode newNode, TourValues deltaValues)
 {
-    // get tau_ij
+    // get tau_ij, eta_ij^k
     double tau = _pm.getTau(lastNode, newNode);
+    double eta = getEta(deltaValues);
+    
     // calculate t_ij^alpha * n_ij^beta
-    return pow(tau, _alpha) * getDistancePerSatisfaction(deltaValues);
+    return pow(tau, _alpha) * pow(eta, _beta);
 }
 
-double Ant::getDistancePerSatisfaction(TourValues deltaValues)
+double Ant::getEta(TourValues deltaValues)
 {
-    double result;
-    //compute time per satisfaction ( = 1 / fitness )
-    result = 1 / instance.getSatisfactionPerTotalTimeRatio( deltaValues );
-    //make it to power of Beta
-    result = pow(result, _beta); 
-    //return the value to be used in the computation of p_ij^k
+    //compute satisfaction ( = fitness )
+    double result = instance.getSatisfactionPerTotalTimeRatio( deltaValues );
     return result;
 }
 
 double Ant::getTourDeltaTau() const
 {
-    return instance.getTotalTime() / instance.getTotalSatisfaction();
+    return instance.getTotalSatisfaction();
 }
 
 void Ant::findTour()

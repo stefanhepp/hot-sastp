@@ -84,11 +84,21 @@ struct Arg: public option::Arg {
         if (msg) printError ("Option '", option, "' requires a numeric argument\n");
         return option::ARG_ILLEGAL;
     }
+    
+    static option::ArgStatus Double (const option::Option& option, bool msg) {
+        char* endptr = 0;
+        if (option.arg != 0 && strtof (option.arg, &endptr)) {};
+        if (endptr != option.arg && *endptr == 0)
+            return option::ARG_OK;
+
+        if (msg) printError ("Option '", option, "' requires a floating point argument\n");
+        return option::ARG_ILLEGAL;	
+    }
 };
 
 enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DEBUG, DOT, PRINT_CSV, PRINT_ALL_STEPS, 
                   TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA, ANTALPHA, ANTBETA, ANTTAU, ANTSTEPS, ANTNUMBEROFTHEM, 
-                  ANTMAXTAU, ANTMINTAU,ANTHEURISTICTAG, ANTPERSITENCE, ANTUPDATEBEST, UPDATEGLOBAL, IMPROVEANTS };
+                  ANTMAXTAU, ANTMINTAU,ANTHEURISTICTAG, ANTPERSITENCE, ANTUPDATEBEST, UPDATEGLOBAL, IMPROVEANTS, PRINTBESTANTS };
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -110,6 +120,8 @@ const option::Descriptor usage[] = {
         KNEAREST, 0, "k", "knear", Arg::Numeric, "  -k <arg>, \t--knear=<arg> \tMust have as an"
         " argument a number -maximal KNearest Spots."
     },
+    { ALPHA , 0, "", "alpha", Arg::NonEmpty, "   \t--alpha=<arg> \tAlpha for the construction of Restricted Candidates List. Values in [0..1]"},
+    
     { DOT, 0, "d", "dot", Arg::None, "  -d, \t--dot \tGenerate dot file from solution. " },
     { VERBOSE, 0, "v", "verbose", Arg::None, "  -v, \t--verbose \tBe verbosive."},
     { DEBUG, 0, "x", "debug", Arg::None, "  -x, \t--debug \tPrint out debug infos." },
@@ -131,31 +143,31 @@ const option::Descriptor usage[] = {
     },
     { TIMEOUT, 0, "t", "timeout", Arg::Numeric, "  -t <secs>, \t--timeout=<secs> \tTimeout for search in seconds." },
     
-    { ANTALPHA, 0, "A", "antAlpha", Arg::Numeric, "  -A <double>, \t--antAlpha=<double> \tAlfa used for limiting the internal ratio." },
+    { ANTALPHA, 0, "A", "antAlpha", Arg::Double, "  -A <double>, \t--antAlpha=<double> \tAlfa used for limiting the internal ratio." },
     
-    { ANTBETA, 0, "B", "antBeta", Arg::Numeric, "  -B <double>, \t--antBeta=<double> \tBeta used for limiting the internal ratio." },
+    { ANTBETA, 0, "B", "antBeta", Arg::Double, "  -B <double>, \t--antBeta=<double> \tBeta used for limiting the internal ratio." },
     
-    { ANTTAU, 0, "T", "antTau", Arg::Numeric, "  -T <double>, \t--antTau=<double> \tInitial tau used in the ACO." },
+    { ANTTAU, 0, "T", "antTau", Arg::Double, "  -T <double>, \t--antTau=<double> \tInitial tau used in the ACO." },
     
-    { ANTMAXTAU, 0, "", "maxTau", Arg::Numeric, "   \t--maxTau=<double> \tMax tau used in the ACO." },
+    { ANTMAXTAU, 0, "C", "maxTau", Arg::Double, "  -C <double>, \t--maxTau=<double> \tMax tau used in the ACO." },
     
-    { ANTMINTAU, 0, "", "minTau", Arg::Numeric, "  \t--minTau=<double> \tMin tau used in the ACO." },
+    { ANTMINTAU, 0, "D", "minTau", Arg::Double, "  -D <double>, \t--minTau=<double> \tMin tau used in the ACO." },
     
-    { ANTPERSITENCE, 0, "p", "persist", Arg::Numeric,   "  -p <double> \t--persist=<double> \tPersistence factor used in the ACO." },
+    { ANTPERSITENCE, 0, "P", "persist", Arg::Numeric,   "  -P <double> \t--persist=<double> \tPersistence factor used in the ACO." },
     
-    { ANTNUMBEROFTHEM, 0, "", "ants", Arg::Numeric, "  \t--ants=<integer> \tNumber of ants in the population." },
+    { ANTNUMBEROFTHEM, 0, "N", "ants", Arg::Numeric, "  -N <integer>, \t--ants=<integer> \tNumber of ants in the population." },
    
     { ANTSTEPS, 0, "S", "Steps", Arg::Numeric, "  -S <integer> \t--Steps=<integer> \tHow many times we send the ants for solutions." },
    
-    { ANTUPDATEBEST, 0, "w", "updBest", Arg::Numeric, "  -w <unsigned> \t--updBest=<unsigned> \tNumber of best ants used to influence the pheromone matrix." },
+    { ANTUPDATEBEST, 0, "W", "updBest", Arg::Numeric, "  -W <unsigned> \t--updBest=<unsigned> \tNumber of best ants used to influence the pheromone matrix." },
     
     { ANTHEURISTICTAG, 0, "T", "heuTag", Arg::Numeric, "  \t--heuTag=<unsigned> \tNeareast Neighbor = 0 , Insert Method =1" },
     
-    { ALPHA , 0, "", "alpha", Arg::NonEmpty, "   \t--alpha=<arg> \tAlpha for the construction of Restricted Candidates List. Values in [0..1]"},
+    { UPDATEGLOBAL, 0, "U", "updGlobal", Arg::Numeric, "  -U <unsigned> \t--updGlobal=<unsigned> \tUpdate with global best solution every n'th step." },
     
-    { UPDATEGLOBAL, 0, "u", "updGlobal", Arg::Numeric, "  -u <unsigned> \t--updGlobal=<unsigned> \tUpdate with global best solution every n'th step." },
+    { IMPROVEANTS, 0, "I", "improveAnts", Arg::None, "  -I, \t--improveAnts \tUse improved solutions to update pheromones." },
     
-    { IMPROVEANTS, 0, "", "improveAnts", Arg::None, "  \t--improveAnts \tUse improved solutions to update pheromones." },
+    { PRINTBESTANTS, 0, "X", "printBestAnts", Arg::None, "  -X, \t--printBestAnts \tPrint satisfaction from best ants in every step." },
       
     {
         UNKNOWN, 0, "", "", Arg::None,
@@ -415,6 +427,10 @@ int Config::parseArguments (int argc, char* argv[])
 	    case IMPROVEANTS:
 		assert(!opt.arg);
 		_improveAntSolution = true;
+		break;
+	    case PRINTBESTANTS:
+		assert(!opt.arg);
+		_printBestAnts = true;
 		break;
 	    case UPDATEGLOBAL:
 		assert(opt.arg);
