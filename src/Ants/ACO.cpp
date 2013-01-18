@@ -115,6 +115,9 @@ void ACO::setBestAnt(Ant* ant)
 {
     if (bestAnt) delete bestAnt;
     bestAnt = ant->clone();
+    if (env.getConfig().getTauMax() < 0) {
+	PM.setMaxTau(bestAnt->getInstance().getTotalSatisfaction());
+    }
 }
 
 void ACO::updatePheromones(SatisfactionList &satisfaction, unsigned round)

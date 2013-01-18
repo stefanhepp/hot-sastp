@@ -28,6 +28,10 @@ public:
     
     void reset(float initTau);
     
+    void setMinTau(double tau) { minTau = tau; }
+    
+    void setMaxTau(double tau) { maxTau = tau < minTau ? minTau : tau; }
+    
     float getTau(const TourNode start, const TourNode end) const;
     
     void setTau(const TourNode start, const TourNode end, double tau);
