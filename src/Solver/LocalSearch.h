@@ -21,6 +21,8 @@ public:
     
     virtual void run();
     
+    virtual AbstractSearch* clone() const { return new LocalSearch(*this); }
+    
 };
 
 #endif // LOCALSEARCH_H

@@ -26,6 +26,9 @@ public:
     virtual void reset(const Instance& init);
     
     virtual void run();
+    
+    virtual AbstractSearch* clone() const { return new GVNS(*this); }
+    
 };
 
 #endif // GVNS_H

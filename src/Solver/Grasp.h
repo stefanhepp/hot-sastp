@@ -24,6 +24,8 @@ public:
     
     virtual void run();
  
+    // TODO properly clone sub-searches!
+    virtual AbstractSearch* clone() const { return new Grasp(*this); }
 };
 
 #endif // GRASP_H

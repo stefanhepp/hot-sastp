@@ -22,6 +22,8 @@ public:
     
     int getLastImprovementStep() const { return _lastImprovementStep; }
     
+    virtual AbstractSearch* clone() const =0;
+    
 protected:
     int _noImprovement;
     int _maxSteps;
@@ -50,6 +52,8 @@ public:
     virtual void reset(const Instance& init) { instance = init; }
     
     virtual void run() {}    
+    
+    virtual AbstractSearch* clone() const { return new DummySearch(*this); }
 };
 
 #endif // ABSTRACTSEARCH_H

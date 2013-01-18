@@ -37,6 +37,8 @@ public:
     
     virtual void run();
 
+    virtual AbstractSearch* clone() const { return new VND(*this); }
+    
 };
 
 #endif // VND_H
