@@ -120,6 +120,10 @@ public:
      */ 
     double getTauMax() const { return _minTau; }
     
+    unsigned getMinAntK() const { return _minAntK; }
+    
+    unsigned getMaxAntK() const { return _maxAntK; }
+    
     /**
      * @return Heuristic to be used by ants
      */
@@ -129,6 +133,8 @@ public:
      * @return true if we should use the improved tour to update the pheromones (default: false).
      */
     bool doImproveAntSolution() const { return _improveAntSolution; }
+    
+    double getAllowedTimeFactor() const { return _allowedTimeFactor; }
     
     /**
      * @return 0 to update only with iteration best ants, or k > 0 to update every kth round with the global best ant.
@@ -189,6 +195,10 @@ private:
     double _initialTau;
     double _maxTau; 
     double _minTau;
+    
+    unsigned _minAntK;
+    unsigned _maxAntK;
+    
     /**
      * Parameters _alpha and _beta control the ratio between pheromones and 
      * local information ( _beta = 0 => fast convergence to a (random) path 
@@ -211,6 +221,8 @@ private:
     
     double   _persistFactor;
     AntHeuristicTag _antHeuristic;
+    
+    double _allowedTimeFactor;
     
     bool     _improveAntSolution;
     unsigned _updateWithGlobalBest;

@@ -41,6 +41,11 @@ Config::Config()
     _antHeuristic = AH_NEAREST;
     _minTau = 0.0;
     _maxTau = MAXDOUBLE;
+    
+    _minAntK = 1;
+    _maxAntK = _numberOfAnts+1;
+    
+    _allowedTimeFactor = 1.0;
     _persistFactor = 0.5;
     _improveAntSolution = false;
     _updateWithGlobalBest = 0;
@@ -99,7 +104,9 @@ struct Arg: public option::Arg {
 
 enum optionIndex {UNKNOWN, HELP, ALGORITHM, NEIGHBORHOOD, GREEDY_NN, KNEAREST, VERBOSE, DEBUG, DOT, PRINT_CSV, PRINT_ALL_STEPS, 
                   TIMEOUT, INSERTMODE, STEP, MAXSTEPS, ALPHA, ANTALPHA, ANTBETA, ANTTAU, ANTSTEPS, ANTNUMBEROFTHEM, 
-                  ANTMAXTAU, ANTMINTAU,ANTHEURISTICTAG, ANTPERSITENCE, ANTUPDATEBEST, UPDATEGLOBAL, IMPROVEANTS, PRINTBESTANTS };
+                  ANTMAXTAU, ANTMINTAU,ANTHEURISTICTAG, ANTPERSITENCE, ANTUPDATEBEST, UPDATEGLOBAL, IMPROVEANTS, PRINTBESTANTS,
+		  ANTMINK, ANTMAXK, ALLOWEDTIMEFACTOR  
+};
 const option::Descriptor usage[] = {
     {
         UNKNOWN, 0, "", "",        Arg::Unknown, "USAGE: sastpsolver [options] inputFile outputFile\n\n"
@@ -154,8 +161,14 @@ const option::Descriptor usage[] = {
     
     { ANTMAXTAU, 0, "D", "maxTau", Arg::Double, "  -C <double>, \t--maxTau=<double> \tMax tau used in the ACO. Use -1 to set it to current global best satisfaction." },
     
+    { ANTMINK, 0, "J", "minAntK", Arg::Numeric, "  -E <unsigned> \t--minAntK=<unsigned> \tMinimum k value for ants." },
+    
+    { ANTMAXK, 0, "K", "maxAntK", Arg::Numeric, "  -F <unsigned> \t--maxAntK=<unsigned> \tMaximum k value for ants." },
+    
     { ANTPERSITENCE, 0, "P", "persist", Arg::Double,   "  -P <double>, \t--persist=<double> \tPersistence factor used in the ACO." },
     
+    { ALLOWEDTIMEFACTOR, 0, "F", "allowedTime", Arg::Double,   "  -F <double>, \t--allowedTime=<double> \tFactor of time to allow to exceed by the ants." },
+
     { ANTNUMBEROFTHEM, 0, "N", "ants", Arg::Numeric, "  -N <integer>, \t--ants=<integer> \tNumber of ants in the population." },
    
     { ANTSTEPS, 0, "S", "Steps", Arg::Numeric, "  -S <integer>, \t--Steps=<integer> \tHow many times we send the ants for solutions." },
@@ -211,6 +224,8 @@ int Config::parseArguments (int argc, char* argv[])
         printHelp();
         exit (1);
     }
+    
+    bool hasSetMaxAntK = false;
 
     for (int i = 0; i < parse.optionsCount(); ++i) {
         option::Option& opt = buffer[i];
@@ -384,6 +399,7 @@ int Config::parseArguments (int argc, char* argv[])
                 assert(opt.arg);
                 _numberOfAnts = (unsigned)atoi(opt.arg);
                 assert( _numberOfAnts >= 1 );
+		if (!hasSetMaxAntK) _maxAntK = _numberOfAnts + 1;
                 break;          
             case ANTSTEPS:
                 assert(opt.arg);
@@ -398,6 +414,22 @@ int Config::parseArguments (int argc, char* argv[])
                 assert(opt.arg);
                 _minTau = (double) atof(opt.arg);
                 assert(_minTau >= 0.0 );
+                break;
+            case ALLOWEDTIMEFACTOR:
+                assert(opt.arg);
+                _allowedTimeFactor = (double) atof(opt.arg);
+                assert(_allowedTimeFactor >= 1.0 );
+                break;
+            case ANTMINK:
+                assert(opt.arg);
+                _minAntK = (unsigned) atoi(opt.arg);
+                assert(_minAntK > 0);
+                break;
+            case ANTMAXK:
+                assert(opt.arg);
+                _maxAntK = (unsigned) atoi(opt.arg);
+		hasSetMaxAntK = true;
+                assert(_maxAntK > 0 );
                 break;
             case ANTPERSITENCE: 
                 assert(opt.arg);
