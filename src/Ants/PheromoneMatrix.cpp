@@ -10,6 +10,7 @@ PheromoneMatrix::PheromoneMatrix (Environment &env)
     persistFactor = env.getConfig().getPersistFactor();
     minTau = env.getConfig().getTauMin();
     maxTau = env.getConfig().getTauMax();
+    if (maxTau < minTau) maxTau = minTau;
     
     matrix = new double***[problem.getNumSpot()+1];
     memset(matrix, 0, sizeof(double***)*(problem.getNumSpot()+1));
@@ -113,7 +114,10 @@ void PheromoneMatrix::evaporate()
 		
 		unsigned numEndMethods = k > 0 ? problem.getSpot(k-1).getMethods().size() : 1;
 		for (int l = 0; l < numEndMethods; l++) {
-		    mj[l] = persistFactor * mj[l];
+		    double tau = persistFactor * mj[l];
+		    if (tau < minTau) tau = minTau;
+		    if (tau > maxTau) tau = maxTau;
+		    mj[l] = tau;
 		}
 	    }
 	}

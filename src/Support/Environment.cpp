@@ -149,9 +149,9 @@ const option::Descriptor usage[] = {
     
     { ANTTAU, 0, "T", "antTau", Arg::Double, "  -T <double>, \t--antTau=<double> \tInitial tau used in the ACO." },
     
-    { ANTMAXTAU, 0, "C", "maxTau", Arg::Double, "  -C <double>, \t--maxTau=<double> \tMax tau used in the ACO." },
+    { ANTMINTAU, 0, "C", "minTau", Arg::Double, "  -D <double>, \t--minTau=<double> \tMin tau used in the ACO." },
     
-    { ANTMINTAU, 0, "D", "minTau", Arg::Double, "  -D <double>, \t--minTau=<double> \tMin tau used in the ACO." },
+    { ANTMAXTAU, 0, "D", "maxTau", Arg::Double, "  -C <double>, \t--maxTau=<double> \tMax tau used in the ACO. Use -1 to set it to current global best satisfaction." },
     
     { ANTPERSITENCE, 0, "P", "persist", Arg::Double,   "  -P <double>, \t--persist=<double> \tPersistence factor used in the ACO." },
     
@@ -392,7 +392,6 @@ int Config::parseArguments (int argc, char* argv[])
             case ANTMAXTAU: 
                 assert(opt.arg);
                 _maxTau = (double) atof(opt.arg);
-                assert(_maxTau>= 0.0 );
                 break;
             case ANTMINTAU:
                 assert(opt.arg);
