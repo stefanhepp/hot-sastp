@@ -107,7 +107,7 @@ TourNode Ant::selectBestTourNode(NearestSpotList nearest, unsigned int& insertAt
         else 
             p += entry.second/sumP;
     }
-    
+
     // we should only reach that point if our tauEtaList is empty (i.e. we found no usable methods), 
     // we return just some best guess here
     return TourNode(nearest.front().second, 0);

@@ -15,7 +15,7 @@ using namespace std;
 Config::Config()
 {
     // Set some default values
-    _algorithm = AT_GREEDY;
+    _algorithm = AT_ANT_LS;
     _neighborhood = NT_ONE_OPT;
     _maxKNearestSpots = 10;
     _nodeInsertMode = NIM_SHORTEST_PATH;
@@ -37,6 +37,7 @@ Config::Config()
     _initialTau = 1; 
     _alpha = 1; 
     _beta = 2;
+
     _antHeuristic = AH_NEAREST;
     _minTau = 0.0;
     _maxTau = MAXDOUBLE;
