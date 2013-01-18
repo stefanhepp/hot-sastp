@@ -30,11 +30,12 @@ Ioan Dragan, 0856561 }
 \paragraph{Ant colony optimization}
 
 \paragraph{Ants}
-Two types of ant are implemented in the current version of our solution. One of them constructs a tour in a greedy nearest neighbor way. This mean that we restrict the list of spots an ant can visit at a specific time. This limitation is given by the k-nearest nodes. Selection of the next node to be inserted in the tour is done taking into consideration the pheromone matrix value and all the other parameters which are needed in the decision making.
 
-The other type of ant is based on the 
+Two types of ant are implemented in the current version of our solution. One of them constructs a tour in a greedy nearest neighbor way. This means that we restrict the list of spots an ant can visit at a specific time. This limitation is given by the k-nearest nodes. Selection of the next node to be inserted in the tour is done taking into consideration the pheromone matrix value and all the other parameters which are needed in the decision making. The insertion of the new node in the tour is done always at the end. In order to update the pheromone matrix at the end, we only need to traverse the tour once and simply modify the pheromone for each of the vertices taken in the tour.
 
- 
+The other type of ant is based on the best insertion spot in the tour of a new node. This heuristic was one of the heuristics which proved to give good results if used in the classical search algorithms. The heuristic also has the 
+
+Both implementations of ants do not allow us to end up with unfeasible tours. This is taken care of in the implementation of the ant itself. 
 
 
 
