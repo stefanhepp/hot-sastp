@@ -61,19 +61,7 @@ void Ant::findTour()
     }
 }
 
-
-
-int AntNearest::insertSpot()
-{
-    NearestSpotList nearest = spotsearch.findNearestSpots(instance, instance.getTourLength() - 1, _antNumber+1); 
-    
-    // find best spot and method, add it to the tour
-    TourNode best = selectBestTourNode(nearest);
-    
-    return instance.addNode(best);
-}
-
-TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
+TourNode Ant::selectBestTourNode(NearestSpotList nearest, unsigned int& insertAt, Config::NodeInsertMode insertMethod)
 {
     // list contains pairs of valid candidates, and their tauEta value
     std::vector<std::pair<TourNode,double>> candidates;   
@@ -84,22 +72,21 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
         unsigned spotId = ps.second;
         
         const Spot& nearestspot = problem.getSpot(spotId);
-        TourNode lastNode = instance.getLastNode();
+        TourNode lastNode = getLastNode();
 	
-        unsigned bestInsert;
-        
         // check all methods of this spot
         unsigned methodId = 0;
         for (const auto& m : nearestspot.getMethods()) {
             
 	    TourNode newNode(spotId, methodId);
-	    TourValues insertValues = instance.getInsertDeltaValues(instance.getTourLength(), newNode);
+	    TourValues insertValues = getInsertValues(tournode, newNode, insertAt);
 	    
 	    double tauEta = getTauEta(lastNode, newNode, insertValues);
             
 	    if (!instance.isValid(insertValues)) {
 		// TODO What happens if the new node causes the tour to get invalid? Several approches:
 		// - continue; (but this does not allow us to create tours that are larger than the maximum!)
+		//   don't forget to do methodId++;
 		// - or set tauEta to something low so that it gets unlikely (but not impossible) that it will be picked
 		tauEta *= 0.01;
 	    }
@@ -114,7 +101,7 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
     double r = ((double) rand() / (RAND_MAX));
     double p = 0.0;
     
-    for(auto& entry : candidates) {
+    for (auto& entry : candidates) {
         if (p + entry.second/sumP > r)
             return entry.first;
         else 
@@ -126,6 +113,19 @@ TourNode AntNearest::selectBestTourNode(NearestSpotList nearest)
     return TourNode(nearest.front().second, 0);
 }
 
+
+
+int AntNearest::insertSpot()
+{
+    NearestSpotList nearest = spotsearch.findNearestSpots(instance, instance.getTourLength() - 1, _antNumber+1); 
+    
+    // find best spot and method, add it to the tour
+    unsigned insertAt;
+    TourNode best = selectBestTourNode(nearest, insertAt, Config::NIM_ALWAYS_BEFORE);
+    
+    return instance.addNode(best);
+}
+
 void AntNearest::addPheromones(double factor)
 {
     double deltaTau = factor * getTourDeltaTau();
@@ -135,6 +135,13 @@ void AntNearest::addPheromones(double factor)
         _pm.addTau(instance.getNode(i - 1), instance.getNode(i), deltaTau);
     }
 }
+
+TourValues AntNearest::getInsertValues(int tournode, TourNode newNode, unsigned int& insertAt)
+{
+    insertAt = instance.getTourLength();
+    return instance.getInsertDeltaValues(insertAt, newNode);
+}
+
 
 
 void AntInsert::findTour()
@@ -183,29 +190,39 @@ void AntInsert::setInstance(const Instance& inst)
 
 int AntInsert::insertSpot()
 {
+    // TODO interpret construction graph not as tour but as decision tree which 
+    // nodes to insert -> t_ij means: insert node j after node i has been inserted into tour
+    // But where to insert? use shortest distance!
+
     NearestSpotList nearest = spotsearch.findNearestTourSpots(instance, _antNumber+1, true); 
     
     // find best spot and method, add it to the tour
     unsigned insertAt;
     TourNode best = selectBestTourNode(nearest, insertAt, _insertMode);
     
+    // remember order of insert decisions
+    insertionOrder.push_back(best);
+    
     return instance.insertNode(insertAt, best);
 }
 
-TourNode AntInsert::selectBestTourNode(NearestSpotList nearest, unsigned int& insertAt, Config::NodeInsertMode insertMethod)
+TourValues AntInsert::getInsertValues(int tournode, TourNode newNode, unsigned int& insertAt)
 {
-    // TODO interpret construction graph not as tour but as decision tree which 
-    // nodes to insert -> t_ij means: insert node j after node i has been inserted into tour
-    // But where to insert? use shortest distance!
-
-
-    return TourNode(0,0);
+    // TODO check whether we should insert before or after the nearest node index (=tournode)
+    insertAt = tournode == -1 ? 0 : tournode;
+    return instance.getInsertDeltaValues(insertAt, newNode);    
 }
 
 void AntInsert::addPheromones(double factor)
 {
-    double deltaTau = getTourDeltaTau();
+    double deltaTau = factor * getTourDeltaTau();
     
+    TourNode lastNode = instance.getHotelNode();
     
+    // Note: first edge has start-index -1 (the hotel)
+    for(unsigned i = 0; i < insertionOrder.size(); i++) {
+        _pm.addTau(lastNode, insertionOrder[i], deltaTau);
+	lastNode = insertionOrder[i];
+    }    
 }
 

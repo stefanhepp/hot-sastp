@@ -8,6 +8,8 @@
 #include "Support/ProblemHelper.h"
 #include "Ants/PheromoneMatrix.h"
 
+#include <vector>
+
 // This class implements the behaviour of ant k. 
 // An ant creates a tour based on some heuristics and a parametrized neighborhood.
 class Ant
@@ -40,7 +42,16 @@ protected:
      * Insert a new node into the tour and return its index.
      */
     virtual int insertSpot() = 0;
+
+    virtual TourNode getLastNode() = 0;
     
+    virtual TourValues getInsertValues(int tournode, TourNode newNode, unsigned &insertAt)=0;
+    
+    /**
+     * @param insertAt - out parameter, returns index where to insert the selected node
+     */
+    TourNode selectBestTourNode(NearestSpotList nearest, unsigned &insertAt, Config::NodeInsertMode insertMethod);
+
     /**
      * This computes the tau_ij^alpha * eta_ij^beta.
      *
@@ -89,9 +100,11 @@ public:
 protected:
     virtual int insertSpot();
     
-private:     
-    TourNode selectBestTourNode(NearestSpotList nearest);
-        
+    virtual TourNode getLastNode() { return instance.getLastNode(); }
+    
+    virtual TourValues getInsertValues(int tournode, TourNode newNode, unsigned &insertAt);
+    
+private:        
     SpotSearch& spotsearch;
     ProblemHelper helper;
     
@@ -119,11 +132,10 @@ public:
 protected:
     virtual int insertSpot();
     
+    virtual TourNode getLastNode() { return insertionOrder.empty() ? instance.getHotelNode() : insertionOrder.back(); }
+    
+    virtual TourValues getInsertValues(int tournode, TourNode newNode, unsigned &insertAt);
 private:     
-    /**
-     * @param insertAt - out parameter, returns index where to insert the selected node
-     */
-    TourNode selectBestTourNode(NearestSpotList nearest, unsigned &insertAt, Config::NodeInsertMode insertMethod);
     
     SpotSearch& spotsearch;
     ProblemHelper helper;
