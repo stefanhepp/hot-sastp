@@ -322,6 +322,10 @@ int Config::parseArguments (int argc, char* argv[])
                 assert (atoi (opt.arg));
                 _maxKNearestSpots = atoi (opt.arg);
                 break;
+            case VNDMODE:
+                assert (atoi (opt.arg));
+                _vndMode = atoi (opt.arg);
+                break;
             case VERBOSE:
                 assert (!opt.arg);
                 _verbose = true;

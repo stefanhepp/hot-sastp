@@ -85,9 +85,9 @@ void PheromoneMatrix::setTau(const TourNode start, const TourNode end, double ta
 
 void PheromoneMatrix::addTau(const TourNode start, const TourNode end, double deltaTau)
 {
-    if (debug) {
-	std::cerr << "Add Tau (" << (int)start.spot << "," << start.method << ") -> (" << end.spot << "," << end.method << ") += " << deltaTau << "\n";
-    }
+//     if (debug) {
+// 	std::cerr << "Add Tau (" << (int)start.spot << "," << start.method << ") -> (" << end.spot << "," << end.method << ") += " << deltaTau << "\n";
+//     }
     
     setTau(start, end, getTau(start, end) + deltaTau);
 }

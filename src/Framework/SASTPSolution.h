@@ -33,7 +33,7 @@ public:
 
 	void load(const std::string& filename);
 	void store(const std::string& filename)const;
-	void print(std::ostream& os, bool pretty = true)const;
+	void print(std::ostream& os, bool pretty = true, bool skipNodes = false)const;
 
 	double getStamina()const{return stamina;}
 	double getSatisfaction()const{return satisfaction;}

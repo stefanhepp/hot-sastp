@@ -19,12 +19,13 @@ int main(int argc, char* argv[]) {
     string inputproblem(argv[1]);
     string inputsolution(argv[2]);
     string outputfile(argv[3]);
-    std::cout << argv[1]<<" "<<argv[2]<<argv[3]<<" ";
     SASTProblem problem(inputproblem);
     SASTPSolution solution(problem);
     solution.load(inputsolution);
     
     SASTPDotPrinter printer(problem, solution);
+    
+    solution.print(cout, true, true);
     
     //printer.writeTikzFile(outputfile);
     printer.writeDotFile(outputfile, problem.getSpots().size() > 20);

@@ -164,10 +164,12 @@ void SASTPSolution::store(const std::string& filename)const
 	}
 }
 
-void SASTPSolution::print(std::ostream& os, bool pretty)const
+void SASTPSolution::print(std::ostream& os, bool pretty, bool skipNodes)const
 {
     if (pretty) {
 	os << "Solution has "<<tour.size()<<" stops, taking "<<tourtime<<" time and achieving "<<satisfaction<<" satisfaction, with "<<stamina<<" stamina remaining\n";
+	if (skipNodes) return;
+	
 	os << "Stops:\n";
 
 	for(const auto& s:tour)

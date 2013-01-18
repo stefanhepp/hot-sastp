@@ -25,9 +25,9 @@ void VND::run()
     double deltaSatisfaction;
     unsigned i = 0;
     
-    if (env.getConfig().isDebug()) {
-	cout << "VND: Starting with " << neighborhoods[0]->getName() << endl;
-    }
+//     if (env.getConfig().isDebug()) {
+// 	cout << "VND: Starting with " << neighborhoods[0]->getName() << endl;
+//     }
     
     start();
     
@@ -45,15 +45,15 @@ void VND::run()
 	env.printStepResult(instance);
 	
 	if ( deltaSatisfaction > 0.005 ) {
-	    if ( i != 0 && env.getConfig().isDebug() ) {
-		cout << "VND: Switching back to " << neighborhoods[0]->getName() << endl;
-	    }
+// 	    if ( i != 0 && env.getConfig().isDebug() ) {
+// 		cout << "VND: Switching back to " << neighborhoods[0]->getName() << endl;
+// 	    }
 	    i = 0;
 	} else {
 	    i++;
-	    if ( i < neighborhoods.size() && env.getConfig().isDebug() ) {
-		cout << "VND: Switching to " << neighborhoods[i]->getName() << endl;
-	    }
+// 	    if ( i < neighborhoods.size() && env.getConfig().isDebug() ) {
+// 		cout << "VND: Switching to " << neighborhoods[i]->getName() << endl;
+// 	    }
 	}
 	
     } while (i < neighborhoods.size());

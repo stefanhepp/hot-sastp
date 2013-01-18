@@ -29,6 +29,8 @@ void ACO::run()
 {
     start();
 
+    bool debug = env.getConfig().isDebug();
+    
     double deltaSatisfaction = 0;
     
     SatisfactionList satisfaction;
@@ -50,9 +52,13 @@ void ACO::run()
 	// perform steps and daemon actions with all ants
 	for (size_t k = 0; k < ants.size(); k++) {
 	    Ant* ant = ants[k];
+	
+	    if (debug) cerr << "ACO: finding tour of ant " << k << " in step " << getCurrentStep() << endl;
 	    
 	    // perform ant step
 	    ant->findTour();
+	    
+	    if (debug) cerr << "ACO: running local search\n";
 	    
 	    // perform daemon action
 	    localSearch.reset(ant->getInstance());
@@ -82,6 +88,8 @@ void ACO::run()
 	if (bestAntIdx >= 0) {
 	    setBestAnt(ants[bestAntIdx]);
 	}
+	
+	if (debug) cerr << "ACO: updating pheromones\n";
 	
 	// update pheromone matrix
 	updatePheromones(satisfaction, getCurrentStep());
