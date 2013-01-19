@@ -1,0 +1,85 @@
+#!/usr/bin/env python
+import os,sys
+import time
+import subprocess 
+import csv
+from shlex import split as splitsh
+
+directory = ""
+outputDirectory = ""
+
+def runCommand(program, arguments, problem, iteration, uniqueID):
+#    for problem in arguments: 
+#        os.system( "echo "+program + " " + problem +">>"+ outputFile)
+       # os.system( program+" "+" "+problem+" "+arguments +" >> "+ outputFile)
+    outputFile = problem.strip(".prob")
+    command = program + " " + arguments + " "+directory+problem + " " +outputDirectory+uniqueID+outputFile+"_"+str(iteration+1)+".sol"
+    os.system(command + ">> LogFile"+uniqueID+".csv" )
+    print "Solving : " + program + " " + arguments + " "+ problem + " " +uniqueID+outputFile+"_"+str(iteration+1)+".sol" 
+
+#### return the list of problems which are to be run ###########
+def getProblems(dirname,lis):
+    for filename in os.listdir(dirname):
+        if filename.endswith("prob"):
+            lis.append(filename)
+    lis.sort()
+
+
+##### run each problem in this configuration for 30 times ############
+def runNTimes(program, arguments, inputFile, times, uniqueID):
+    for item in inputFile:
+        for i in range(0, times):
+            runCommand(program, arguments, item, i, uniqueID);
+
+############ run different configurations for  n times ##################
+
+def runDifConf(program, configurationList, inputFile, times):
+    i = 1
+    for item in configurationList: 
+        runNTimes(program, item, inputFile, times,"conf"+str(i) )
+        i = i + 1 
+
+        
+#################  create the Latex table for each logFile #############
+
+def CreateLatexTable(logfile):
+    log = open(logfile, "r")
+    logLines = log.readlines();
+
+    print logLines
+
+'''
+    with open(logfile,"rb") as csvfile : 
+        reader = csv.reader(csvfile, delimiter=",", quotechar = '|')
+    for row in reader: 
+        print row
+'''
+
+
+if __name__ == '__main__':
+    listOfProblems=[]
+    if len( sys.argv) < 4 : 
+        print "runProblems <executable> <inputProblemsDirectory> <outputDirectory> <configurationFile> "
+        exit(1)
+    executable = sys.argv[1]
+    directory = sys.argv[2]
+    outputDirectory = sys.argv[3]
+    configurations = sys.argv[4]
+    confList=[]
+    
+    outputFile = ""
+    
+    confFile = open(configurations, "r")
+    configurations = confFile.readlines()
+
+    problemList =[]
+    getProblems(directory, problemList)
+    
+    runDifConf(executable, configurations, problemList, 1)
+
+    for x in range(0, len(configurations)):
+        CreateLatexTable("LogFileconf"+str(x+1)+".csv")
+    
+    print problemList
+    
+
