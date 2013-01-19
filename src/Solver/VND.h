@@ -21,6 +21,13 @@ class VND : public AbstractSearch
 public:
     VND(Environment& env, const Instance& init);
 
+    VND(const VND& obj) 
+    : AbstractSearch(obj), instance(obj.instance) 
+    {
+	for (auto nb : obj.neighborhoods) neighborhoods.push_back(nb->clone());
+	stepFunctions.insert(stepFunctions.begin(), obj.stepFunctions.begin(), obj.stepFunctions.end());
+    }
+    
     void addNeighborhood(Neighborhood& nb) { 
 	neighborhoods.push_back(&nb); 
 	stepFunctions.push_back(stepFunction);
@@ -37,6 +44,8 @@ public:
     
     virtual void run();
 
+    virtual VND* clone() const { return new VND(*this); }
+    
 };
 
 #endif // VND_H

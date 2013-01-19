@@ -61,6 +61,8 @@ public:
     
     GreedyNearestNeighbor ( Environment& env );
     
+    virtual AbstractSearch* clone() const { return new GreedyNearestNeighbor(*this); }
+    
 protected:
     
     virtual unsigned insertSpot();
@@ -76,6 +78,8 @@ public:
     
     GreedyInsertHeuristic ( Environment& env );
     
+    virtual AbstractSearch* clone() const { return new GreedyInsertHeuristic(*this); }
+    
 protected:
         
     virtual unsigned insertSpot();
@@ -86,6 +90,8 @@ public:
     
     GreedyRandomHeuristic (Environment& env);
     virtual void reset(const Instance& inst);
+    
+    virtual AbstractSearch* clone() const { return new GreedyRandomHeuristic(*this); }
     
 protected:
    

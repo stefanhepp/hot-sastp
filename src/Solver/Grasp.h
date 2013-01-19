@@ -18,12 +18,20 @@ class Grasp : public AbstractSearch
 public:
     Grasp(Environment& env, AbstractSearch& localSearch, const Instance& init);
 
+    Grasp(const Grasp& obj) 
+    : AbstractSearch(obj), instance(obj.instance), initInstance(obj.initInstance), 
+      localSearch(*obj.localSearch.clone()) 
+    {
+	randGreedy = new GreedyRandomHeuristic(env);
+    }
+    
     virtual Instance& getInstance() { return instance; };
     
     virtual void reset(const Instance& init);
     
     virtual void run();
  
+    virtual AbstractSearch* clone() const { return new Grasp(*this); }
 };
 
 #endif // GRASP_H

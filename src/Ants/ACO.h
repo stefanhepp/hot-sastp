@@ -45,6 +45,9 @@ public:
     
     virtual void run();
     
+    virtual AbstractSearch* clone() const { return new ACO(*this); }
+
+    
 private:
     void initAnts(int numAnts);
     

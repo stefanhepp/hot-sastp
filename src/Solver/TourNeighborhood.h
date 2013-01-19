@@ -21,7 +21,7 @@ typedef std::vector< std::pair<unsigned, double> > MethodRatioList;
 class NodeInserter {
 public:
     NodeInserter(Environment& env, unsigned int maxk, bool insertUsed);
-    
+        
     /**
      * Initialize search for the next step.
      */
@@ -56,6 +56,8 @@ public:
      * Store the last result found by find[Random]InsertNodes as current best result
      */
     virtual void storeAsBestStep();
+
+    virtual NodeInserter* clone() const =0;
     
 protected:
     Environment& env;
@@ -106,6 +108,9 @@ class SearchNodeInserter : public NodeInserter {
 public:
     SearchNodeInserter(Environment& env, AbstractSearch& search);
 
+    SearchNodeInserter(const SearchNodeInserter& obj)
+    : NodeInserter(obj), search(*obj.search.clone()), newTour(obj.newTour), bestNewTour(obj.bestNewTour) {}
+    
     virtual void prepareStep(Instance& instance, Config::StepFunction stepFunction);
     
     virtual double findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction);
@@ -116,6 +121,8 @@ public:
     
     virtual void storeAsBestStep() { bestNewTour = newTour; }
 
+    virtual NodeInserter* clone() const { return new SearchNodeInserter(*this); }
+    
 protected:
     AbstractSearch& search;
     
@@ -135,8 +142,7 @@ public:
     
     virtual double findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction, bool findBestStep);
     
-protected:
-    
+    virtual NodeInserter* clone() const  { return new ConsecutiveNodeInserter(*this); }
 };
 
 class RandomNodeInserter : public NodeInserter {
@@ -148,10 +154,8 @@ public:
     virtual double findRandomInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction);
     
     virtual double findInsertNodes(Instance& instance, const TourNodeIndexList& removedNodes, double minSatisfaction, bool findBestStep);
-        
-protected:
-
     
+    virtual NodeInserter* clone() const { return new RandomNodeInserter(*this); }
 };
 
 /**
@@ -162,14 +166,16 @@ class NearestNodesNeighborhood : public Neighborhood
 public:
     NearestNodesNeighborhood(Environment& env, NodeInserter& nodeInserter);
 
+    NearestNodesNeighborhood(const NearestNodesNeighborhood& obj) 
+     : Neighborhood(obj), nodeInserter(*obj.nodeInserter.clone()) {}
+
 protected:
     NodeInserter& nodeInserter;
     
     /**
      * Must be sorted by tour index
      */
-    TourNodeIndexList removedNodes;
-    
+    TourNodeIndexList removedNodes;    
 };
 
 
@@ -190,8 +196,7 @@ public:
     
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);
     
-private:
-    
+    virtual Neighborhood* clone() const { return new NearestTourExchange(*this); }    
 };
 
 
@@ -203,6 +208,8 @@ public:
     virtual std::string getName() const;
     
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);
+
+    virtual Neighborhood* clone() const { return new TwoNodesTourExchange(*this); }
 
 private:
     unsigned lastFirstNode;

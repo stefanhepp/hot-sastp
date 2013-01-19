@@ -39,6 +39,11 @@ void ACO::run()
     // just to be on the safe side, initialize best ant with empty tour
     setBestAnt(ants[0]);
     
+    std::vector<AbstractSearch*> localSearches;
+    for (int i = 0; i < ants.size(); i++) {
+	localSearches.push_back(localSearch.clone());
+    }
+    
     do {
 	
 	bool printStep = env.setPrintSteps(false);
@@ -64,10 +69,12 @@ void ACO::run()
 	    if (debug) cerr << "ACO: running local search\n";
 	    
 	    // perform daemon action
-	    localSearch.reset(ant->getInstance());
-	    localSearch.run();
-
-	    Instance& localInstance = localSearch.getInstance();
+	    localSearches[k]->reset(ant->getInstance());
+	    localSearches[k]->run();
+	}
+	
+	for (size_t k = 0; k < numAnts; k++) {
+	    Instance& localInstance = localSearches[k]->getInstance();
 	    
 	    double localSatisfaction = localInstance.getTotalSatisfaction();
 	    satisfaction[k] = std::make_pair(k, localSatisfaction);
@@ -82,7 +89,7 @@ void ACO::run()
 	    if (!localInstance.isValid()) {
 		satisfaction[k].second = -1;
 	    } else if (improveAntSolution) {
-		ant->setInstance(localInstance);
+		ants[k]->setInstance(localInstance);
 	    }
 	    
 	    // TODO track satisfaction per ant over steps
