@@ -25,6 +25,9 @@ class ACO : public AbstractSearch
     
     // The local search to use to improve the results
     AbstractSearch &localSearch;
+    AbstractSearch *optionalSearch;
+
+    unsigned optionalSearchSteps;
     
     unsigned maxSteps;
     
@@ -36,8 +39,7 @@ class ACO : public AbstractSearch
     AntList ants;
 public:
   
-    ACO(Environment& env, AbstractSearch &localSearch);
-    
+    ACO(Environment& env, AbstractSearch &localSearch, AbstractSearch* optionalSearch = 0, unsigned optionalSearchSteps = 0);
 
     virtual Instance& getInstance() { return instance; }
 
