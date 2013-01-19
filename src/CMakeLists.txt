@@ -1,7 +1,7 @@
 
 set(SASTP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(CMAKE_CXX_FLAGS "-std=c++0x")
+set(CMAKE_CXX_FLAGS "-std=c++0x -fopenmp")
 
 include_directories(${SASTP_INCLUDE_DIR})
 

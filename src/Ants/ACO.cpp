@@ -53,6 +53,7 @@ void ACO::run()
 	// perform steps and daemon actions with all ants
 	#pragma omp parallel for
 	for (size_t k = 0; k < numAnts; k++) {
+
 	    Ant* ant = ants[k];
 	
 	    if (debug) cerr << "ACO: finding tour of ant " << k << " in step " << getCurrentStep() << endl;
