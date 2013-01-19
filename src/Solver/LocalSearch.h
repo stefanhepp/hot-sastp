@@ -15,6 +15,9 @@ class LocalSearch : public AbstractSearch
 public:
     LocalSearch(Environment& env, Neighborhood& nb, const Instance& init);
 
+    LocalSearch(const LocalSearch& obj) 
+    : AbstractSearch(obj), instance(obj.instance), neighborhood(*obj.neighborhood.clone()) {}
+    
     virtual Instance& getInstance() { return instance; };
 
     virtual void reset(const Instance& init);

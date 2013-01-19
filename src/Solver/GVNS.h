@@ -19,6 +19,12 @@ class GVNS : public AbstractSearch
 public:
     GVNS(Environment& env, VND& vnd, const Instance& init);
     
+    GVNS(const GVNS& obj) 
+    : AbstractSearch(obj), vnd(*obj.vnd.clone()), instance(obj.instance) 
+    {
+	for (auto nb : obj.neighborhoods) neighborhoods.push_back(nb->clone());
+    }
+    
     virtual Instance& getInstance() { return instance; };
     
     void addNeighborhood(Neighborhood& nb) { neighborhoods.push_back(&nb); }

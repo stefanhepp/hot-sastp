@@ -29,6 +29,8 @@ public:
      * @return true if a step has been performed
      */
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply)=0;
+
+    virtual Neighborhood* clone() const =0;
     
 protected:
     
@@ -51,6 +53,8 @@ public :
     virtual std::string getName() const { return "Spot-1-Opt"; }
     
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);    
+    
+    virtual Neighborhood* clone() const { return new SpotOneOPT(*this); }
     
 private:
     
@@ -97,6 +101,8 @@ public :
     
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);
     
+    virtual Neighborhood* clone() const { return new EdgeTwoOPT(*this); }
+    
 private:
     
     bool isValidEdgeExchange(Instance& instance, int firstEdge, int secondEdge, double &deltaSatisfaction);
@@ -122,6 +128,8 @@ public :
     
     virtual bool performStep(Instance& instance, Config::StepFunction stepFunction, bool alwaysApply);
     
+    virtual Neighborhood* clone() const { return new MethodTwoOPT(*this); }
+        
 private:
     
     bool isValidMethodExchange(Instance& instance, 
