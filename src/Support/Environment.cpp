@@ -44,7 +44,7 @@ Config::Config()
     _maxTau = MAXDOUBLE;
     
     _minAntK = 1;
-    _maxAntK = _numberOfAnts+1;
+    _maxAntK = _numberOfAnts*2;
     
     _allowedTimeFactor = 1.0;
     _persistFactor = 0.8;
@@ -406,7 +406,7 @@ int Config::parseArguments (int argc, char* argv[])
                 assert(opt.arg);
                 _numberOfAnts = (unsigned)atoi(opt.arg);
                 assert( _numberOfAnts >= 1 );
-		if (!hasSetMaxAntK) _maxAntK = _numberOfAnts + 1;
+		if (!hasSetMaxAntK) _maxAntK = _numberOfAnts * 2;
                 break;          
             case ANTSTEPS:
                 assert(opt.arg);

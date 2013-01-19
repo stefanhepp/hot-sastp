@@ -8,10 +8,11 @@
 
 using namespace std;
 
-ACO::ACO(Environment& env, AbstractSearch &localSearch)
+ACO::ACO(Environment& env, AbstractSearch &localSearch, AbstractSearch* optionalSearch, unsigned optionalSearchSteps)
 : AbstractSearch(env, env.getConfig().getMaxStepsNoChange()),
   instance(env.getProblem()), bestAnt(0), PM(env), 
-  localSearch(localSearch), maxSteps(env.getConfig().getNumberOfSteps())
+  localSearch(localSearch), optionalSearch(optionalSearch), optionalSearchSteps(optionalSearchSteps),
+  maxSteps(env.getConfig().getNumberOfSteps())
 {
     improveAntSolution = env.getConfig().doImproveAntSolution();
     updateWithGlobalBest = env.getConfig().getUpdateWithGlobalBest();

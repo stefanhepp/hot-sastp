@@ -12,8 +12,11 @@
 AntNeighborhood::AntNeighborhood(Environment& env, unsigned int k)
 : _antNumber(k)
 {
-    // TODO get min/max from config
-    _maxK = (k+1)*2;
+    float minK = env.getConfig().getMinAntK();
+    float maxK = env.getConfig().getMaxAntK();
+    float numAnts = env.getConfig().getNumberOfAnts();
+
+    _maxK = (unsigned) (minK + k*(maxK - minK)/(numAnts - 1.0) + 0.5);
 }
 
 
