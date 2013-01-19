@@ -41,12 +41,76 @@ def runDifConf(program, configurationList, inputFile, times):
 
         
 #################  create the Latex table for each logFile #############
+import numpy
+
+
+'''
+\begin{table}[b!]
+  \vspace{-6mm}%
+  \caption{Computed values using the nearest tour neighborhood}
+  \label{tab:NearestTour}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+   \multirow{2}{*}{\bfseries Problem} &
+      \multicolumn{2}{c}{\bfseries Local Search, Next} &
+      \multicolumn{2}{c}{\bfseries VND, Next} &
+      \multicolumn{2}{c}{\bfseries Grasp (VND), Next} \\
+    &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Satis. &
+    \bfseries Time &
+    \bfseries Satis. &
+    \bfseries Time 
+    \\\hline
+sastp10   & 43.2979 & 0.00 & 43.2979 & 0.00 & 43.2979 & 0.02 \\
+sastp20   & 67.2554 & 0.00 & 69.9204 & 0.00 & 72.4877 & 0.14 \\
+sastp50   & 195.385 & 0.04 & 208.364 & 0.07 & 210.068 & 1.43 \\
+sastp100  & 465.156 & 0.43 & 492.373 & 0.52 & 499.048 & 21.44 \\
+sastp200  & 904.097 & 1.82 & 960.046 & 3.01 & 968.095 & 180.44 \\
+sastp500  & 2265.16 & 3.82 & 2608.02 & 80.29 & 2612.06 & 657.99 \\
+sastp1000 & 4474.67 & 1.38 & 5451.09 & 667.66 & 5449.17 & 1141.64 
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+'''
+def ComputeForOneProblem(fileWrite, problemName, lines):
+    maximumSatisfaction = 0.0
+    avgTime = 0.0
+    bestSatisfaction = 0.0
+    standardDev = []
+    noRuns = 0
+    for index in lines: 
+        spl = index.split(",")
+        if problemName in spl[0]: 
+            noRuns = noRuns + 1
+            avgTime = avgTime + float(spl[2])
+            standardDev.append(float(spl[1]))
+            if float(spl[1]) > bestSatisfaction : 
+                bestSatisfaction = float(spl[1])
+    deviation = numpy.std(standardDev)
+    avg = avgTime/noRuns
+    fileWrite.write(problemName+" & "+ str(bestSatisfaction)+ " & "+ str(deviation)+ " & " +str(avg) + "\n")
+    
 
 def CreateLatexTable(logfile):
     log = open(logfile, "r")
     logLines = log.readlines();
+    logLines.sort()
+    stdev = []
+    problems = ["sastp10","sastp20"]#,"sastp50", "sastp100", "sastp200", "sastp500"]
 
-    print logLines
+    fout = open("Latex_from_"+logfile,"a")
+    for line in problems: 
+        ComputeForOneProblem(fout,line, logLines)
+        #if splitted[0].endswith("sastp10") : 
+        #    stdev.append(float(splitted[1]))
+    #print numpy.std(stdev)
+    #print numpy.average(stdev)
+    #print logLines
 
 '''
     with open(logfile,"rb") as csvfile : 
@@ -75,6 +139,7 @@ if __name__ == '__main__':
     problemList =[]
     getProblems(directory, problemList)
     
+    #instead of 1 place the number of runs of this configuration
     runDifConf(executable, configurations, problemList, 1)
 
     for x in range(0, len(configurations)):
