@@ -1,19 +1,25 @@
-Improvement Ideas / Suggestions
-+ Preprocessing Step: sort methods + spots by ratio
-- Preprocessing Step: Eliminate impossible (partial) solutions in advance
-- Representation: Store as (linked) list of edges, faster edge exchange and insert/remove, can be sorted
-- Allow intermediate invalid solutions: accept longer inserted tours, then run edge cleanup
-
 TODOs
-- Create subdirectory for first/second report
-- Keep track of timestamp of best found solution
+- Use minAntK/maxAntK options
+- Allow intermediate invalid solutions: accept longer inserted tours, then run edge cleanup
+- Implement AntNeighorhoods, skip bad solutions
++ ACO: initialize with optional second localSearch, use second local search every n'th iteration
+- Initialize half of ants with different neighborhoods
+- print out best ants per step with solution values
 
+Evaluation
+- Find minimal VND neighborhood set (order of Neighborhoods, configurations,..)
+
+Python script
+- Get options for sasptsolver from command-line (?)
+- Run sastpsolver for all *.prob files, print result in csv-format (-cp), store csv-files (required for gnuplots!)
+- Parse all csv files, collect: best satsisfaction, avg satisfaction, avg runtime, avg runtime until last improvement
+- print out latex table code with results for all problems
+
+
+Other Improvements / Suggestions
+- Preprocessing Step: sort methods + spots by ratio
+- Preprocessing Step: Eliminate methods that are fully dominated by other methods at same spot
 - NodeInserter.addNewNode: avoid crossovers, insert with minimal tour increase
-- NodeInserter: faster/more efficient way for selecting edges to insert? Early exit criteria to improve speed
-- TourNeighborhoods: check runtime?
-- Testing
-    - Try combinations of neighborhoods for VND, GVNS to improve on satisfaction + runtime
-    - Try combinations of arguments for neighborhoods (maxLength, minLength, different inserter, allow insert used spots/methods, early
-      exits, algorithms to insert new nodes?)
 - Statistics about number of improvements per VND neighborhood, runtime of neighborhoods
+
 
