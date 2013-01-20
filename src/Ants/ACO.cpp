@@ -163,7 +163,18 @@ void ACO::updatePheromones(SatisfactionList &satisfaction, unsigned round)
     
     bool debug = env.getConfig().doPrintBestAnts();
     
-    
+    if (debug) {
+	cerr << "ACO: Updating ants:" << endl;
+	if (updateBestAnt) {
+	    cerr << "     - Best Ant #" << bestAnt->getAntNumber() << " (K: " << bestAnt->getNeighborhood().getMaxNearestK() 
+	         << ", sat: " << bestAnt->getInstance().getTotalSatisfaction() << ")" << endl;
+	}
+	for (int i = 0; i < (updateBestAnt ? w - 1 : w); i++) {
+	  int k = satisfaction[i].first;
+	  cerr << "     - Ant #" << k << " (K: " << ants[k]->getNeighborhood().getMaxNearestK() << ", sat: " << ants[k]->getInstance().getTotalSatisfaction() 
+	            << ", opt sat: " << satisfaction[i].second << ")" << endl;
+	}
+    }
     
     if (updateBestAnt) {
 	bestAnt->addPheromones(w);

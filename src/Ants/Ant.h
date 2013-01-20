@@ -48,6 +48,10 @@ public:
     
     Instance &getInstance() { return instance; }
     
+    int getAntNumber() const { return _antNumber; }
+
+    AntNeighborhood &getNeighborhood() { return neighborhood; }
+
     virtual void setInstance(const Instance& inst) { instance = inst; }
     
     // construct a tour based on the pheromeone matrix and the neighborhood heuristics
