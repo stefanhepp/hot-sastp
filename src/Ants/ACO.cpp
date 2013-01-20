@@ -78,7 +78,9 @@ void ACO::run()
 	    Instance& localInstance = localSearches[k]->getInstance();
 	    
 	    double localSatisfaction = localInstance.getTotalSatisfaction();
-	    satisfaction[k] = std::make_pair(k, localSatisfaction);
+	    satisfaction[k].antId = k;
+	    satisfaction[k].antSatisfaction = ants[k]->getInstance().getTotalSatisfaction();
+	    satisfaction[k].optSatisfaction = localSatisfaction;
 	   
 	    // update the best instance
 	    if (localSatisfaction > bestSatisfaction) {
@@ -88,7 +90,7 @@ void ACO::run()
 	    }
 	    
 	    if (!localInstance.isValid()) {
-		satisfaction[k].second = -1;
+		satisfaction[k].optSatisfaction = -1;
 	    } else if (improveAntSolution) {
 		ants[k]->setInstance(localInstance);
 	    }
@@ -137,6 +139,7 @@ void ACO::setBestAnt(Ant* ant)
     if (bestAnt) delete bestAnt;
     bestAnt = ant->clone();
     if (env.getConfig().getTauMax() < 0) {
+        // TODO update minTau
 	PM.setMaxTau(bestAnt->getInstance().getTotalSatisfaction());
     }
 }
@@ -148,8 +151,8 @@ void ACO::updatePheromones(SatisfactionList &satisfaction, unsigned round)
 
     // sort ants by satisfaction, use first m ants to update pheromones
     sort(satisfaction.begin(), satisfaction.end(), 
-	  [](pair<size_t,double> a, pair<size_t,double> b) {
-	      return a.second > b.second;
+	  [](AntResults a, AntResults b) {
+	      return a.optSatisfaction > b.optSatisfaction;
 	  });
     
     // For Rank-based AS use:
@@ -170,9 +173,9 @@ void ACO::updatePheromones(SatisfactionList &satisfaction, unsigned round)
 	         << ", sat: " << bestAnt->getInstance().getTotalSatisfaction() << ")" << endl;
 	}
 	for (int i = 0; i < (updateBestAnt ? w - 1 : w); i++) {
-	  int k = satisfaction[i].first;
-	  cerr << "     - Ant #" << k << " (K: " << ants[k]->getNeighborhood().getMaxNearestK() << ", sat: " << ants[k]->getInstance().getTotalSatisfaction() 
-	            << ", opt sat: " << satisfaction[i].second << ")" << endl;
+	  int k = satisfaction[i].antId;
+	  cerr << "     - Ant #" << k << " (K: " << ants[k]->getNeighborhood().getMaxNearestK() << ", sat: " << satisfaction[i].antSatisfaction 
+	            << ", opt sat: " << satisfaction[i].optSatisfaction << ")" << endl;
 	}
     }
     
@@ -182,7 +185,7 @@ void ACO::updatePheromones(SatisfactionList &satisfaction, unsigned round)
     }
     
     for (int i = 0; i < w; i++) {
-	int k = satisfaction[i].first;
+	int k = satisfaction[i].antId;
 	ants[k]->addPheromones(w - i);
     }    
 }

@@ -12,8 +12,14 @@
 
 class ACO : public AbstractSearch
 {
+    typedef struct {
+      unsigned antId;
+      double antSatisfaction;
+      double optSatisfaction;
+    } AntResults;
+  
     typedef std::vector<Ant*> AntList;
-    typedef std::vector<std::pair<size_t, double> > SatisfactionList;
+    typedef std::vector<AntResults> SatisfactionList;
     
     // This is (a copy of) the best instance of the last iteration, after localSearch
     Instance instance;
