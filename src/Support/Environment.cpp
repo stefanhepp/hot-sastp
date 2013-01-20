@@ -20,7 +20,7 @@ Config::Config()
     _maxKNearestSpots = 10;
     _nodeInsertMode = NIM_SHORTEST_PATH;
     _stepFunction = SF_NEXT;
-    _vndMode = 0;
+    _vndMode = 3;
     _greedyInsertHeuristic = true;
     _verbose = false;
     _debug = false;
@@ -32,10 +32,10 @@ Config::Config()
     _alphaRCL = 1;
     _maxRuntime = 1800;
     //the following options have to be decided upon -- this are just some initials 
-    _stepsToFinish = 10000;
-    _numberOfAnts = 20; 
-    _numUpdateBestAnts = 1;
-    _initialTau = 1;
+    _stepsToFinish = 100000;
+    _numberOfAnts = 10; 
+    _numUpdateBestAnts = 5;
+    _initialTau = 5000;
     _alpha = 1; 
     _beta = 2;
 
@@ -43,8 +43,8 @@ Config::Config()
     _minTau = 0.0;
     _maxTau = MAXDOUBLE;
     
-    _minAntK = 1;
-    _maxAntK = _numberOfAnts*2;
+    _minAntK = 8;
+    _maxAntK = getDefaultMaxAntK();
     
     _allowedTimeFactor = 1.0;
     _persistFactor = 0.8;
@@ -406,7 +406,7 @@ int Config::parseArguments (int argc, char* argv[])
                 assert(opt.arg);
                 _numberOfAnts = (unsigned)atoi(opt.arg);
                 assert( _numberOfAnts >= 1 );
-		if (!hasSetMaxAntK) _maxAntK = _numberOfAnts * 2;
+		if (!hasSetMaxAntK) _maxAntK = getDefaultMaxAntK();
                 break;          
             case ANTSTEPS:
                 assert(opt.arg);

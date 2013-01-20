@@ -126,6 +126,8 @@ public:
     
     unsigned getMaxAntK() const { return _maxAntK; }
     
+    unsigned getDefaultMaxAntK() const { return std::max(15u, 8 + _numberOfAnts*2); }
+    
     /**
      * @return Heuristic to be used by ants
      */
