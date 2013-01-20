@@ -31,6 +31,8 @@ void Driver::prepare()
     
     if (env.getConfig().isVerbose()) cout << "Removed " << count << " of " << (count + env.getProblem().getNumMeth()) << " methods" << endl;
   
+    helper.sortMethods();
+    
     // Initialize the SpotSearch
     env.initSpotSearch( env.getConfig().getMaxKNearestSpots() );
 }
@@ -141,6 +143,19 @@ VND* Driver::getVND(Environment& env, const Instance& init)
 	case 4:
 	    // Setting with just edge and method two-opt
 	    nb = new EdgeTwoOPT(env);
+	    vnd->addNeighborhood(*nb);
+	    
+	    nb = new MethodTwoOPT(env);
+	    vnd->addNeighborhood(*nb);
+	    
+	    break;
+	case 5:
+	    // Setting with just edge and method two-opt
+	    nb = new EdgeTwoOPT(env);
+	    vnd->addNeighborhood(*nb);
+	    
+	    ni = new ConsecutiveNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
+	    nb = new NearestTourExchange(env, 2, 4, *ni);
 	    vnd->addNeighborhood(*nb);
 	    
 	    nb = new MethodTwoOPT(env);

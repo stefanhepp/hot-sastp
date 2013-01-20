@@ -46,6 +46,7 @@ public:
 	}
 
 	void addMethod(Method* m){methods.push_back(m);}
+	std::vector<Method*>& getMethods() {return methods;}
 	const std::vector<Method*>& getMethods()const{return methods;}
 	
 	const Method& getMethod(unsigned index) const {return *methods[index];}

@@ -46,6 +46,8 @@ public:
     double calcInsertSatisfactionTimeRatio(double currRemainingStamina, const Method& m, double deltaTour, double& deltaTime);
     
     unsigned removeDominatedMethods();
+    
+    void sortMethods();
 };
 
 #endif // PROBLEMHELPER_H

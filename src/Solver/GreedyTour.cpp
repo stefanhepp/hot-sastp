@@ -69,6 +69,7 @@ TourNode GreedyTour::selectBestTourNode ( NearestSpotList nearest, unsigned &ins
 		best.method = methodId;
 		bestRatio = ratio;
 		insertAt = bestInsert;
+		break;
 	    }
 	    
 	    methodId++;

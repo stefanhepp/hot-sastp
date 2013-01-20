@@ -1,6 +1,7 @@
 #include "ProblemHelper.h"
 
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -150,5 +151,18 @@ unsigned int ProblemHelper::removeDominatedMethods()
   }
   
   return count;
+}
+
+void ProblemHelper::sortMethods()
+{
+  for (auto& spot : problem.getSpots()) {
+    
+    std::sort(spot->getMethods().begin(), spot->getMethods().end(), [this](const Method* a, const Method* b) {
+      double ra = a->getSatisfaction() / (a->getTime() + a->getStamina() / problem.getHabitus());
+      double rb = b->getSatisfaction() / (b->getTime() + b->getStamina() / problem.getHabitus());
+      
+      return ra > rb;
+    });
+  }
 }
 

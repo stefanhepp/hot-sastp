@@ -357,26 +357,16 @@ std::vector< unsigned int > Instance::getRatioSortedNodes() const
 double Instance::getBestMethodRatio(unsigned int fromIndex, const Spot& toSpot, unsigned int& bestMethod) const
 {
     const Spot& fromSpot = getSpot(fromIndex);
-    double bestRatio = -1;
-    
-    bestMethod = 0;
     
     double dist = problem.getDistance(fromSpot, toSpot);
     
-    unsigned methodId = -1;
-    for (auto& method : toSpot.getMethods()) {
-	methodId++;
-	
-	double ratio = method->getSatisfaction() / (method->getTime() + method->getStamina() / problem.getHabitus());
-	if (ratio > bestRatio) {
-	    bestMethod = methodId;
-	    bestRatio = ratio;
-	}
-    }
+    bestMethod = 0;
+    const Method& method = toSpot.getMethod(0);    
+    double bestRatio = method.getSatisfaction() / (method.getTime() + method.getStamina() / problem.getHabitus());
     
-    double totalSatisfaction = toSpot.getMethod(bestMethod).getSatisfaction() - dist * problem.getAlpha();
-    double totalTime = toSpot.getMethod(bestMethod).getTime() + dist / problem.getVelocity() + 
-                       toSpot.getMethod(bestMethod).getStamina() / problem.getHabitus();
+    double totalSatisfaction = method.getSatisfaction() - dist * problem.getAlpha();
+    double totalTime = method.getTime() + dist / problem.getVelocity() + 
+                       method.getStamina() / problem.getHabitus();
 		       
     return totalSatisfaction / totalTime;
 }
