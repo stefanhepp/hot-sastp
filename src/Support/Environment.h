@@ -8,6 +8,9 @@
 
 #include <sys/time.h>
 
+class AbstractSearch;
+
+
 class Config
 {
 public:
@@ -290,7 +293,7 @@ public:
     
     void printStepResult(const Instance& instance);
     
-    void printSolution(const SASTPSolution& solution);
+    void printSolution(const SASTPSolution& solution, AbstractSearch &search);
     
     bool setPrintSteps(bool enable);
     

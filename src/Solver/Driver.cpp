@@ -208,6 +208,10 @@ void Driver::solve()
 	greedy->run();
 	
 	solution = greedy->getInstance().createSolution(env.getOrigProblem());
+	
+	if (solution) {
+            env.printSolution(*solution, *greedy);
+        }
 	break;
     }
 
@@ -226,6 +230,10 @@ void Driver::solve()
 	local->run();
 	
         solution = local->getInstance().createSolution(env.getOrigProblem());
+		
+	if (solution) {
+            env.printSolution(*solution, *local);
+        }
         break;
     }
     
@@ -244,6 +252,10 @@ void Driver::solve()
 	vnd->run();
 	
         solution = vnd->getInstance().createSolution(env.getOrigProblem());
+	
+	if (solution) {
+            env.printSolution(*solution, *vnd);
+        }	
         break;
     }
         
@@ -259,6 +271,10 @@ void Driver::solve()
         grasp.run();
         
         solution = grasp.getInstance().createSolution(env.getOrigProblem());
+
+	if (solution) {
+            env.printSolution(*solution, grasp);
+        }
         break;
     }
    
@@ -274,6 +290,10 @@ void Driver::solve()
 	grasp.run();
 	
         solution = grasp.getInstance().createSolution(env.getOrigProblem());
+	
+	if (solution) {
+            env.printSolution(*solution, grasp);
+        }	
         break;
     }
     case Config::AT_GVNS: {
@@ -291,6 +311,10 @@ void Driver::solve()
 	gvns.run();
         
         solution = gvns.getInstance().createSolution(env.getOrigProblem());
+	
+	if (solution) {
+            env.printSolution(*solution, gvns);
+        }
         break;
     }
     case Config::AT_ANT:
@@ -305,6 +329,10 @@ void Driver::solve()
         ants.run();
         
 	solution = ants.getInstance().createSolution(env.getOrigProblem());
+
+	if (solution) {
+            env.printSolution(*solution, ants);
+        }
         break;
     }
     case Config::AT_ANT_LS:
@@ -319,6 +347,10 @@ void Driver::solve()
         ants.run();
 	
 	solution = ants.getInstance().createSolution(env.getOrigProblem());
+
+	if (solution) {
+            env.printSolution(*solution, ants);
+        }
         break;
     }
     case Config::AT_ANT_VND:
@@ -333,13 +365,13 @@ void Driver::solve()
         ants.run();
         
 	solution = ants.getInstance().createSolution(env.getOrigProblem());
+	
+	if (solution) {
+            env.printSolution(*solution, ants);
+        }
         break;
     }
   }  
-  
-  if (solution) {
-      env.printSolution(*solution);
-  }
 }
 
 void Driver::checkSolution() {

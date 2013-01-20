@@ -22,6 +22,8 @@ public:
     
     int getLastImprovementStep() const { return _lastImprovementStep; }
     
+    float getLastImprovementTime() const { return _lastImprovementTime; }
+    
     virtual AbstractSearch* clone() const =0;
     
 protected:
@@ -29,13 +31,14 @@ protected:
     int _maxSteps;
     int _currStep;
     int _lastImprovementStep;
+    float _lastImprovementTime;
     
     Environment& env;
     SASTProblem& problem;
     
     Config::StepFunction stepFunction;
     
-    void start() { _noImprovement =0; _lastImprovementStep = 0; _currStep = 0; }
+    void start() { _noImprovement =0; _lastImprovementStep = 0; _currStep = 0; _lastImprovementTime = 0; }
     
     bool shouldStop(double improvement);
     

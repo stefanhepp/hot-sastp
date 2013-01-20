@@ -1,5 +1,7 @@
 #include "Environment.h"
 
+#include "Solver/AbstractSearch.h"
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -562,16 +564,17 @@ void Environment::printStepResult(const Instance& instance)
     
 }
 
-void Environment::printSolution(const SASTPSolution& solution)
+void Environment::printSolution(const SASTPSolution& solution, AbstractSearch &search)
 {
     if (config.doPrintCSVOutput()) {
-	cout << problemName << "," << solution.getSatisfaction() << "," << getCurrentTime() << endl;
+	cout << problemName << "," << solution.getSatisfaction() << "," << getCurrentTime() << "," << search.getLastImprovementTime() << endl;
     } else {
 	cout << "Found solution to " << problemName << " (time: " << solution.getTourTime() << 
 	                                                  ", satisfaction: " << solution.getSatisfaction() << 
 	                                                  ", stamina: " << solution.getStamina() << 
 	                                                  ", length: " << solution.getTour().size() << 
-	                                                  ", runtime: " << getCurrentTime() << ")" << endl;
+	                                                  ", runtime: " << getCurrentTime() << 
+	                                                  ", last improvement: " << search.getLastImprovementTime() << ")" << endl;
     }
 }
 

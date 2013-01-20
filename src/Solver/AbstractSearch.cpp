@@ -15,6 +15,7 @@ bool AbstractSearch::shouldStop(double improvement)
     } else {
 	_noImprovement = 0;
 	_lastImprovementStep = _currStep;
+	_lastImprovementTime = env.getCurrentTime();
     }
     if(_maxSteps == _noImprovement)
 	return true;
