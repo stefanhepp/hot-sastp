@@ -9,9 +9,6 @@ directory = ""
 outputDirectory = ""
 
 def runCommand(program, arguments, problem, iteration, uniqueID):
-#    for problem in arguments: 
-#        os.system( "echo "+program + " " + problem +">>"+ outputFile)
-       # os.system( program+" "+" "+problem+" "+arguments +" >> "+ outputFile)
     outputFile = problem.strip(".prob")
     command = program + " " + arguments + " "+directory+problem + " " +outputDirectory+uniqueID+outputFile+"_"+str(iteration+1)+".sol"
     os.system(command + ">> LogFile"+uniqueID+".csv" )
@@ -28,15 +25,19 @@ def getProblems(dirname,lis):
 ##### run each problem in this configuration for 30 times ############
 def runNTimes(program, arguments, inputFile, times, uniqueID):
     for item in inputFile:
-        for i in range(0, times):
-            runCommand(program, arguments, item, i, uniqueID);
+         if "sastp1000" in item or "sastp500" in item: 
+             times = 5
+         else : 
+             times = 30
+         for i in range(0, times):
+             runCommand(program, arguments, item, i, uniqueID);
 
 ############ run different configurations for  n times ##################
 
 def runDifConf(program, configurationList, inputFile, times):
     i = 1
     for item in configurationList: 
-        runNTimes(program, item, inputFile, times,"conf"+str(i) )
+        runNTimes(program, item.strip("\n"), inputFile, times,"conf"+str(i) )
         i = i + 1 
 
         
@@ -79,32 +80,37 @@ sastp1000 & 4474.67 & 1.38 & 5451.09 & 667.66 & 5449.17 & 1141.64
 '''
 def ComputeForOneProblem(fileWrite, problemName, lines):
     maximumSatisfaction = 0.0
-    avgTime = 0.0
+    avgTime = 1.0
     bestSatisfaction = 0.0
     standardDev = []
     noRuns = 0
     for index in lines: 
         spl = index.split(",")
-        if problemName in spl[0]: 
+        #print spl[0], problemName
+        if problemName == spl[0]: 
             noRuns = noRuns + 1
             avgTime = avgTime + float(spl[2])
             standardDev.append(float(spl[1]))
             if float(spl[1]) > bestSatisfaction : 
                 bestSatisfaction = float(spl[1])
+    #print standardDev
     deviation = numpy.std(standardDev)
-    avg = avgTime/noRuns
+    if noRuns == 0 : 
+        avg = -1
+    else: 
+        avg = avgTime/noRuns
     fileWrite.write(problemName+" & "+ str(bestSatisfaction)+ " & "+ str(deviation)+ " & " +str(avg) + "\n")
-    
+    #print problemName+" & "+ str(bestSatisfaction)+ " & "+ str(deviation)+ " & " +str(avg) + "\n"
 
 def CreateLatexTable(logfile):
     log = open(logfile, "r")
     logLines = log.readlines();
     logLines.sort()
     stdev = []
-    problems = ["sastp10","sastp20"]#,"sastp50", "sastp100", "sastp200", "sastp500"]
+    problems = ["sastp10","sastp20","sastp50", "sastp100", "sastp200", "sastp500", "sastp1000"]
 
     fout = open("Latex_from_"+logfile,"a")
-    for line in problems: 
+    for line in (problems): 
         ComputeForOneProblem(fout,line, logLines)
         #if splitted[0].endswith("sastp10") : 
         #    stdev.append(float(splitted[1]))
@@ -135,16 +141,15 @@ if __name__ == '__main__':
     
     confFile = open(configurations, "r")
     configurations = confFile.readlines()
-
+    
     problemList =[]
     getProblems(directory, problemList)
-    
+     
     #instead of 1 place the number of runs of this configuration
-    runDifConf(executable, configurations, problemList, 1)
+    runDifConf(executable, configurations, problemList, 30)
 
     for x in range(0, len(configurations)):
         CreateLatexTable("LogFileconf"+str(x+1)+".csv")
     
-    print problemList
     
 
