@@ -7,15 +7,17 @@
 
 class Method
 {
+	size_t id;
 	std::string name;
 	double satisfaction;
 	double time;
 	double stamina;
 
 public:
-	Method(const std::string& name,double satisfaction,double time,double stamina):
-		name(name),satisfaction(satisfaction),time(time),stamina(stamina){}
+	Method(size_t id, const std::string& name,double satisfaction,double time,double stamina):
+		id(id), name(name),satisfaction(satisfaction),time(time),stamina(stamina){}
 
+	size_t getID() const { return id; }
 	const std::string& getName()const{return name;}
 	double getSatisfaction()const{return satisfaction;}
 	double getTime()const{return time;}
@@ -29,12 +31,19 @@ inline std::ostream& operator<<(std::ostream& os,const Method& m)
 
 class Spot
 {
+	size_t id;
 	std::string name;
 	double x,y;
 	std::vector<Method*> methods;
 
 public:
-	Spot(const std::string& name,double x,double y):name(name),x(x),y(y){}
+	Spot(size_t id, const std::string& name,double x,double y):id(id),name(name),x(x),y(y){}
+	
+	Spot(const Spot& obj):id(obj.id), name(obj.name),x(obj.x),y(obj.y) 
+	{
+	  // If we make Method mutable, we need to copy here as well
+	  methods.insert(methods.begin(), obj.methods.begin(), obj.methods.end());
+	}
 
 	void addMethod(Method* m){methods.push_back(m);}
 	const std::vector<Method*>& getMethods()const{return methods;}
@@ -42,6 +51,9 @@ public:
 	const Method& getMethod(unsigned index) const {return *methods[index];}
 	Method& getMethod(unsigned index) {return *methods[index];}
 
+	void removeMethod(unsigned index) { methods.erase(methods.begin() + index); }
+	
+	size_t getID() const { return id; }
 	const std::string& getName()const{return name;}
 	double getX()const{return x;}
 	double getY()const{return y;}
@@ -61,6 +73,8 @@ class SASTProblem
 public:
 	SASTProblem(const std::string& filename);
 
+	SASTProblem(const SASTProblem& obj);
+	
 	void store(const std::string& filename);
 
 	void printData()const;
@@ -105,7 +119,7 @@ private:
 
 	std::vector<Spot*> spots;
 
-	SASTProblem():maxTime(0),initStamina(0),maxStamina(0),alpha(0),habitus(0),velocity(0),startX(0),startY(0),start("Origin",0,0){}
+	SASTProblem():maxTime(0),initStamina(0),maxStamina(0),alpha(0),habitus(0),velocity(0),startX(0),startY(0),start(-1, "Origin",0,0){}
 
 	friend class SASTProblemGenerator;
 };

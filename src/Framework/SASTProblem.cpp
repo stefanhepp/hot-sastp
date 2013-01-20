@@ -10,7 +10,7 @@
 using namespace std;
 
 SASTProblem::SASTProblem(const std::string& filename):
-		maxTime(0),initStamina(0),maxStamina(0),alpha(0),habitus(0),velocity(0),startX(0),startY(0),start("Origin",0,0)
+		maxTime(0),initStamina(0),maxStamina(0),alpha(0),habitus(0),velocity(0),startX(0),startY(0),start(-1, "Origin",0,0)
 {
 	ifstream ifs(filename);
 
@@ -39,7 +39,7 @@ SASTProblem::SASTProblem(const std::string& filename):
 		ifs>>token>>startX>>startY;
 		assert(token=="start");
 		
-		start = Spot("Origin",startX, startY);
+		start = Spot(-1, "Origin",startX, startY);
 
 		int num_spots=0, num_methods=0;
 
@@ -49,6 +49,8 @@ SASTProblem::SASTProblem(const std::string& filename):
 		ifs>>token>>num_methods;
 		assert(token=="nummeth");
 
+		unsigned method_id = 0;
+		
 		for(int i=0;i<num_spots+num_methods;++i) //sum is number of lines that have to be read
 		{
 			string line;
@@ -66,7 +68,9 @@ SASTProblem::SASTProblem(const std::string& filename):
 				assert(id == spots.size());
 				if(!spots.empty()) assert(!spots.back()->getMethods().empty());
 				
-				spots.push_back(new Spot(name,x,y));
+				spots.push_back(new Spot(id,name,x,y));
+				
+				method_id = 0;
 			}
 			if(token=="method")
 			{
@@ -76,7 +80,9 @@ SASTProblem::SASTProblem(const std::string& filename):
 				s>>name>>satisfaction>>time>>stamina;
 				assert(!spots.empty());
 
-				spots.back()->addMethod(new Method(name,satisfaction,time,stamina));
+				spots.back()->addMethod(new Method(method_id, name,satisfaction,time,stamina));
+				
+				method_id++;
 			}
 		}
 	}
@@ -88,6 +94,15 @@ SASTProblem::SASTProblem(const std::string& filename):
 	{
 		throw logic_error("Error in input file: initial stamina > maximum stamina\n");
 	}
+}
+
+SASTProblem::SASTProblem(const SASTProblem& obj)
+: maxTime(obj.maxTime),initStamina(obj.initStamina),maxStamina(obj.maxStamina),alpha(obj.alpha),habitus(obj.habitus),
+  velocity(obj.velocity),startX(obj.startX),startY(obj.startY),start(obj.start)
+{
+  for (const Spot* spot : obj.spots) {
+    spots.push_back(new Spot(*spot));
+  }
 }
 
 void SASTProblem::store(const std::string& filename)

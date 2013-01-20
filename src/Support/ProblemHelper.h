@@ -15,6 +15,8 @@ class ProblemHelper
     SpotSearch& spotsearch;
     
 public:
+    ProblemHelper(Environment& env) : problem(env.getProblem()), spotsearch(env.getSpotSearch()) {}
+  
     ProblemHelper(SASTProblem& problem, SpotSearch& spotsearch) : problem(problem), spotsearch(spotsearch) {}
     
     /**
@@ -42,6 +44,8 @@ public:
      * @return delta satisfaction / delta total time.
      */
     double calcInsertSatisfactionTimeRatio(double currRemainingStamina, const Method& m, double deltaTour, double& deltaTime);
+    
+    unsigned removeDominatedMethods();
 };
 
 #endif // PROBLEMHELPER_H

@@ -319,11 +319,11 @@ int Config::parseArguments (int argc, char* argv[])
 		_printAllSteps = true;
 		break;
             case KNEAREST:
-                assert (atoi (opt.arg));
+                assert (opt.arg);
                 _maxKNearestSpots = atoi (opt.arg);
                 break;
             case VNDMODE:
-                assert (atoi (opt.arg));
+                assert (opt.arg);
                 _vndMode = atoi (opt.arg);
                 break;
             case VERBOSE:
@@ -505,7 +505,7 @@ int Config::parseArguments (int argc, char* argv[])
 
 
 Environment::Environment(Config& config)
- : config(config), problem(0), spotsearch(0), empty(0), printSteps(false)
+ : config(config), problem(0), origProblem(0), spotsearch(0), empty(0), printSteps(false)
 {
     problemName = config.getInputFilename();
     size_t p = problemName.find_last_of('/');
@@ -579,7 +579,9 @@ void Environment::loadProblemFile (const string& filename)
 {
     deleteProblem();
 
-    problem = new SASTProblem (filename);
+    origProblem = new SASTProblem (filename);
+    problem = new SASTProblem(*origProblem);
+    
     empty = new Instance(*problem);
 }
 

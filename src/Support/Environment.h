@@ -251,6 +251,7 @@ class Environment
 {    
     Config& config;
     
+    SASTProblem *origProblem;
     SASTProblem *problem;
     SpotSearch  *spotsearch;
     Instance    *empty;
@@ -267,6 +268,8 @@ public:
     
     const Config& getConfig() const { return config; }
     Config& getConfig() { return config; }
+    
+    const SASTProblem& getOrigProblem() const { return *origProblem; }
     
     const SASTProblem& getProblem() const { return *problem; }
     SASTProblem& getProblem() { return *problem; }

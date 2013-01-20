@@ -24,9 +24,15 @@ Driver::~Driver()
 
 void Driver::prepare()
 {
+    // perform some preprocessing on the problem
+    ProblemHelper helper(env);
+    
+    unsigned count = helper.removeDominatedMethods();
+    
+    if (env.getConfig().isVerbose()) cout << "Removed " << count << " of " << (count + env.getProblem().getNumMeth()) << " methods" << endl;
+  
     // Initialize the SpotSearch
     env.initSpotSearch( env.getConfig().getMaxKNearestSpots() );
-    
 }
 
 GreedyTour* Driver::getGreedyTour(Environment& env){
@@ -180,7 +186,7 @@ void Driver::solve()
 	env.setPrintSteps(true);
 	greedy->run();
 	
-	solution = greedy->getInstance().createSolution();
+	solution = greedy->getInstance().createSolution(env.getOrigProblem());
 	break;
     }
 
@@ -198,7 +204,7 @@ void Driver::solve()
 	env.setPrintSteps(true);
 	local->run();
 	
-        solution = local->getInstance().createSolution();
+        solution = local->getInstance().createSolution(env.getOrigProblem());
         break;
     }
     
@@ -216,7 +222,7 @@ void Driver::solve()
 	env.setPrintSteps(true);
 	vnd->run();
 	
-        solution = vnd->getInstance().createSolution();
+        solution = vnd->getInstance().createSolution(env.getOrigProblem());
         break;
     }
         
@@ -231,7 +237,7 @@ void Driver::solve()
 	env.setPrintSteps(true);
         grasp.run();
         
-        solution = grasp.getInstance().createSolution();
+        solution = grasp.getInstance().createSolution(env.getOrigProblem());
         break;
     }
    
@@ -246,7 +252,7 @@ void Driver::solve()
 	env.setPrintSteps(true);
 	grasp.run();
 	
-        solution = grasp.getInstance().createSolution();
+        solution = grasp.getInstance().createSolution(env.getOrigProblem());
         break;
     }
     case Config::AT_GVNS: {
@@ -263,7 +269,7 @@ void Driver::solve()
 	env.setPrintSteps(true);
 	gvns.run();
         
-        solution = gvns.getInstance().createSolution();
+        solution = gvns.getInstance().createSolution(env.getOrigProblem());
         break;
     }
     case Config::AT_ANT:
@@ -277,7 +283,7 @@ void Driver::solve()
 	env.setPrintSteps(true);
         ants.run();
         
-	solution = ants.getInstance().createSolution();
+	solution = ants.getInstance().createSolution(env.getOrigProblem());
         break;
     }
     case Config::AT_ANT_LS:
@@ -291,7 +297,7 @@ void Driver::solve()
 	env.setPrintSteps(true);
         ants.run();
 	
-	solution = ants.getInstance().createSolution();
+	solution = ants.getInstance().createSolution(env.getOrigProblem());
         break;
     }
     case Config::AT_ANT_VND:
@@ -305,7 +311,7 @@ void Driver::solve()
 	env.setPrintSteps(true);
         ants.run();
         
-	solution = ants.getInstance().createSolution();
+	solution = ants.getInstance().createSolution(env.getOrigProblem());
         break;
     }
   }  

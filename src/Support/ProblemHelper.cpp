@@ -1,5 +1,9 @@
 #include "ProblemHelper.h"
 
+#include <iostream>
+
+using namespace std;
+
 double ProblemHelper::getInsertDeltaTourLength(const Instance& tour, unsigned int index, const Spot& newspot, 
 					        Config::NodeInsertMode insertMode, unsigned int& bestInsert)
 {    
@@ -113,3 +117,38 @@ double ProblemHelper::calcInsertSatisfactionTimeRatio(double currRemainingStamin
     
     return deltaSatisfaction / deltaTime;
 }
+
+unsigned int ProblemHelper::removeDominatedMethods()
+{
+  unsigned count = 0;
+  
+  for (auto& spot : problem.getSpots()) {
+    
+    for (int i = 0; i < spot->getMethods().size(); i++) {
+      const Method &method = spot->getMethod(i);
+      
+      double gain = method.getSatisfaction();
+      double cost = method.getTime() + method.getStamina() * problem.getHabitus();
+      
+      bool isdom = false;
+      for (int j = 0; j < spot->getMethods().size(); j++) {
+	if (j == i) continue;
+	
+	const Method &m = spot->getMethod(j);
+	
+	double g = m.getSatisfaction();
+	double c = m.getTime() + m.getStamina() / problem.getHabitus();
+	if (g >= gain && c <= cost) isdom++;
+      }
+      
+      if (isdom) {
+	spot->removeMethod(i);
+	i--;
+	count++;
+      }
+    }
+  }
+  
+  return count;
+}
+

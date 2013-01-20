@@ -302,7 +302,7 @@ bool Instance::isValid() const
     return (getTotalTime() <= problem.getMaxTime());
 }
 
-bool Instance::isValid(TourValues delta) const
+bool Instance::isValid(const TourValues& delta) const
 {
     double time = tourTime + delta.tourTime;
     double stamina = remainingStamina - delta.stamina;
@@ -313,7 +313,7 @@ bool Instance::isValid(TourValues delta) const
     return time < problem.getMaxTime();
 }
 
-double Instance::getSatisfactionPerTotalTimeRatio(TourValues delta) const
+double Instance::getSatisfactionPerTotalTimeRatio(const TourValues& delta) const
 {
     double time = tourTime + delta.tourTime;
     double stamina = remainingStamina - delta.stamina;
@@ -382,9 +382,9 @@ double Instance::getBestMethodRatio(unsigned int fromIndex, const Spot& toSpot, 
 }
 
 
-SASTPSolution* Instance::createSolution() const
+SASTPSolution* Instance::createSolution(const SASTProblem& origProblem) const
 {
-    SASTPSolution* sol = new SASTPSolution(problem);
+    SASTPSolution* sol = new SASTPSolution(origProblem);
     
     double currStamina = problem.getInitStamina();
     double remainingRest = getTotalRequiredRestTime();
@@ -404,7 +404,10 @@ SASTPSolution* Instance::createSolution() const
 	
 	currStamina += rest * problem.getHabitus();
 	
-	sol->addStop( node.spot, node.method, rest );
+	const Spot& spot = problem.getSpot(node.spot);
+
+	// create the solution using the original spot and method IDs
+	sol->addStop( spot.getID(), spot.getMethod(node.method).getID(), rest );
     }
     
     sol->finishTour();

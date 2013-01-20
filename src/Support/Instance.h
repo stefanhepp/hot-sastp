@@ -232,9 +232,9 @@ public:
      */
     bool isValid() const;
 
-    bool isValid(TourValues delta) const;
+    bool isValid(const TourValues& delta) const;
     
-    double getSatisfactionPerTotalTimeRatio(TourValues values) const;
+    double getSatisfactionPerTotalTimeRatio(const TourValues& values) const;
     
     /**
      * @param fromIndex index of the previous node
@@ -266,7 +266,7 @@ public:
                   { return getStepValues(TourNode(fromSpot, fromMethod), TourNode(toSpot, toMethod)); }
     TourValues getStepValues(unsigned toNode) const { return getStepValues(getNode(toNode-1), getNode(toNode)); }
     
-    SASTPSolution* createSolution() const;
+    SASTPSolution* createSolution(const SASTProblem& origProblem) const;
   
 private:
     

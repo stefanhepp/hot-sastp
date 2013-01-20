@@ -63,7 +63,7 @@ void SASTPSolution::finishTour()
 	if(tour.empty())return;
 
 	const Spot& lastSpot=prob.getSpot(tour.back().spot);
-	const Spot  finishSpot("Origin",prob.getStartX(),prob.getStartY());
+	const Spot  finishSpot(-1, "Origin",prob.getStartX(),prob.getStartY());
 
 	tourtime+=prob.getTravelTime(lastSpot,finishSpot);
 	satisfaction-=prob.getTravelSatisfactionCost(lastSpot,finishSpot);
