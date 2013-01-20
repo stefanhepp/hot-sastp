@@ -49,7 +49,7 @@ Config::Config()
     _allowedTimeFactor = 1.0;
     _persistFactor = 0.8;
     _improveAntSolution = false;
-    _updateWithGlobalBest = 0;
+    _updateWithGlobalBest = 1;
 }
 
 
