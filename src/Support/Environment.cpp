@@ -160,13 +160,13 @@ const option::Descriptor usage[] = {
     
     { ANTTAU, 0, "T", "antTau", Arg::Double, "  -T <double>, \t--antTau=<double> \tInitial tau used in the ACO." },
     
-    { ANTMINTAU, 0, "C", "minTau", Arg::Double, "  -D <double>, \t--minTau=<double> \tMin tau used in the ACO." },
+    { ANTMINTAU, 0, "C", "minTau", Arg::Double, "  -C <double>, \t--minTau=<double> \tMin tau used in the ACO." },
     
-    { ANTMAXTAU, 0, "D", "maxTau", Arg::Double, "  -C <double>, \t--maxTau=<double> \tMax tau used in the ACO. Use -1 to set it to current global best satisfaction." },
+    { ANTMAXTAU, 0, "D", "maxTau", Arg::Double, "  -D <double>, \t--maxTau=<double> \tMax tau used in the ACO. Use -1 to set it to current global best satisfaction." },
     
-    { ANTMINK, 0, "J", "minAntK", Arg::Numeric, "  -E <unsigned> \t--minAntK=<unsigned> \tMinimum k value for ants." },
+    { ANTMINK, 0, "J", "minAntK", Arg::Numeric, "  -J <unsigned> \t--minAntK=<unsigned> \tMinimum k value for ants." },
     
-    { ANTMAXK, 0, "K", "maxAntK", Arg::Numeric, "  -F <unsigned> \t--maxAntK=<unsigned> \tMaximum k value for ants." },
+    { ANTMAXK, 0, "K", "maxAntK", Arg::Numeric, "  -K <unsigned> \t--maxAntK=<unsigned> \tMaximum k value for ants." },
     
     { ANTPERSITENCE, 0, "P", "persist", Arg::Double,   "  -P <double>, \t--persist=<double> \tPersistence factor used in the ACO." },
     
@@ -184,7 +184,7 @@ const option::Descriptor usage[] = {
     
     { IMPROVEANTS, 0, "I", "improveAnts", Arg::None, "  -I, \t--improveAnts \tUse improved solutions to update pheromones." },
     
-    { PRINTBESTANTS, 0, "X", "printBestAnts", Arg::None, "  -X, \t--printBestAnts \tPrint satisfaction from best ants in every step." },
+    { PRINTBESTANTS, 0, "X", "printAnts", Arg::None, "  -X, \t--printAnts \tPrint satisfaction from all ants in every step." },
       
     {
         UNKNOWN, 0, "", "", Arg::None,

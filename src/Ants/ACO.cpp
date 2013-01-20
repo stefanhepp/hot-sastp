@@ -169,12 +169,13 @@ void ACO::updatePheromones(SatisfactionList &satisfaction, unsigned round)
     if (debug) {
 	cerr << "ACO: Updating ants:" << endl;
 	if (updateBestAnt) {
-	    cerr << "     - Best Ant #" << bestAnt->getAntNumber() << " (K: " << bestAnt->getNeighborhood().getMaxNearestK() 
+	    cerr << "     - [U] Best Ant #" << bestAnt->getAntNumber() << " (K: " << bestAnt->getNeighborhood().getMaxNearestK() 
 	         << ", sat: " << bestAnt->getInstance().getTotalSatisfaction() << ")" << endl;
 	}
-	for (int i = 0; i < (updateBestAnt ? w - 1 : w); i++) {
+	for (int i = 0; i < ants.size(); i++) {
 	  int k = satisfaction[i].antId;
-	  cerr << "     - Ant #" << k << " (K: " << ants[k]->getNeighborhood().getMaxNearestK() << ", sat: " << satisfaction[i].antSatisfaction 
+	  cerr << "     - " << (i < (updateBestAnt ? w - 1 : w) ? "[U] " : "[-] ");
+	  cerr << "Ant #" << k << " (K: " << ants[k]->getNeighborhood().getMaxNearestK() << ", sat: " << satisfaction[i].antSatisfaction 
 	            << ", opt sat: " << satisfaction[i].optSatisfaction << ")" << endl;
 	}
     }
