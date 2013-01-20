@@ -119,12 +119,15 @@ VND* Driver::getVND(Environment& env, const Instance& init)
     switch (env.getConfig().getVNDMode()) {
 	case 0:
 	    // default setting
+	    // sastp500 -a 8 -N 10: 2605, 6.12s
 	    nb = new EdgeTwoOPT(env);
 	    vnd->addNeighborhood(*nb);
 	case 1:
+	    // sastp500 -a 8 -N 10: 2609, 4.6s
 	    nb = new MethodTwoOPT(env);
 	    vnd->addNeighborhood(*nb);
 	case 2:
+	    // sastp500 -a 8 -N 10: 2608, 2.4s
 	    ni = new ConsecutiveNodeInserter(env, env.getConfig().getMaxKNearestSpots(), false);
 	    nb = new NearestTourExchange(env, 2, 4, *ni);
 	    vnd->addNeighborhood(*nb);
@@ -132,6 +135,7 @@ VND* Driver::getVND(Environment& env, const Instance& init)
 	    
 	case 3:
 	    // slightly optimized setting
+	    // sastp500 -a 8 -N 10: 2609, 4.5s
 	    nb = new EdgeTwoOPT(env);
 	    vnd->addNeighborhood(*nb);
 
@@ -142,6 +146,7 @@ VND* Driver::getVND(Environment& env, const Instance& init)
 	    break;
 	case 4:
 	    // Setting with just edge and method two-opt
+	    // sastp500 -a 8 -N 10: 1932, 0.4s
 	    nb = new EdgeTwoOPT(env);
 	    vnd->addNeighborhood(*nb);
 	    
@@ -151,6 +156,7 @@ VND* Driver::getVND(Environment& env, const Instance& init)
 	    break;
 	case 5:
 	    // Setting with just edge and method two-opt
+	    // sastp500 -a 8 -N 10: 2610, 7.0s
 	    nb = new EdgeTwoOPT(env);
 	    vnd->addNeighborhood(*nb);
 	    

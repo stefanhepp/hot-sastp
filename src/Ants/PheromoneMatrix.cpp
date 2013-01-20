@@ -3,6 +3,8 @@
 #include <cstring>
 #include <iostream>
 
+using namespace std;
+
 PheromoneMatrix::PheromoneMatrix (Environment &env)
     : problem(env.getProblem()), debug(env.getConfig().isDebug())
 {
@@ -85,9 +87,9 @@ void PheromoneMatrix::setTau(const TourNode start, const TourNode end, double ta
 
 void PheromoneMatrix::addTau(const TourNode start, const TourNode end, double deltaTau)
 {
-//     if (debug) {
-// 	std::cerr << "Add Tau (" << (int)start.spot << "," << start.method << ") -> (" << end.spot << "," << end.method << ") += " << deltaTau << "\n";
-//     }
+    if (debug) {
+	std::cerr << "Add Tau (" << (int)start.spot << "," << start.method << ") -> (" << end.spot << "," << end.method << ") += " << deltaTau << "\n";
+    }
     
     setTau(start, end, getTau(start, end) + deltaTau);
 }
@@ -150,5 +152,54 @@ void PheromoneMatrix::destroy()
     }
         
     memset(matrix, 0, sizeof(double***)*numSpots);
+}
+
+void PheromoneMatrix::print(ostream& out)
+{
+    unsigned numSpots = problem.getNumSpot()+1;
+    
+    unsigned count = numSpots;
+    
+    out << "Pheromone matrix: default tau = " << defaultTau << endl;
+    
+    for (int i = 0; i < numSpots; i++) {
+	double*** mi = matrix[i];
+	if (!mi) continue;
+	
+	unsigned numMethods = i > 0 ? problem.getSpot(i-1).getMethods().size() : 1;
+	
+	count += numMethods;
+	
+	for (int j = 0; j < numMethods; j++) {
+	    double** sj = mi[j]; 
+	    if (!sj) continue;
+	
+	    count += numSpots;
+	    
+	    out << " - (Spot,Method) = (" << (i-1) << "," << j << ") -> ";
+	    
+	    for (int k = 0; k < numSpots; k++) {
+		double* mj = sj[k];
+		if (!mj) continue;
+		
+		unsigned numEndMethods = k > 0 ? problem.getSpot(k-1).getMethods().size() : 1;
+		
+		count += 2 * numEndMethods;
+		
+		for (int l = 0; l < numEndMethods; l++) {
+		    double tau = mj[l];
+		    
+		    out << "(" << (k-1) << "," << l << ") = " << tau << ", ";
+		}
+		
+	    }
+	    
+	    out << endl;
+	}
+    }    
+    
+    count *= 4;
+    
+    out << "  Size: " << count << " bytes\n";
 }
 

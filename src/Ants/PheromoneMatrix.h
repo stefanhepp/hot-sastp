@@ -5,6 +5,8 @@
 #include "Support/Instance.h"
 #include "Support/Environment.h"
 
+#include <ostream>
+
 class PheromoneMatrix
 {   
     SASTProblem &problem;
@@ -39,6 +41,8 @@ public:
     void addTau(const TourNode start, const TourNode end, double deltaTau);
     
     void evaporate();
+    
+    void print(std::ostream& out);
     
 private:
     // destroy all used memory

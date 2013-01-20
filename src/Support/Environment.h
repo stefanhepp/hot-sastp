@@ -120,7 +120,7 @@ public:
     /**
      * @return get maximum tau value (default: INFINITY)
      */ 
-    double getTauMax() const { return _minTau; }
+    double getTauMax() const { return _maxTau; }
     
     unsigned getMinAntK() const { return _minAntK; }
     

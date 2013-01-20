@@ -56,6 +56,10 @@ void ACO::run()
 	int bestAntIdx = -1;
 	int numAnts = ants.size();
 	
+	if (debug) {
+	    PM.print(cerr);
+	}
+	
 	// perform steps and daemon actions with all ants
 	#pragma omp parallel for
 	for (size_t k = 0; k < numAnts; k++) {
@@ -67,7 +71,7 @@ void ACO::run()
 	    // perform ant step
 	    ant->findTour();
 	    
-	    if (debug) cerr << "ACO: running local search\n";
+	    if (debug) cerr << "ACO: running local search of ant " << k << endl;
 	    
 	    // perform daemon action
 	    localSearches[k]->reset(ant->getInstance());
@@ -188,5 +192,5 @@ void ACO::updatePheromones(SatisfactionList &satisfaction, unsigned round)
     for (int i = 0; i < w; i++) {
 	int k = satisfaction[i].antId;
 	ants[k]->addPheromones(w - i);
-    }    
+    }
 }
