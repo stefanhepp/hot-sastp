@@ -1,0 +1,520 @@
+\documentclass{article}
+
+\usepackage{algorithm}
+\usepackage[noend]{algorithmic}
+
+\usepackage{multirow}
+\usepackage{datatool}
+\usepackage{graphicx}
+
+\usepackage[margin=1in]{geometry}
+
+
+% TODO Add title
+% VU Heuristic Optimization
+%  SASTP, Exercise 2
+%  Ioan Dragan, 
+%  Stefan Hepp, 0026640
+
+\title{SASTP Exercise 2\\
+{VU Heuristic Optimization Techniques} }
+\author{Stefan Hepp, 0026640 \\
+Ioan Dragan, 0856561 }
+
+\begin{document}
+\maketitle
+\section{General Description of the Framework and Algorithms}
+
+We reused the framework of Exercise 1 for this exercise, in particular the instance representation and the calculation of the resting times
+as a post-processing step are the same. However, for performance reasons we added a preprocessing step that removes methods from spots that
+are dominated by at least another method at the same spot in terms of time and satisfaction. If a method provides less or equal satisfaction
+with the same or higher costs in terms of time (including the resting time calculated from the required stamina), it can always be replaced
+by the method with higher satisfaction, which leads to a better result. This eliminates about half of all methods in the provided problems. 
+
+Furthermore we sort methods by their satisfaction per time ratio, so that the greedy algorithms do not need to iterate over all methods to find the best candidates.
+
+\paragraph{Ant Colony Optimization}
+
+We chose to implement the Ant Colony Optimization (ACO) metaheuristic. The ACO algorithm initializes several ants as described below, which
+then use a heuristic approach and a pheromone matrix to create solutions. Optionally a local search is used to improve the results of the
+ants. 
+
+We use a rank-based ant system (AS) variant, i.e., we update the pheromone matrix with the $w-1$ iteration-best ants ($w$ = 5 for 10 ants in our
+evaluation) as well as with the globally best result. We also evaluated a setting similar to the Min-Max Ant System where we only update
+with the iteration-best ant ($w=1$) and limit the maximum $\tau$ values in the pheromone matrix to the current globally-best found
+satisfaction value at each step.
+
+We use OpenMP to execute the construction of the tours and the subsequent local search per ant in parallel.
+% which speeds up the execution by about factor $5$ for 10 ants on a 8-core machine.
+
+\paragraph{Pheromone matrix}
+
+The pheromone matrix uses pairs consisting of a spot-index and a method-index as indices. It is therefore represented as a four-dimensional
+matrix. In order to reduce the memory requirements, the matrix has been implemented as a sparse tree containing rows and columns of the
+matrix as nodes. The leaves contain the values $\tau_{ij}$. Nodes are only created when an entry of a leaf is set to some value. For all
+$\tau_{ij}$ that do not yet have an entry in the matrix, a default value $\tau_d$ is returned. $\tau_d$ is set to the initial $\tau_0$ value 
+and updated during evaporation. The semantics of the entries in the pheromone matrix depends on the ant implementation that is used.
+
+The pheromone matrix is updated by all the ants in sequential order only after the evaporation step, i.e., the matrix is not updated
+concurrently. $\Delta\tau_{ij}^k$ is set to the total satisfaction of the tour found by ant $k$.
+
+\paragraph{Ants}
+
+Two types of ant heuristics have been implemented. One of them constructs a tour in a greedy nearest neighbor way, i.e., the neighborhood
+$N^k$ of ant $k$ consists of the $k'$ nearest spots of the previously inserted spot. The value of $k'$ varies per ant between $8$ and $28$
+for the $10$ ants in our setup. The construction graph contains one node per spot and method pair, and each node has edges to all other
+nodes except to nodes of the same spot. $\tau_{ij}$ represents the pheromone for visiting a specific method of a spot after visiting some
+spot with a given method. $\eta_{ij}$ is calculated as the satisfaction per time ratio of adding node $j$ after node $i$, thus methods with
+higher satisfaction per time ratio have a higher probability of being chosen.
+%Selection of the next node to be inserted in the tour is done taking into consideration the pheromone matrix value and all the other parameters which are needed in the decision making. 
+%The insertion of the new node in the tour is done always at the end. 
+In order to update the pheromone matrix, we need to traverse the tour once and apply $\Delta\tau_{ij}^k$ for each of the vertices taken in the tour.
+
+The other type of ant is based on the best insertion heuristic. This heuristic proved to give good results in the search algorithms of Exercise~1. 
+The heuristic tries to fit a new node in the tour such that we maximize the satisfaction with minimal tour length increase.
+The insertion place is based on the shortest distance from any node in the tour to the node to be inserted.
+The nodes of the construction graph are the same as of the first ant implementation, but an edge $(i,j)$ now means that node $j$ is inserted
+into the tour if node $i$ has been inserted previously, i.e., the construction graph is a decision tree encoding the order of nodes to insert.
+The insertion position is not encoded but decided by the ant at every step anew. 
+
+Both implementations of ants do not generate infeasible tours.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% Greedy %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Results and Discussion}
+
+We tested our implementation with different configurations of the ant colony optimization algorithm. We used the following common parameters
+for evaluation if not noted differently: $\alpha = 1$, $\beta = 2$, persistance factor $\rho = 0.8$, initial $\tau_0 = 1000$. We use 10 ants
+and stop the algorithm after either 20 minutes or after 25 iterations without increase of satisfaction. We use a rank-based AS setup with
+$w=5$ by default, and also evaluated a Min-Max like AS that uses the iteration-best ant to update the pheromones and limits the $\tau$
+values to the best found satisfaction value. We performed the evaluations for the two ant heuristic implementations nearest-node ("Next")
+and insert-heuristics ("Insert").
+
+For the local search we use the VND search with the edge-2-opt and the tour-opt that removes either 2 or 3 nodes and greedily inserts new nodes consecutively
+into the tour. Other neighborhoods such as the method-2-opt are not used since they increase the runtime without much improvement for the
+results. Local searches using only one of the neighborhoods were able to improve the solutions of the ants somewhat, but did not give
+optimal results. The tour-opt is responsible for a large part of the runtime.
+
+In this evaluation we always update the pheromone matrix with the optimized solutions. This allows the ants to find much better (though not
+necesarrily optimal) solutions from the second iteration on and generally lead to better or at least comparable results as the setting where
+the pheromone matrix is updated with the unoptimized solutions of the ants.
+
+However, using optimized solutions can lead to edges in the construction graph that are outside of the ants' neighborhoods. Therefore the
+ants might still not be able to construct the optimal solution found by the local search in the following iterations even when using only
+the information stored in the pheromone matrix to evaluate candidates.
+\medskip
+
+We managed to achieve in some of the cases better results than the ones obtained by non-population-based search heuristics. 
+The ACO has the advantage of generating a larger number of tours, which proved to give a better satisfaction. 
+However, the major downside of ACO is the fact that it takes quite long when an expensive local search is used.
+
+Our implementation leaves room for improvement.
+The ACO was not able to find optimal solutions without an additional local search. This is due to several reasons.
+
+
+%Another thing which might be further improved are the results of the tests by simply playing more with the parameters for each of the variations 
+%of the algorithms. This was not done exhaustively by us, so improvement in the total tour length and satisfaction might be achieved. 
+
+%TODO some discussion of results: VND improves a lot, ants alone not enough (do not detect crossovers, .. ), need better (ie. more
+%expensive) construction heuristics using more lookahead?
+
+
+\begin{table}[b!]
+  \caption{Computed values using Rank-based AS, Next Ant, no local search}
+  \label{tab:conf1}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem & 
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+    sastp10 & 41.8889 & 41.2037 & 1.6444 & 0.03533 \\ 
+	sastp20 & 71.2446 & 61.2053 & 4.6175 & 0.0286 \\ 
+	sastp50 & 187.3030 & 179.0910 & 3.8314 & 0.0589 \\ 
+	sastp100 & 446.0060 & 423.6268 & 7.9482 & 0.1543 \\ 
+	sastp200 & 806.0900 & 781.5946 & 12.5164 & 0.2786 \\ 
+	sastp500 & 2146.1300 & 2091.1350 & 43.9897 & 0.8942 \\ 
+	sastp1000 & 4213.3100 & 4158.8880 & 30.1404 & 0.9029 
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}[b!]
+  \caption{Computed values using Rank-based AS, Next Ant, VND local search}
+  \label{tab:conf2}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+   sastp10 & 43.2979 & 43.2979 & 0.0 & 0.0364 \\ 
+   sastp20 & 72.4877 & 72.4877 & 0.0 & 0.0893 \\ 
+   sastp50 & 212.625 & 211.7637 & 0.7064 & 0.7037 \\ 
+   sastp100 & 505.092 & 503.7117 & 0.727 & 4.1661 \\ 
+   sastp200 & 975.133 & 972.3051 & 1.5835 & 22.8307 \\ 
+   sastp500 & 2617.15 & 2615.308 & 1.0154 & 268.6628 \\ 
+   sastp1000 & 5451.31 & 5450.006 & 0.9722 & 1023.88
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}[b!]
+  \caption{Computed values using Rank-based AS, Next Ant, no local search, rho=0.2}
+  \label{tab:conf3}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+    sastp10 & 41.8889 & 37.8786 & 3.6177 & 0.0371 \\ 
+    sastp20 & 65.1206 & 50.4986 & 5.0134 & 0.0399 \\ 
+    sastp50 & 175.668 & 166.6757 & 4.3926 & 0.0544 \\ 
+    sastp100 & 426.036 & 392.8171 & 11.9743 & 0.0809 \\ 
+    sastp200 & 752.137 & 733.3267 & 9.7063 & 0.1364 \\ 
+    sastp500 & 2012.81 & 1987.088 & 19.2344 & 0.4782 \\ 
+    sastp1000 & 4256.67 & 4160.224 & 63.6609 & 0.8518
+
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}[b!]
+  \caption{Computed values using Rank-based AS, Next Ant, VND local search, rho=0.2}
+  \label{tab:conf4}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+    sastp10 & 43.2979 & 43.2979 & 0.0 & 0.0436 \\ 
+    sastp20 & 72.4877 & 72.4374 & 0.2709 & 0.0705 \\ 
+    sastp50 & 212.625 & 211.0882 & 0.6558 & 0.4623 \\ 
+    sastp100 & 504.831 & 504.1002 & 0.8066 & 2.3433 \\ 
+    sastp200 & 977.117 & 973.6227 & 1.3481 & 20.8448 \\ 
+    sastp500 & 2620.01 & 2616.652 & 1.7338 & 158.866 \\ 
+    sastp1000 & 5455.27 & 5453.776 & 0.8323 & 1009.884
+
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}[b!]
+  \caption{Computed values using Min-Max AS, Next Ant, no local search}
+  \label{tab:conf5}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+   sastp10 & 41.8889 & 38.3187 & 2.9868 & 0.0384 \\ 
+   sastp20 & 65.3593 & 55.1009 & 5.4497 & 0.0448 \\ 
+   sastp50 & 179.799 & 169.2874 & 6.9689 & 0.0776 \\ 
+   sastp100 & 426.222 & 406.5479 & 13.8004 & 0.1453 \\ 
+   sastp200 & 795.61 & 762.5328 & 17.1739 & 0.3086 \\ 
+   sastp500 & 2062.45 & 2019.754 & 32.3927 & 0.7834 \\ 
+   sastp1000 & 4153.76 & 4132.17 & 22.0222 & 1.3032
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}[b!]
+  \caption{Computed values using Min-Max AS, Next Ant, VND local search}
+  \label{tab:conf6}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+    sastp10 & 43.2979 & 43.2979 & 0.0 & 0.0478 \\ 
+    sastp20 & 72.4877 & 72.4877 & 0.0 & 0.0965 \\ 
+    sastp50 & 212.625 & 211.6224 & 0.6754 & 0.7246 \\ 
+    sastp100 & 504.738 & 503.3902 & 0.8192 & 5.0302 \\ 
+    sastp200 & 974.28 & 970.9718 & 1.7374 & 22.1149 \\ 
+    sastp500 & 2616.44 & 2615.06 & 1.2754 & 291.8544 \\ 
+    sastp1000 & 5449.18 & 5447.85 & 1.0035 & 1025.282
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+\begin{table}[b!]
+  \caption{Computed values using Min-Max AS, Next Ant, no local search, rho=0.2}
+  \label{tab:conf7}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+   sastp10 & 41.8889 & 34.8167 & 2.6143 & 0.0369 \\ 
+   sastp20 & 59.0034 & 49.2742 & 5.3977 & 0.0398 \\ 
+   sastp50 & 171.452 & 159.399 & 5.1703 & 0.055 \\ 
+   sastp100 & 401.588 & 375.0972 & 11.5001 & 0.0789 \\ 
+   sastp200 & 749.305 & 718.628 & 13.3477 & 0.1311 \\ 
+   sastp500 & 1971.59 & 1941.262 & 17.1473 & 0.4418 \\ 
+   sastp1000 & 4131.34 & 4097.774 & 25.8643 & 0.796
+
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+\begin{table}[b!]
+  \caption{Computed values using Min-Max AS, Next Ant, VND local search, rho=0.2}
+  \label{tab:conf8}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+  sastp10 & 43.2979 & 43.2979 & 0.0 & 0.0437 \\ 
+  sastp20 & 72.4877 & 72.0374 & 0.8205 & 0.0759 \\ 
+  sastp50 & 212.208 & 210.8661 & 0.6092 & 0.4394 \\ 
+  sastp100 & 504.738 & 503.4019 & 1.034 & 1.6397 \\ 
+  sastp200 & 977.164 & 973.3107 & 2.1298 & 11.3303 \\ 
+  sastp500 & 2626.18 & 2623.59 & 2.2716 & 194.2388 \\ 
+  sastp1000 & 5460.0 & 5455.764 & 2.6621 & 1011.9152
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+\begin{table}[b!]
+  \caption{Computed values using Rank-based AS, Insert Ant, no local search}
+  \label{tab:conf9}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+    sastp10 & 41.8889 & 40.8904 & 2.1519 & 0.0401 \\ 
+    sastp20 & 70.8606 & 60.4437 & 5.1397 & 0.0808 \\ 
+    sastp50 & 183.145 & 173.9262 & 5.1244 & 0.2088 \\ 
+    sastp100 & 415.008 & 397.928 & 9.5908 & 0.7563 \\ 
+    sastp200 & 749.021 & 733.0668 & 7.7951 & 1.9684 \\ 
+    sastp500 & 1943.38 & 1934.38 & 8.0681 & 16.9356
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+
+
+\begin{table}[b!]
+  \caption{Computed values using Rank-based AS, Insert Ant, VND}
+  \label{tab:conf9}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+    sastp10 & 43.2979 & 43.2979 & 0.0 & 0.1475 \\ 
+    sastp20 & 72.4877 & 72.4877 & 0.0 & 0.4761 \\ 
+    sastp50 & 211.91 & 211.423 & 0.4406 & 3.8641 \\ 
+    sastp100 & 503.618 & 502.0225 & 0.5882 & 37.7563 \\ 
+    sastp200 & 972.642 & 971.31 & 1.2576 & 266.795 \\ 
+    sastp500 & 2614.19 & 2613.356 & 0.9174 & 1821.456 \\ 
+    sastp1000 & 5456.01 & 5453.52 & 1.5293 & 1816.465
+    \\\hline
+  \end{tabular}
+
+\end{table}
+
+% TODO Rank-based, Inert Ant, VND missing?
+
+
+\begin{table}
+  \caption{Computed values using Rank-based AS, Insert Ant, no local search, rho=0.2}
+  \label{tab:conf10}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+    \input{../scripts/runProblems/newRuns/Latex_output_LogFileconf1.csv.tex}
+    \hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}
+  \caption{Computed values using Rank-based AS, Insert Ant, VND local search, rho=0.2}
+  \label{tab:conf11}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+    \input{../scripts/runProblems/newRuns/Latex_output_LogFileconf2.csv.tex}
+    \hline
+  \end{tabular}
+
+\end{table}
+
+\clearpage
+
+\begin{table}
+  \caption{Computed values using Min-Max AS, Insert Ant, no local search}
+  \label{tab:conf12}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+    \input{../scripts/runProblems/newRuns/Latex_output_LogFileconf3.csv.tex}
+    \hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}
+  \caption{Computed values using Min-Max AS, Insert Ant, VND local search}
+  \label{tab:conf13}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+    \input{../scripts/runProblems/newRuns/Latex_output_LogFileconf4.csv.tex}
+    \hline
+  \end{tabular}
+
+\end{table}
+
+
+\begin{table}
+  \caption{Computed values using Min-Max AS, Insert Ant, no local search, rho=0.2}
+  \label{tab:conf14}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem &
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+    \input{../scripts/runProblems/newRuns/Latex_output_LogFileconf5.csv.tex}
+    \hline
+  \end{tabular}
+
+\end{table}
+
+\begin{table}
+  \caption{Computed values using Min-Max AS, Insert Ant, VND local search, rho=0.2}
+  \label{tab:conf15}
+  \setlength{\tabcolsep}{1.4mm}
+  \centering
+  \begin{tabular}{lrrrrrr}
+    \bfseries Problem & 
+    \bfseries Max. Satis. &
+    \bfseries Avg Satis. &
+    \bfseries Std. dev. &
+    \bfseries Avg. Time 
+    \\\hline
+    \input{../scripts/runProblems/newRuns/Latex_output_LogFileconf6.csv.tex}
+    \hline
+  \end{tabular}
+
+\end{table}
+
+
+\clearpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+\begin{figure}
+\centering
+\includegraphics[width=1.0\textwidth]{graphs/ACONEXT.pdf}
+\caption{Satisfaction over time development for ACO using Next Ant, no local search}
+\label{fig:ACONEXT}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=1.0\textwidth]{graphs/ACO.pdf}
+\caption{Satisfaction over time development for ACO using Insert Ant, no local search}
+\label{fig:ACO}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=1.0\textwidth]{graphs/ACOVND.pdf}
+\caption{Satisfaction over time development for ACO using VND local search}
+\label{fig:vnd}
+\end{figure}
+
+
+
+
+\end{document}
