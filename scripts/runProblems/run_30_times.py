@@ -4,6 +4,7 @@ import time
 import subprocess 
 import csv
 from shlex import split as splitsh
+from decimal import * 
 
 directory = ""
 outputDirectory = ""
@@ -78,6 +79,8 @@ sastp1000 & 4474.67 & 1.38 & 5451.09 & 667.66 & 5449.17 & 1141.64
 \end{table}
 
 '''
+getcontext().prec = 4
+
 def ComputeForOneProblem(fileWrite, problemName, lines):
     maximumSatisfaction = 0.0
     avgTime = 1.0
@@ -103,7 +106,8 @@ def ComputeForOneProblem(fileWrite, problemName, lines):
     else: 
         avg = avgTime/noRuns
         avgS = avgSast/noRuns
-    fileWrite.write(problemName+" & "+ str(bestSatisfaction)+ " & "+ str(avgS) +" & "+str(deviation)+ " & " +str(avg) + " \\\\ \n")
+    fileWrite.write(problemName+" & "+ str(round(bestSatisfaction, 4))+ " & "+ str(round(avgS,4)) +" & "+str(round(deviation,4))+ " & " +str(round(avg,4)) + " \\\\ \n")
+    #fileWrite.write(problemName+" & "+ str(Decimal(bestSatisfaction))+ " & "+ str(Decimal(avgS)) +" & "+str(Decimal(deviation))+ " & " +str(Decimal(avg)) + " \\\\ \n")
     #print problemName+" & "+ str(bestSatisfaction)+ " & "+ str(deviation)+ " & " +str(avg) + "\n"
 
 def CreateLatexTable(logfile):
