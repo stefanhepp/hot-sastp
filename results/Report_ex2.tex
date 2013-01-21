@@ -39,7 +39,7 @@ We chose to implement the Ant Colony Optimization (ACO) metaheuristic. The ACO a
 then use a heuristic approach and a pheromone matrix to create solutions. Optionally a local search is used to improve the results of the
 ants. 
 
-We use a rank-based ACO variant, i.e., we update with the pheromone matrix with the $w-1$ iteration-best ants ($w$ = 5 for 10 ants in our
+We use a rank-based ant system (AS) variant, i.e., we update with the pheromone matrix with the $w-1$ iteration-best ants ($w$ = 5 for 10 ants in our
 evaluation) as well as with the globally best result. We also evaluated a setting similar to the Min-Max Ant System where we only update
 with the iteration-best ant ($w=1$) and limit the maximum $\tau$ values in the pheromone matrix to the current globally-best found
 satisfaction value at each step.
@@ -86,12 +86,15 @@ Both implementations of ants do not generate infeasible tours.
 
 We tested our implementation with different configurations of the ant colony optimization algorithm. We used the following common parameters
 for evaluation if not noted differently: $\alpha = 1$, $\beta = 2$, persistance factor $\rho = 0.8$, initial $\tau_0 = 1000$. We use 10 ants
-and stop the algorithm after either 20 minutes or after 25 iterations without increase of satisfaction. 
+and stop the algorithm after either 20 minutes or after 25 iterations without increase of satisfaction. We use a rank-based AS setup with
+$w=5$ by default, and also evaluated a Min-Max like AS that uses the iteration-best ant to update the pheromones and limits the $\tau$
+values to the best found satisfaction value. We performed the evaluations for the two ant heuristic implementations nearest-node ("Next")
+and insert-heuristics ("Insert").
 
 For the local search we use the VND search with the edge-2-opt and the tour-opt that removes either 2 or 3 nodes and greedily inserts new nodes consecutively
 into the tour. Other neighborhoods such as the method-2-opt are not used since they increase the runtime without much improvement for the
 results. Local searches using only one of the neighborhoods were able to improve the solutions of the ants somewhat, but did not give
-optimal results. The tour-opt incurred a large part of the runtime.
+optimal results. The tour-opt is responsible for a large part of the runtime.
 
 In this evaluation we always update the pheromone matrix with the optimized solutions. This allows the ants to find much better (though not
 necesarrily optimal) solutions from the second iteration on and generally lead to better or at least comparable results as the setting where
