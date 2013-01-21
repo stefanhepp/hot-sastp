@@ -66,7 +66,7 @@ The other type of ant is based on the best insertion heuristic. This heuristic w
 
 We tested our implementation of different configurations of the ant colony optimization algorithm. The results are in general good. We managed to achieve in some of the cases better results than the ones obtained by the non genetic search heuristics. 
 
-% TODO some description of setups used
+% TODO some description of setups used: Rank-based/Max-Min, different -P values, with/wo local search (reference tables)
 
 
 For the local search we use the VND search with the edge-2-opt and the tour-opt that removes either 2 or 3 nodes and greedily inserts new nodes consecutively
@@ -74,7 +74,7 @@ into the tour. Other neighborhoods such as the method-2-opt are not used since t
 results. Local searches using only one of the neighborhoods were able to improve the solutions of the ants somewhat, but did not give
 optimal results. The tour-opt incurred a large part of the runtime.
 
-In the evaluation we always update the pheromone matrix with the optimized solutions. This allows the ants to find much better (though not
+In this evaluation we always update the pheromone matrix with the optimized solutions. This allows the ants to find much better (though not
 necesarrily optimal) solutions from the second iteration on and generally lead to better or at least comparable results as the setting where
 the pheromone matrix is updated with the unoptimized solutions of the ants.
 
@@ -88,7 +88,6 @@ The major downside of ACO is the fact that it takes quite long in comparison wit
 
 Our implementation leaves room for improvement, so one can think about different implementations for the ants. Another thing which might be further improved are the results of the tests by simply playing more with the parameters for each of the variations of the algorithms. This was not done exhaustively by us, so improvement in the total tour length and satisfaction might be achieved. 
 
-%TODO add some discussion about the results obtained using these strategies. 
 %TODO some discussion of results: VND improves a lot, ants alone not enough (do not detect crossovers, .. ), need better (ie. more
 %expensive) construction heuristics using more lookahead?
 
