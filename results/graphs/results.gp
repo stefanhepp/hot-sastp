@@ -6,7 +6,8 @@ set grid nopolar
 #set grid layerdefault  linetype 1 linewidth 1.000 linecolor rgb "gray",  linetype 0 linewidth 1.000 linecolor rgb "black"
 #set key top right horizontal reverse enhanced nobox Left samplen 2.5 width 0.2
 set key bottom right nobox
-set style data lines
+set pointsize 0.5
+set style data linespoints
 set datafile separator ','
 
 #set xtics border out scale 0,0 nomirror rotate by -65  offset character 0, 0, 0 

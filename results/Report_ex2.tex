@@ -116,14 +116,12 @@ Our implementation leaves room for improvement, so one can think about different
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
+  \caption{Computed values using Next Ant }
   \label{tab:conf1}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 6 -H 0 -I -conf1 } \\
-    &
+    \bfseries Problem & 
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
@@ -136,7 +134,6 @@ Our implementation leaves room for improvement, so one can think about different
 	sastp200 & 806.0900 & 781.5946 & 12.5164 & 0.2786 \\ 
 	sastp500 & 2146.1300 & 2091.1350 & 43.9897 & 0.8942 \\ 
 	sastp1000 & 4213.3100 & 4158.8880 & 30.1404 & 0.9029 
-
     \\\hline
   \end{tabular}
 
@@ -145,14 +142,12 @@ Our implementation leaves room for improvement, so one can think about different
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
+  \caption{Computed values using VND and Next Ant}
   \label{tab:conf2}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 8 -H 0 -I  conf2} \\
-    &
+    \bfseries Problem &
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
@@ -173,26 +168,24 @@ sastp1000 & 5451.31 & 5450.006 & 0.9722 & 1023.88
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
+  \caption{Computed values using Next , rho=0.2}
   \label{tab:conf3}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 6 -H 0 - I -P 0.2 -conf3 } \\
-    &
+    \bfseries Problem &
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
     sastp10 & 41.8889 & 37.8786 & 3.6177 & 0.0371 \\ 
-sastp20 & 65.1206 & 50.4986 & 5.0134 & 0.0399 \\ 
-sastp50 & 175.668 & 166.6757 & 4.3926 & 0.0544 \\ 
-sastp100 & 426.036 & 392.8171 & 11.9743 & 0.0809 \\ 
-sastp200 & 752.137 & 733.3267 & 9.7063 & 0.1364 \\ 
-sastp500 & 2012.81 & 1987.088 & 19.2344 & 0.4782 \\ 
-sastp1000 & 4256.67 & 4160.224 & 63.6609 & 0.8518
+    sastp20 & 65.1206 & 50.4986 & 5.0134 & 0.0399 \\ 
+    sastp50 & 175.668 & 166.6757 & 4.3926 & 0.0544 \\ 
+    sastp100 & 426.036 & 392.8171 & 11.9743 & 0.0809 \\ 
+    sastp200 & 752.137 & 733.3267 & 9.7063 & 0.1364 \\ 
+    sastp500 & 2012.81 & 1987.088 & 19.2344 & 0.4782 \\ 
+    sastp1000 & 4256.67 & 4160.224 & 63.6609 & 0.8518
 
     \\\hline
   \end{tabular}
@@ -202,26 +195,24 @@ sastp1000 & 4256.67 & 4160.224 & 63.6609 & 0.8518
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
+  \caption{Computed values using VND using Next, rho=0.2}
   \label{tab:conf4}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 8 -H 0 - I -P 0.2 -conf4 } \\
-    &
+    \bfseries Problem &
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
-sastp10 & 43.2979 & 43.2979 & 0.0 & 0.0436 \\ 
-sastp20 & 72.4877 & 72.4374 & 0.2709 & 0.0705 \\ 
-sastp50 & 212.625 & 211.0882 & 0.6558 & 0.4623 \\ 
-sastp100 & 504.831 & 504.1002 & 0.8066 & 2.3433 \\ 
-sastp200 & 977.117 & 973.6227 & 1.3481 & 20.8448 \\ 
-sastp500 & 2620.01 & 2616.652 & 1.7338 & 158.866 \\ 
-sastp1000 & 5455.27 & 5453.776 & 0.8323 & 1009.884
+    sastp10 & 43.2979 & 43.2979 & 0.0 & 0.0436 \\ 
+    sastp20 & 72.4877 & 72.4374 & 0.2709 & 0.0705 \\ 
+    sastp50 & 212.625 & 211.0882 & 0.6558 & 0.4623 \\ 
+    sastp100 & 504.831 & 504.1002 & 0.8066 & 2.3433 \\ 
+    sastp200 & 977.117 & 973.6227 & 1.3481 & 20.8448 \\ 
+    sastp500 & 2620.01 & 2616.652 & 1.7338 & 158.866 \\ 
+    sastp1000 & 5455.27 & 5453.776 & 0.8323 & 1009.884
 
     \\\hline
   \end{tabular}
@@ -231,26 +222,24 @@ sastp1000 & 5455.27 & 5453.776 & 0.8323 & 1009.884
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
+  \caption{Computed values using Next, Min-Max AS }
   \label{tab:conf5}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 6 -H 0 -W 1 -U 5 -D -11 -conf5 } \\
-    &
+    \bfseries Problem &
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
    sastp10 & 41.8889 & 38.3187 & 2.9868 & 0.0384 \\ 
-sastp20 & 65.3593 & 55.1009 & 5.4497 & 0.0448 \\ 
-sastp50 & 179.799 & 169.2874 & 6.9689 & 0.0776 \\ 
-sastp100 & 426.222 & 406.5479 & 13.8004 & 0.1453 \\ 
-sastp200 & 795.61 & 762.5328 & 17.1739 & 0.3086 \\ 
-sastp500 & 2062.45 & 2019.754 & 32.3927 & 0.7834 \\ 
-sastp1000 & 4153.76 & 4132.17 & 22.0222 & 1.3032
+   sastp20 & 65.3593 & 55.1009 & 5.4497 & 0.0448 \\ 
+   sastp50 & 179.799 & 169.2874 & 6.9689 & 0.0776 \\ 
+   sastp100 & 426.222 & 406.5479 & 13.8004 & 0.1453 \\ 
+   sastp200 & 795.61 & 762.5328 & 17.1739 & 0.3086 \\ 
+   sastp500 & 2062.45 & 2019.754 & 32.3927 & 0.7834 \\ 
+   sastp1000 & 4153.76 & 4132.17 & 22.0222 & 1.3032
     \\\hline
   \end{tabular}
 
@@ -259,26 +248,24 @@ sastp1000 & 4153.76 & 4132.17 & 22.0222 & 1.3032
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
+  \caption{Computed values using VND, Min-Max AS}
   \label{tab:conf6}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 8 -H 0 -W 1 -U 5 -D -11 -conf6 } \\
-    &
+    \bfseries Problem 
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
-sastp10 & 43.2979 & 43.2979 & 0.0 & 0.0478 \\ 
-sastp20 & 72.4877 & 72.4877 & 0.0 & 0.0965 \\ 
-sastp50 & 212.625 & 211.6224 & 0.6754 & 0.7246 \\ 
-sastp100 & 504.738 & 503.3902 & 0.8192 & 5.0302 \\ 
-sastp200 & 974.28 & 970.9718 & 1.7374 & 22.1149 \\ 
-sastp500 & 2616.44 & 2615.06 & 1.2754 & 291.8544 \\ 
-sastp1000 & 5449.18 & 5447.85 & 1.0035 & 1025.282
+    sastp10 & 43.2979 & 43.2979 & 0.0 & 0.0478 \\ 
+    sastp20 & 72.4877 & 72.4877 & 0.0 & 0.0965 \\ 
+    sastp50 & 212.625 & 211.6224 & 0.6754 & 0.7246 \\ 
+    sastp100 & 504.738 & 503.3902 & 0.8192 & 5.0302 \\ 
+    sastp200 & 974.28 & 970.9718 & 1.7374 & 22.1149 \\ 
+    sastp500 & 2616.44 & 2615.06 & 1.2754 & 291.8544 \\ 
+    sastp1000 & 5449.18 & 5447.85 & 1.0035 & 1025.282
     \\\hline
   \end{tabular}
 
@@ -286,26 +273,24 @@ sastp1000 & 5449.18 & 5447.85 & 1.0035 & 1025.282
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
+  \caption{Computed values using Next, Min-Max AS , rho=0.2}
   \label{tab:conf7}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 6 -H 0 -W 1 -U 5 -D -11 -P 0.2 -conf7 } \\
-    &
+    \bfseries Problem &
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
    sastp10 & 41.8889 & 34.8167 & 2.6143 & 0.0369 \\ 
-sastp20 & 59.0034 & 49.2742 & 5.3977 & 0.0398 \\ 
-sastp50 & 171.452 & 159.399 & 5.1703 & 0.055 \\ 
-sastp100 & 401.588 & 375.0972 & 11.5001 & 0.0789 \\ 
-sastp200 & 749.305 & 718.628 & 13.3477 & 0.1311 \\ 
-sastp500 & 1971.59 & 1941.262 & 17.1473 & 0.4418 \\ 
-sastp1000 & 4131.34 & 4097.774 & 25.8643 & 0.796
+   sastp20 & 59.0034 & 49.2742 & 5.3977 & 0.0398 \\ 
+   sastp50 & 171.452 & 159.399 & 5.1703 & 0.055 \\ 
+   sastp100 & 401.588 & 375.0972 & 11.5001 & 0.0789 \\ 
+   sastp200 & 749.305 & 718.628 & 13.3477 & 0.1311 \\ 
+   sastp500 & 1971.59 & 1941.262 & 17.1473 & 0.4418 \\ 
+   sastp1000 & 4131.34 & 4097.774 & 25.8643 & 0.796
 
     \\\hline
   \end{tabular}
@@ -314,26 +299,24 @@ sastp1000 & 4131.34 & 4097.774 & 25.8643 & 0.796
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
+  \caption{Computed values using VND, Min-Max AS, rho=0.2}
   \label{tab:conf8}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 8 -H 0 -W 1 -U 5 -D -11 -P 0.2 -conf8 } \\
-    &
+    \bfseries Problem &
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
   sastp10 & 43.2979 & 43.2979 & 0.0 & 0.0437 \\ 
-sastp20 & 72.4877 & 72.0374 & 0.8205 & 0.0759 \\ 
-sastp50 & 212.208 & 210.8661 & 0.6092 & 0.4394 \\ 
-sastp100 & 504.738 & 503.4019 & 1.034 & 1.6397 \\ 
-sastp200 & 977.164 & 973.3107 & 2.1298 & 11.3303 \\ 
-sastp500 & 2626.18 & 2623.59 & 2.2716 & 194.2388 \\ 
-sastp1000 & 5460.0 & 5455.764 & 2.6621 & 1011.9152
+  sastp20 & 72.4877 & 72.0374 & 0.8205 & 0.0759 \\ 
+  sastp50 & 212.208 & 210.8661 & 0.6092 & 0.4394 \\ 
+  sastp100 & 504.738 & 503.4019 & 1.034 & 1.6397 \\ 
+  sastp200 & 977.164 & 973.3107 & 2.1298 & 11.3303 \\ 
+  sastp500 & 2626.18 & 2623.59 & 2.2716 & 194.2388 \\ 
+  sastp1000 & 5460.0 & 5455.764 & 2.6621 & 1011.9152
     \\\hline
   \end{tabular}
 
@@ -341,25 +324,23 @@ sastp1000 & 5460.0 & 5455.764 & 2.6621 & 1011.9152
 
 \begin{table}[b!]
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
+  \caption{Computed values using Insert}
   \label{tab:conf9}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 6 -H 1 -I -conf9 } \\
-    &
+    \bfseries Problem &
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
-sastp10 & 41.8889 & 40.8904 & 2.1519 & 0.0401 \\ 
-sastp20 & 70.8606 & 60.4437 & 5.1397 & 0.0808 \\ 
-sastp50 & 183.145 & 173.9262 & 5.1244 & 0.2088 \\ 
-sastp100 & 415.008 & 397.928 & 9.5908 & 0.7563 \\ 
-sastp200 & 749.021 & 733.0668 & 7.7951 & 1.9684 \\ 
-sastp500 & 1943.38 & 1934.38 & 8.0681 & 16.9356
+    sastp10 & 41.8889 & 40.8904 & 2.1519 & 0.0401 \\ 
+    sastp20 & 70.8606 & 60.4437 & 5.1397 & 0.0808 \\ 
+    sastp50 & 183.145 & 173.9262 & 5.1244 & 0.2088 \\ 
+    sastp100 & 415.008 & 397.928 & 9.5908 & 0.7563 \\ 
+    sastp200 & 749.021 & 733.0668 & 7.7951 & 1.9684 \\ 
+    sastp500 & 1943.38 & 1934.38 & 8.0681 & 16.9356
     \\\hline
   \end{tabular}
 
@@ -368,20 +349,18 @@ sastp500 & 1943.38 & 1934.38 & 8.0681 & 16.9356
 
 \begin{table}
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
-  \label{tab:conf14}
+  \caption{Computed values using Insert, rho=0.2}
+  \label{tab:conf10}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 6 -H 1 -I -P 0.2 -conf } \\
-    &
+    \bfseries Problem &
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
-\input{../scripts/runProblems/newRuns/Latex_output_LogFileconf1.csv.tex}
+    \input{../scripts/runProblems/newRuns/Latex_output_LogFileconf1.csv.tex}
     \hline
   \end{tabular}
 
@@ -390,20 +369,18 @@ sastp500 & 1943.38 & 1934.38 & 8.0681 & 16.9356
 
 \begin{table}
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
-  \label{tab:conf14}
+  \caption{Computed values using VND, Insert, rho=0.2}
+  \label{tab:conf11}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 8 -H 1 -I -P 0.2 -conf } \\
-    &
+    \bfseries Problem &
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
-\input{../scripts/runProblems/newRuns/Latex_output_LogFileconf2.csv.tex}
+    \input{../scripts/runProblems/newRuns/Latex_output_LogFileconf2.csv.tex}
     \hline
   \end{tabular}
 
@@ -413,20 +390,18 @@ sastp500 & 1943.38 & 1934.38 & 8.0681 & 16.9356
 
 \begin{table}
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
-  \label{tab:conf14}
+  \caption{Computed values using Insert, Min-Max AS}
+  \label{tab:conf12}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 6 -H 1 -I -W 1 -U 5 -D -1 -conf } \\
-    &
+    \bfseries Problem &
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
-\input{../scripts/runProblems/newRuns/Latex_output_LogFileconf3.csv.tex}
+    \input{../scripts/runProblems/newRuns/Latex_output_LogFileconf3.csv.tex}
     \hline
   \end{tabular}
 
@@ -435,20 +410,18 @@ sastp500 & 1943.38 & 1934.38 & 8.0681 & 16.9356
 
 \begin{table}
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
-  \label{tab:conf14}
+  \caption{Computed values using VND, Insert, Min-Max AS}
+  \label{tab:conf13}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 8 -H 1 -I -W 1 -U 5 -D -1 -conf } \\
-    &
+    \bfseries Problem &
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
-\input{../scripts/runProblems/newRuns/Latex_output_LogFileconf4.csv.tex}
+    \input{../scripts/runProblems/newRuns/Latex_output_LogFileconf4.csv.tex}
     \hline
   \end{tabular}
 
@@ -457,20 +430,18 @@ sastp500 & 1943.38 & 1934.38 & 8.0681 & 16.9356
 
 \begin{table}
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
+  \caption{Computed values using Insert, Min-Max AS, rho=0.2}
   \label{tab:conf14}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 6 -H 1 -I -W 1 -U 5 -D -1 -P 0.2 -conf14 } \\
-    &
+    \bfseries Problem &
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
-\input{../scripts/runProblems/newRuns/Latex_output_LogFileconf5.csv.tex}
+    \input{../scripts/runProblems/newRuns/Latex_output_LogFileconf5.csv.tex}
     \hline
   \end{tabular}
 
@@ -478,20 +449,18 @@ sastp500 & 1943.38 & 1934.38 & 8.0681 & 16.9356
 
 \begin{table}
   \vspace{-6mm}%
-  \caption{Computed values using the nearest tour neighborhood}
+  \caption{Computed values using VND, Insert, Min-Max AS, rho=0.2}
   \label{tab:conf15}
   \setlength{\tabcolsep}{1.4mm}
   \centering
   \begin{tabular}{lrrrrrr}
-   \multirow{2}{*}{\bfseries Problem} &
-      \multicolumn{4}{c}{\bfseries -a 8 -H 1 -I -W 1 -U 5 -D -1 -P 0.2 -conf14 } \\
-    &
+    \bfseries Problem & 
     \bfseries Max. Satis. &
     \bfseries Avg Satis. &
     \bfseries Std. dev. &
     \bfseries Avg. Time 
     \\\hline
-\input{../scripts/runProblems/newRuns/Latex_output_LogFileconf6.csv.tex}
+    \input{../scripts/runProblems/newRuns/Latex_output_LogFileconf6.csv.tex}
     \hline
   \end{tabular}
 
