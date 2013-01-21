@@ -27,6 +27,15 @@ Ioan Dragan, 0856561 }
 
 \paragraph{Pheromone matrix}
 
+The pheromone matrix uses pairs consisting of a spot-index and a method-index as indices. It is therefore represented as a four-dimensional
+matrix. In order to reduce the memory requirements, the matrix has been implemented as a sparse tree containing rows and columns of the
+matrix as nodes. The leaves contain the values $\tau_{ij}$. Nodes are only created when an entry of a leaf is set to some value. For all
+$\tau_{ij}$ that do not yet have an entry in the matrix, a default value $\tau_d$ is returned. $\tau_d$ is set to the initial $\tau_0$ value 
+and updated during evaporation. The semantics of the entries in the pheromone matrix depends on the ant implementation that is used.
+
+The pheromone matrix is updated by all the ants in sequential order only after the evaporation step, i.e., the matrix is not updated
+concurrently.
+
 \paragraph{Ant colony optimization}
 
 \paragraph{Ants}
