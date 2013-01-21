@@ -29,8 +29,9 @@ We reused the framework of Exercise 1 for this exercise, in particular the insta
 as a post-processing step are the same. However, for performance reasons we added a preprocessing step that removes methods from spots that
 are dominated by at least another method at the same spot in terms of time and satisfaction. If a method provides less or equal satisfaction
 with the same or higher costs in terms of time (including the resting time calculated from the required stamina), it can always be replaced
-by the method with higher satisfaction, which leads to a better result. Furthermore we sort methods by their satisfaction per time ratio, so
-that the greedy algorithms do not need to iterate over all methods to find the best candidates.
+by the method with higher satisfaction, which leads to a better result. This eliminates about half of all methods in the provided problems. 
+
+Furthermore we sort methods by their satisfaction per time ratio, so that the greedy algorithms do not need to iterate over all methods to find the best candidates.
 
 \paragraph{Ant Colony Optimization}
 
@@ -38,8 +39,13 @@ We chose to implement the Ant Colony Optimization (ACO) metaheuristic. The ACO a
 then use a heuristic approach and a pheromone matrix to create solutions. Optionally a local search is used to improve the results of the
 ants. 
 
-We use a rank-based ACO variant.
+We use a rank-based ACO variant, i.e., we update with the pheromone matrix with the $w-1$ iteration-best ants ($w$ = 5 for 10 ants in our
+evaluation) as well as with the globally best result. We also evaluated a setting similar to the Min-Max Ant System where we only update
+with the iteration-best ant ($w=1$) and limit the maximum $\tau$ values in the pheromone matrix to the current globally-best found
+satisfaction value at each step.
 
+We use OpenMP to execute the construction of the tours and the subsequent local search per ant in parallel.
+% which speeds up the execution by about factor $5$ for 10 ants on a 8-core machine.
 
 \paragraph{Pheromone matrix}
 
@@ -50,24 +56,37 @@ $\tau_{ij}$ that do not yet have an entry in the matrix, a default value $\tau_d
 and updated during evaporation. The semantics of the entries in the pheromone matrix depends on the ant implementation that is used.
 
 The pheromone matrix is updated by all the ants in sequential order only after the evaporation step, i.e., the matrix is not updated
-concurrently.
+concurrently. $\Delta\tau_{ij}^k$ is set to the total satisfaction of the tour found by ant $k$.
 
 \paragraph{Ants}
 
-Two types of ant are implemented in the current version of our solution. One of them constructs a tour in a greedy nearest neighbor way. This means that we restrict the list of spots an ant can visit at a specific time. This limitation is given by the k-nearest nodes. Selection of the next node to be inserted in the tour is done taking into consideration the pheromone matrix value and all the other parameters which are needed in the decision making. The insertion of the new node in the tour is done always at the end. In order to update the pheromone matrix at the end, we only need to traverse the tour once and simply modify the pheromone for each of the vertices taken in the tour.
+Two types of ant heuristics have been implemented. One of them constructs a tour in a greedy nearest neighbor way, i.e., the neighborhood
+$N^k$ of ant $k$ consists of the $k'$ nearest spots of the previously inserted spot. The value of $k'$ varies per ant between $8$ and $28$
+for the $10$ ants in our setup. The construction graph contains one node per spot and method pair, and each node has edges to all other
+nodes except to nodes of the same spot. $\tau_{ij}$ represents the pheromone for visiting a specific method of a spot after visiting some
+spot with a given method. $\eta_{ij}$ is calculated as the satisfaction per time ratio of adding node $j$ after node $i$, thus methods with
+higher satisfaction per time ratio have a higher probability of being chosen.
+%Selection of the next node to be inserted in the tour is done taking into consideration the pheromone matrix value and all the other parameters which are needed in the decision making. 
+%The insertion of the new node in the tour is done always at the end. 
+In order to update the pheromone matrix, we need to traverse the tour once and apply $\Delta\tau_{ij}^k$ for each of the vertices taken in the tour.
 
-The other type of ant is based on the best insertion heuristic. This heuristic was one of the heuristics which proved to give good results if used in the classical search algorithms. The heuristic tries to fit the node in the tour such that we maximize the satisfaction. The insertion place is based on the shortest distance from any node in the tour to the node to be inserted.Both implementations of ants do not allow us to end up with unfeasible tours. This is taken care of in the implementation of the ant itself. 
+The other type of ant is based on the best insertion heuristic. This heuristic proved to give good results in the search algorithms of Exercise~1. 
+The heuristic tries to fit a new node in the tour such that we maximize the satisfaction with minimal tour length increase.
+The insertion place is based on the shortest distance from any node in the tour to the node to be inserted.
+The nodes of the construction graph are the same as of the first ant implementation, but an edge $(i,j)$ now means that node $j$ is inserted
+into the tour if node $i$ has been inserted previously, i.e., the construction graph is a decision tree encoding the order of nodes to insert.
+The insertion position is not encoded but decided by the ant at every step anew. 
 
+Both implementations of ants do not generate infeasible tours.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%% Greedy %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Results and discussion}
+\section{Results and Discussion}
 
-We tested our implementation of different configurations of the ant colony optimization algorithm. The results are in general good. We managed to achieve in some of the cases better results than the ones obtained by the non genetic search heuristics. 
-
-% TODO some description of setups used: Rank-based/Max-Min, different -P values, with/wo local search (reference tables)
-
+We tested our implementation with different configurations of the ant colony optimization algorithm. We used the following common parameters
+for evaluation if not noted differently: $\alpha = 1$, $\beta = 2$, persistance factor $\rho = 0.8$, initial $\tau_0 = 1000$. We use 10 ants
+and stop the algorithm after either 20 minutes or after 25 iterations without increase of satisfaction. 
 
 For the local search we use the VND search with the edge-2-opt and the tour-opt that removes either 2 or 3 nodes and greedily inserts new nodes consecutively
 into the tour. Other neighborhoods such as the method-2-opt are not used since they increase the runtime without much improvement for the
@@ -81,12 +100,15 @@ the pheromone matrix is updated with the unoptimized solutions of the ants.
 However, using optimized solutions can lead to edges in the construction graph that are outside of the ants' neighborhoods. Therefore the
 ants might still not be able to construct the optimal solution found by the local search in the following iterations even when using only
 the information stored in the pheromone matrix to evaluate candidates.
-
 \medskip
 
-The major downside of ACO is the fact that it takes quite long in comparison with the non genetic ones. But it also has the advantage of finding longer tours, which prove to give a better satisfaction in the end. 
+We managed to achieve in some of the cases better results than the ones obtained by non-population-based search heuristics. 
+It has the advantage of generating a larger number of tours, which proved to give a better satisfaction. 
+However, the major downside of ACO is the fact that it takes quite long if an expensive local search is used.
 
-Our implementation leaves room for improvement, so one can think about different implementations for the ants. Another thing which might be further improved are the results of the tests by simply playing more with the parameters for each of the variations of the algorithms. This was not done exhaustively by us, so improvement in the total tour length and satisfaction might be achieved. 
+Our implementation leaves room for improvement, so one can think about different implementations for the ants. 
+%Another thing which might be further improved are the results of the tests by simply playing more with the parameters for each of the variations 
+%of the algorithms. This was not done exhaustively by us, so improvement in the total tour length and satisfaction might be achieved. 
 
 %TODO some discussion of results: VND improves a lot, ants alone not enough (do not detect crossovers, .. ), need better (ie. more
 %expensive) construction heuristics using more lookahead?
