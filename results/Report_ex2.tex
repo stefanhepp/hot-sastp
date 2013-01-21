@@ -39,7 +39,7 @@ We chose to implement the Ant Colony Optimization (ACO) metaheuristic. The ACO a
 then use a heuristic approach and a pheromone matrix to create solutions. Optionally a local search is used to improve the results of the
 ants. 
 
-We use a rank-based ant system (AS) variant, i.e., we update with the pheromone matrix with the $w-1$ iteration-best ants ($w$ = 5 for 10 ants in our
+We use a rank-based ant system (AS) variant, i.e., we update the pheromone matrix with the $w-1$ iteration-best ants ($w$ = 5 for 10 ants in our
 evaluation) as well as with the globally best result. We also evaluated a setting similar to the Min-Max Ant System where we only update
 with the iteration-best ant ($w=1$) and limit the maximum $\tau$ values in the pheromone matrix to the current globally-best found
 satisfaction value at each step.
