@@ -23,7 +23,23 @@ Ioan Dragan, 0856561 }
 
 \begin{document}
 \maketitle
-\section{General description of the framework and algorithms}
+\section{General Description of the Framework and Algorithms}
+
+We reused the framework of Exercise 1 for this exercise, in particular the instance representation and the calculation of the resting times
+as a post-processing step are the same. However, for performance reasons we added a preprocessing step that removes methods from spots that
+are dominated by at least another method at the same spot in terms of time and satisfaction. If a method provides less or equal satisfaction
+with the same or higher costs in terms of time (including the resting time calculated from the required stamina), it can always be replaced
+by the method with higher satisfaction, which leads to a better result. Furthermore we sort methods by their satisfaction per time ratio, so
+that the greedy algorithms do not need to iterate over all methods to find the best candidates.
+
+\paragraph{Ant Colony Optimization}
+
+We chose to implement the Ant Colony Optimization (ACO) metaheuristic. The ACO algorithm initializes several ants as described below, which
+then use a heuristic approach and a pheromone matrix to create solutions. Optionally a local search is used to improve the results of the
+ants. 
+
+We use a rank-based ACO variant.
+
 
 \paragraph{Pheromone matrix}
 
@@ -35,8 +51,6 @@ and updated during evaporation. The semantics of the entries in the pheromone ma
 
 The pheromone matrix is updated by all the ants in sequential order only after the evaporation step, i.e., the matrix is not updated
 concurrently.
-
-\paragraph{Ant colony optimization}
 
 \paragraph{Ants}
 
@@ -50,13 +64,34 @@ The other type of ant is based on the best insertion heuristic. This heuristic w
 
 \section{Results and discussion}
 
-%TODO add some discussion about the results obtained using these strategies. 
-
 We tested our implementation of different configurations of the ant colony optimization algorithm. The results are in general good. We managed to achieve in some of the cases better results than the ones obtained by the non genetic search heuristics. 
+
+% TODO some description of setups used
+
+
+For the local search we use the VND search with the edge-2-opt and the tour-opt that removes either 2 or 3 nodes and greedily inserts new nodes consecutively
+into the tour. Other neighborhoods such as the method-2-opt are not used since they increase the runtime without much improvement for the
+results. Local searches using only one of the neighborhoods were able to improve the solutions of the ants somewhat, but did not give
+optimal results. The tour-opt incurred a large part of the runtime.
+
+In the evaluation we always update the pheromone matrix with the optimized solutions. This allows the ants to find much better (though not
+necesarrily optimal) solutions from the second iteration on and generally lead to better or at least comparable results as the setting where
+the pheromone matrix is updated with the unoptimized solutions of the ants.
+
+However, using optimized solutions can lead to edges in the construction graph that are outside of the ants' neighborhoods. Therefore the
+ants might still not be able to construct the optimal solution found by the local search in the following iterations even when using only
+the information stored in the pheromone matrix to evaluate candidates.
+
+\medskip
 
 The major downside of ACO is the fact that it takes quite long in comparison with the non genetic ones. But it also has the advantage of finding longer tours, which prove to give a better satisfaction in the end. 
 
 Our implementation leaves room for improvement, so one can think about different implementations for the ants. Another thing which might be further improved are the results of the tests by simply playing more with the parameters for each of the variations of the algorithms. This was not done exhaustively by us, so improvement in the total tour length and satisfaction might be achieved. 
+
+%TODO add some discussion about the results obtained using these strategies. 
+%TODO some discussion of results: VND improves a lot, ants alone not enough (do not detect crossovers, .. ), need better (ie. more
+%expensive) construction heuristics using more lookahead?
+
 
 \begin{table}[b!]
   \vspace{-6mm}%
