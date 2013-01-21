@@ -6,7 +6,7 @@ GRAPHS=$(shell find graphs -iname "*.gnu" | sed "s/.gnu$$/.pdf/")
 
 
 .SUFFIXES: .gnu .pdf
-.gnu.pdf: graphs/results.gp
+.gnu.pdf: graphs/results.gp $< $(CSVFILES)
 	cd $(shell dirname $<) && gnuplot $(shell basename $<)
 
 .PHONY: graphs
@@ -19,4 +19,4 @@ Report_ex2.pdf: Report_ex2.tex $(CSVFILES) $(GRAPHS)
 	rubber -fd Report_ex2.tex
 
 clean:
-	rm -rf *.log *.pdf *.aux
+	rm -rf *.log *.pdf *.aux graphs/*.pdf

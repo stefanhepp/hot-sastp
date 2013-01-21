@@ -106,10 +106,13 @@ the information stored in the pheromone matrix to evaluate candidates.
 \medskip
 
 We managed to achieve in some of the cases better results than the ones obtained by non-population-based search heuristics. 
-It has the advantage of generating a larger number of tours, which proved to give a better satisfaction. 
-However, the major downside of ACO is the fact that it takes quite long if an expensive local search is used.
+The ACO has the advantage of generating a larger number of tours, which proved to give a better satisfaction. 
+However, the major downside of ACO is the fact that it takes quite long when an expensive local search is used.
 
-Our implementation leaves room for improvement, so one can think about different implementations for the ants. 
+Our implementation leaves room for improvement.
+The ACO was not able to find optimal solutions without an additional local search. This is due to several reasons.
+
+
 %Another thing which might be further improved are the results of the tests by simply playing more with the parameters for each of the variations 
 %of the algorithms. This was not done exhaustively by us, so improvement in the total tour length and satisfaction might be achieved. 
 
@@ -118,7 +121,7 @@ Our implementation leaves room for improvement, so one can think about different
 
 
 \begin{table}[b!]
-  \caption{Computed values using Next Ant }
+  \caption{Computed values using Rank-based AS, Next Ant, no local search}
   \label{tab:conf1}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -143,7 +146,7 @@ Our implementation leaves room for improvement, so one can think about different
 
 
 \begin{table}[b!]
-  \caption{Computed values using VND and Next Ant}
+  \caption{Computed values using Rank-based AS, Next Ant, VND local search}
   \label{tab:conf2}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -168,7 +171,7 @@ Our implementation leaves room for improvement, so one can think about different
 
 
 \begin{table}[b!]
-  \caption{Computed values using Next , rho=0.2}
+  \caption{Computed values using Rank-based AS, Next Ant, no local search, rho=0.2}
   \label{tab:conf3}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -194,7 +197,7 @@ Our implementation leaves room for improvement, so one can think about different
 
 
 \begin{table}[b!]
-  \caption{Computed values using VND using Next, rho=0.2}
+  \caption{Computed values using Rank-based AS, Next Ant, VND local search, rho=0.2}
   \label{tab:conf4}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -220,8 +223,7 @@ Our implementation leaves room for improvement, so one can think about different
 
 
 \begin{table}[b!]
-  \vspace{-6mm}%
-  \caption{Computed values using Next, Min-Max AS }
+  \caption{Computed values using Min-Max AS, Next Ant, no local search}
   \label{tab:conf5}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -246,7 +248,7 @@ Our implementation leaves room for improvement, so one can think about different
 
 
 \begin{table}[b!]
-  \caption{Computed values using VND, Min-Max AS}
+  \caption{Computed values using Min-Max AS, Next Ant, VND local search}
   \label{tab:conf6}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -270,7 +272,7 @@ Our implementation leaves room for improvement, so one can think about different
 \end{table}
 
 \begin{table}[b!]
-  \caption{Computed values using Next, Min-Max AS , rho=0.2}
+  \caption{Computed values using Min-Max AS, Next Ant, no local search, rho=0.2}
   \label{tab:conf7}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -295,7 +297,7 @@ Our implementation leaves room for improvement, so one can think about different
 \end{table}
 
 \begin{table}[b!]
-  \caption{Computed values using VND, Min-Max AS, rho=0.2}
+  \caption{Computed values using Min-Max AS, Next Ant, VND local search, rho=0.2}
   \label{tab:conf8}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -319,7 +321,7 @@ Our implementation leaves room for improvement, so one can think about different
 \end{table}
 
 \begin{table}[b!]
-  \caption{Computed values using Insert}
+  \caption{Computed values using Rank-based AS, Insert Ant, no local search}
   \label{tab:conf9}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -342,8 +344,10 @@ Our implementation leaves room for improvement, so one can think about different
 \end{table}
 
 
+% TODO Rank-based, Inert Ant, VND missing?
+
 \begin{table}
-  \caption{Computed values using Insert, rho=0.2}
+  \caption{Computed values using Rank-based AS, Insert Ant, no local search, rho=0.2}
   \label{tab:conf10}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -362,7 +366,7 @@ Our implementation leaves room for improvement, so one can think about different
 
 
 \begin{table}
-  \caption{Computed values using VND, Insert, rho=0.2}
+  \caption{Computed values using Rank-based AS, Insert Ant, VND local search, rho=0.2}
   \label{tab:conf11}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -382,7 +386,7 @@ Our implementation leaves room for improvement, so one can think about different
 \clearpage
 
 \begin{table}
-  \caption{Computed values using Insert, Min-Max AS}
+  \caption{Computed values using Min-Max AS, Insert Ant, no local search}
   \label{tab:conf12}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -401,7 +405,7 @@ Our implementation leaves room for improvement, so one can think about different
 
 
 \begin{table}
-  \caption{Computed values using VND, Insert, Min-Max AS}
+  \caption{Computed values using Min-Max AS, Insert Ant, VND local search}
   \label{tab:conf13}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -420,7 +424,7 @@ Our implementation leaves room for improvement, so one can think about different
 
 
 \begin{table}
-  \caption{Computed values using Insert, Min-Max AS, rho=0.2}
+  \caption{Computed values using Min-Max AS, Insert Ant, no local search, rho=0.2}
   \label{tab:conf14}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -438,7 +442,7 @@ Our implementation leaves room for improvement, so one can think about different
 \end{table}
 
 \begin{table}
-  \caption{Computed values using VND, Insert, Min-Max AS, rho=0.2}
+  \caption{Computed values using Min-Max AS, Insert Ant, VND local search, rho=0.2}
   \label{tab:conf15}
   \setlength{\tabcolsep}{1.4mm}
   \centering
@@ -465,22 +469,22 @@ Our implementation leaves room for improvement, so one can think about different
 
 \begin{figure}
 \centering
-\includegraphics{graphs/ACONEXT.pdf}
-\caption{Ant Colony optimization with greedy next}
+\includegraphics[width=1.0\textwidth]{graphs/ACONEXT.pdf}
+\caption{Satisfaction over time development for ACO using Next Ant, no local search}
 \label{fig:ACONEXT}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{graphs/ACO.pdf}
-\caption{Ant colony optimization with best insert}
+\includegraphics[width=1.0\textwidth]{graphs/ACO.pdf}
+\caption{Satisfaction over time development for ACO using Insert Ant, no local search}
 \label{fig:ACO}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{graphs/ACOVND.pdf}
-\caption{Ant colony optimization with VND and different ants}
+\includegraphics[width=1.0\textwidth]{graphs/ACOVND.pdf}
+\caption{Satisfaction over time development for ACO using VND local search}
 \label{fig:vnd}
 \end{figure}
 
