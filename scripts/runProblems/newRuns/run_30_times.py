@@ -82,7 +82,6 @@ def ComputeForOneProblem(fileWrite, problemName, lines):
     maximumSatisfaction = 0.0
     avgTime = 1.0
     bestSatisfaction = 0.0
-    avgSast = 0.0
     standardDev = []
     noRuns = 0
     for index in lines: 
@@ -92,18 +91,15 @@ def ComputeForOneProblem(fileWrite, problemName, lines):
             noRuns = noRuns + 1
             avgTime = avgTime + float(spl[2])
             standardDev.append(float(spl[1]))
-            avgSast = avgSast + float(spl[1])
             if float(spl[1]) > bestSatisfaction : 
                 bestSatisfaction = float(spl[1])
     #print standardDev
     deviation = numpy.std(standardDev)
     if noRuns == 0 : 
         avg = -1
-        avgS = -1
     else: 
         avg = avgTime/noRuns
-        avgS = avgSast/noRuns
-    fileWrite.write(problemName+" & "+ str(bestSatisfaction)+ " & "+ str(avgS) +" & "+str(deviation)+ " & " +str(avg) + " \\\\ \n")
+    fileWrite.write(problemName+" & "+ str(bestSatisfaction)+ " & "+ str(deviation)+ " & " +str(avg) + "\n")
     #print problemName+" & "+ str(bestSatisfaction)+ " & "+ str(deviation)+ " & " +str(avg) + "\n"
 
 def CreateLatexTable(logfile):
@@ -113,7 +109,7 @@ def CreateLatexTable(logfile):
     stdev = []
     problems = ["sastp10","sastp20","sastp50", "sastp100", "sastp200", "sastp500", "sastp1000"]
 
-    fout = open("Latex_from_"+logfile+".tex","a")
+    fout = open("Latex_from_"+logfile,"a")
     for line in (problems): 
         ComputeForOneProblem(fout,line, logLines)
         #if splitted[0].endswith("sastp10") : 
@@ -131,8 +127,6 @@ def CreateLatexTable(logfile):
 
 
 if __name__ == '__main__':
-    CreateLatexTable(sys.argv[1])
-    '''
     listOfProblems=[]
     if len( sys.argv) < 4 : 
         print "runProblems <executable> <inputProblemsDirectory> <outputDirectory> <configurationFile> "
@@ -156,6 +150,6 @@ if __name__ == '__main__':
 
     for x in range(0, len(configurations)):
         CreateLatexTable("LogFileconf"+str(x+1)+".csv")
-    '''
+    
     
 
