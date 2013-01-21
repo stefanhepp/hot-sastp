@@ -118,8 +118,8 @@ def CreateLatexTable(logfile):
     problems = ["sastp10","sastp20","sastp50", "sastp100", "sastp200", "sastp500", "sastp1000"]
 
     logfile1 = logfile.split("/")
-
-    fout = open("Latex_from_"+logfile1[len(logfile1)-1]+".tex","a")
+    
+    fout = open("Latex_output_"+logfile1[len(logfile1)-1]+".tex","a")
     for line in (problems): 
         ComputeForOneProblem(fout,line, logLines)
         #if splitted[0].endswith("sastp10") : 
